@@ -70,7 +70,15 @@ class TwoLayerNetv1(object):
         # of shape (N, C).                                                          #
         #############################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+        A1 = X
+        Z2 = A1 @ W1 + b1
+        A2 = np.maximum(0, Z2) # ReLU
+        Z3 = A2 @ W2 + b2
+        A3 = np.exp(Z3) / np.sum(np.exp(Z3), axis=1, keepdims=True) # softmax
 
+        # scores shape: (N, C)
+        softmax_scores = A3
+        self.scores = softmax_scores
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
         # If the targets are not given then jump out, we're done
