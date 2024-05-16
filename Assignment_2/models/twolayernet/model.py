@@ -124,6 +124,7 @@ class TwoLayerNetv2(TwoLayerNetv1):
         # from the parent (i.e v1) class.                                             #
         #############################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+        softmax_scores = self.forward(X)
 
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
@@ -141,8 +142,9 @@ class TwoLayerNetv2(TwoLayerNetv1):
         # classifier loss.                                                          #
         #############################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
-
+        loss = np.average(-np.log(softmax_scores[np.arange(N), y])) + reg * (np.sum(W1 * W1) + np.sum(W2 * W2))
+        
+        self.loss = loss
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
         return loss
