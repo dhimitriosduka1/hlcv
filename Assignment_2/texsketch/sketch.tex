@@ -1,0 +1,72 @@
+\documentclass{article}
+
+\usepackage{amsmath} % for math symbols and equations
+\usepackage{amsfonts} % add this line to import the missing package
+
+\newcommand{\bb}{b^{(2)}}
+\newcommand{\ab}{a^{(2)}}
+\newcommand{\zc}{z^{(3)}}
+\newcommand{\Wb}{W^{(2)}}
+
+\begin{document}
+
+\section*{Q2}
+\subsection*{(b)}
+Case $N = 1$\\
+Note that $\frac{\partial \zc}{\partial \Wb} \in \mathbb{R}^{K\times H\times K}$ is a tensor.
+To simplify things we can look at the derivative of $\zc$ w.r.t a single element in $\Wb$: 
+$\frac{\partial \zc}{\partial \Wb_{ij}}$.
+We know that $\zc = \Wb\ab + \bb$ where $\ab \in \mathbb{R}^{H}$ and $\Wb \in \mathbb{R}^{K\times H}$.
+It can also be written as
+\begin{align*}
+    \zc_j &= \sum_{i=1}^{K}\left(\left(\sum_{j=1}^{H} \Wb_{ij} \ab_j\right) + \bb_i\right)
+\end{align*}
+apparently
+\begin{align*}
+    \frac{\partial \zc_i}{\partial \Wb_{kj}} =
+    \begin{cases}
+        \ab_j & \text{if } i = k\\
+        0 & \text{otherwise}
+    \end{cases}
+\end{align*}
+which is a vector filled with zero except for the $i$-th element.
+
+By chain rule, we have
+\begin{align*}
+    \frac{\partial J}{\partial \Wb_{ij}} = \frac{\partial J}{\partial \zc} \cdot \frac{\zc}{\partial \Wb_{ij}}
+\end{align*}
+Note that $\frac{\partial J}{\partial \Wb_{ij}} \in \mathbb{R}$ since both $J$ and $\Wb_{ij}$ are scalars.
+Also, most of the elements in $\frac{\zc}{\partial \Wb_{ij}}$ are zeros, except for the $i$-th element which is $\ab_j$.
+Therefore, the result of the dot product is
+\begin{align*}
+    \frac{\partial J}{\partial \Wb_{ij}} = (\frac{\partial J}{\partial \zc})_i \ab_j
+\end{align*}
+We can express the Jacobian matrix $\frac{\partial J}{\partial \Wb}$ as
+\begin{align*}
+    \left(\frac{\partial J}{\partial \Wb}\right)_{ij} = \left(\frac{\partial J}{\partial \zc}\right)_i \ab_j
+\end{align*}
+Case $N > 1$\\
+We have the upstream gradient $\frac{\partial J}{\partial \zc} \in \mathbb{R}^{N\times K}$ 
+and $\ab \in \mathbb{R}^{N\times H}$ because the loss function is an average of $N$ losses.
+Each element of $\frac{\partial J}{\partial \Wb}$ should have form 
+\begin{align*}
+    \left(\frac{\partial J}{\partial \Wb}\right)_{ij} = \frac{1}{N}\sum_{n}^{N}\left(\frac{\partial J}{\partial \zc}\right)_{ni} \ab_{nj}
+\end{align*}
+which can be expressed as a matrix multiplication:
+\begin{align*}
+    \frac{\partial J}{\partial \Wb} = \frac{1}{N}{\left(\frac{\partial J}{\partial \zc}\right)}^\top\ab
+\end{align*}
+verify the dimensions: ${\left(\frac{\partial J}{\partial \zc}\right)}^\top\in\mathbb{R}^{K\times N}$
+so $\frac{\partial J}{\partial \Wb} \in \mathbb{R}^{K\times H}$ and $\Wb\in \mathbb{R}^{K\times H}$ 
+which are the same.
+
+Thus we have 
+\begin{align*}
+    \frac{\partial J}{\partial \Wb} = \frac{1}{N}{\left(\psi(z^{(3)}) - \Delta\right)}^\top\ab
+\end{align*}
+and with regularization
+\begin{align*}
+    \frac{\partial \tilde{J}}{\partial \Wb} = \frac{1}{N}{\left(\psi(z^{(3)}) - \Delta\right)}^\top\ab + 2\lambda \Wb
+\end{align*}
+
+\end{document}
