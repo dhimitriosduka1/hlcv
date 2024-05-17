@@ -216,7 +216,7 @@ class TwoLayerNetv3(TwoLayerNetv2):
         # from the parent (i.e v2) class.                                             #
         #############################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-        loss = self.compute_loss(X)
+        loss = self.compute_loss(X, y, reg)
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
         # Backward pass: compute gradients
