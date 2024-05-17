@@ -3,6 +3,8 @@
 .vscode
 .idea
 __pycache__
+Assignment_2/data/exercise-2
+Assignment_2/cifar-10-python.tar.gz
 
 ## Core latex/pdflatex auxiliary files:
 *.aux
