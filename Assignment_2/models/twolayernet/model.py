@@ -72,7 +72,9 @@ class TwoLayerNetv1(object):
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         A1 = X
         Z2 = A1 @ W1 + b1
+        self.Z2 = Z2
         A2 = np.maximum(0, Z2) # ReLU
+        self.A2 = A2
         Z3 = A2 @ W2 + b2
         A3 = np.exp(Z3) / np.sum(np.exp(Z3), axis=1, keepdims=True) # softmax
 
@@ -193,7 +195,7 @@ class TwoLayerNetv3(TwoLayerNetv2):
         # Thus you can simply use the method from the parent class.                   #
         #############################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)****
-
+        
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
         # If the targets are not given then jump out, we're done
@@ -212,7 +214,7 @@ class TwoLayerNetv3(TwoLayerNetv2):
         # from the parent (i.e v2) class.                                             #
         #############################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
+        loss = self.compute_loss(X)
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
         # Backward pass: compute gradients
@@ -223,7 +225,33 @@ class TwoLayerNetv3(TwoLayerNetv2):
         # grads['W1'] should store the gradient on W1, and be a matrix of same size #
         #############################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+        A3 = self.scores
+        C = A3.shape[1]
 
+        pJ_pZ3 = (self.scores - np.eye(self.scores.shape[1])[y]) / N
+        assert pJ_pZ3.shape == (N, C)
+
+        pJ_pW2 = self.A2.T @ pJ_pZ3 + 2*reg*W2
+        assert pJ_pW2.shape == W2.shape
+        grads['W2'] = pJ_pW2
+
+        pJ_pb2 = pJ_pZ3.sum(axis=0)
+        assert pJ_pb2.shape == b2.shape
+        grads['b2'] = pJ_pb2
+
+        pJ_pA2 = pJ_pZ3 @ W2.T
+        pJ_pZ2 = []
+        for n in range(pJ_pA2.shape[0]):
+            pJ_pZ2.append(pJ_pA2[n] @ (np.diag(self.Z2[n]) > 0))
+        pJ_pZ2 = np.array(pJ_pZ2)
+
+        pJ_pW1 = X.T @ pJ_pZ2  + 2*reg*W1
+        assert pJ_pW1.shape == W1.shape
+        grads['W1'] = pJ_pW1
+
+        pJ_pb1 = pJ_pZ2.sum(axis=0)
+        assert pJ_pb1.shape == b1.shape
+        grads['b1'] = pJ_pb1
         
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
