@@ -8,6 +8,7 @@
 \newcommand{\zc}{z^{(3)}}
 \newcommand{\Wb}{W^{(2)}}
 
+
 \begin{document}
 
 \section*{Q2}
@@ -69,4 +70,54 @@ and with regularization
     \frac{\partial \tilde{J}}{\partial \Wb} = \frac{1}{N}{\left(\psi(z^{(3)}) - \Delta\right)}^\top\ab + 2\lambda \Wb
 \end{align*}
 
+\subsection*{(c)}
+\newcommand{\zb}{z^{(2)}}
+\newcommand{\Wa}{W^{(1)}}
+\newcommand{\ba}{b^{(1)}}
+In case of $N = 1$, from the forumla of $\zc_i$ above we can derive that
+\begin{align*}
+    \frac{\partial \zc_i}{\partial \bb_k} = \begin{cases}
+        1 & \text{if } i = k\\
+        0 & \text{otherwise}
+    \end{cases} = I
+\end{align*}
+Thus the $N > 1$ case Jacobian matrix $\frac{\partial J}{\partial \bb}$ can be expressed as
+\begin{align*}
+    \frac{\partial J}{\partial \bb} &= \frac{\partial J}{\partial \zc} \cdot I\\
+    &= \frac{\partial J}{\partial \zc}\\
+    &= \frac{1}{N}\left(\psi(z^{(3)}) - \Delta\right)
+\end{align*}
+Similarly
+\begin{align*}
+    \frac{\partial \zc_i}{\partial \ab_j} = \Wb_{ij}
+\end{align*}
+so for $N > 1$ we have
+\begin{align*}
+\frac{\partial J}{\partial \ab_j} = \frac{\partial J}{\partial \zc}  \Wb = 
+\frac{1}{N}\left(\psi(z^{(3)}) - \Delta\right) \Wb
+\end{align*}
+The ReLU function $\phi$ is element-wise i.e. $\phi : \mathbb{R}^H \mapsto \mathbb{R}^H$
+thus for $N = 1$, $\frac{\partial \ab}{\partial \zb} \in \mathbb{R}^{H\times H}$ is a diagonal matrix with its diagonal elements
+\begin{align*}
+    \left(\frac{\partial \ab}{\partial \zb}\right)_{ii} = \begin{cases}
+        1 & \text{if } \zb_{i} > 0\\
+        0 & \text{otherwise}
+    \end{cases} = \mathrm{diag}(\mathrm{sign(\zb)})
+\end{align*}
+It is a bit tricky for the $N > 1$ case
+as the upstream gradient $\frac{\partial J}{\partial \ab}$ is a matrix of size $N\times H$
+where each row $(\frac{\partial J}{\partial \ab})_n\in\mathbb{R}^{1\times H}$.
+for each input/row we have 
+\begin{align*}
+    (\frac{\partial J}{\partial \zb})_n = (\frac{\partial J}{\partial \ab})_n \cdot \mathrm{diag}(\mathrm{sign(\zb_n)})
+\end{align*}
+with this upstream gradient $\frac{\partial J}{\partial \zb}$
+the gradient for $\Wa$ and $\ba$ can be calculated in a similar way as $\Wb$ and $\bb$, literally
+\begin{align*}
+    \frac{\partial J}{\partial \Wa} = \frac{1}{N}{\left(\frac{\partial J}{\partial \zb}\right)}^\top X
+\end{align*}
+and 
+\begin{align*}
+    \frac{\partial J}{\partial \ba} = \frac{1}{N}\left(\frac{\partial J}{\partial \zb}\right)
+\end{align*}
 \end{document}
