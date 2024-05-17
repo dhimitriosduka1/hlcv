@@ -1,6 +1,8 @@
 import numpy as np
 from abc import abstractmethod
 
+from utils.activation_funtions import relu, softmax
+
 
 class TwoLayerNetv1(object):
     """
@@ -73,10 +75,10 @@ class TwoLayerNetv1(object):
         A1 = X
         Z2 = A1 @ W1 + b1
         self.Z2 = Z2
-        A2 = np.maximum(0, Z2) # ReLU
+        A2 = relu(Z2) # ReLU
         self.A2 = A2
         Z3 = A2 @ W2 + b2
-        A3 = np.exp(Z3) / np.sum(np.exp(Z3), axis=1, keepdims=True) # softmax
+        A3 = softmax(Z3) # softmax
 
         # scores shape: (N, C)
         softmax_scores = A3
