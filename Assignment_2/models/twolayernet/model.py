@@ -328,8 +328,8 @@ class TwoLayerNetv4(TwoLayerNetv3):
             # Do not forget to apply the learning_rate                              #
             #########################################################################
             # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
-
+            for param in self.params:
+                self.params[param] -= learning_rate * grads[param]
 
             # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
@@ -374,7 +374,7 @@ class TwoLayerNetv4(TwoLayerNetv3):
         # TODO: Implement this function; it should be VERY simple!                #
         ###########################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
+        y_pred = np.argmax(self.forward(X), axis=1)
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
