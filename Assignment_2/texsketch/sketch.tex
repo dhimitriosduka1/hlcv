@@ -114,7 +114,7 @@ for each input/row we have
 with this upstream gradient $\frac{\partial J}{\partial \zb}$
 the gradient for $\Wa$ and $\ba$ can be calculated in a similar way as $\Wb$ and $\bb$, literally
 \begin{align*}
-    \frac{\partial J}{\partial \Wa} = \frac{1}{N}{\left(\frac{\partial J}{\partial \zb}\right)}^\top X
+    \frac{\partial \tilde{J}}{\partial \Wa} = \frac{1}{N}{\left(\frac{\partial J}{\partial \zb}\right)}^\top X + 2\lambda\Wa
 \end{align*}
 and 
 \begin{align*}
