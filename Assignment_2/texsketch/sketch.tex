@@ -55,7 +55,7 @@ Each element of $\frac{\partial J}{\partial \Wb}$ should have form
 \end{align*}
 which can be expressed as a matrix multiplication:
 \begin{align*}
-    \frac{\partial J}{\partial \Wb} = \frac{1}{N}{\left(\frac{\partial J}{\partial \zc}\right)}^\top\ab
+    \frac{\partial J}{\partial \Wb} = {\ab}^\top\left(\frac{\partial J}{\partial \zc}\right)
 \end{align*}
 verify the dimensions: ${\left(\frac{\partial J}{\partial \zc}\right)}^\top\in\mathbb{R}^{K\times N}$
 so $\frac{\partial J}{\partial \Wb} \in \mathbb{R}^{K\times H}$ and $\Wb\in \mathbb{R}^{K\times H}$ 
@@ -63,11 +63,11 @@ which are the same.
 
 Thus we have 
 \begin{align*}
-    \frac{\partial J}{\partial \Wb} = \frac{1}{N}{\left(\psi(z^{(3)}) - \Delta\right)}^\top\ab
+    \frac{\partial J}{\partial \Wb} = \frac{1}{N}{\ab}^\top\left(\psi(z^{(3)}) - \Delta\right)
 \end{align*}
 and with regularization
 \begin{align*}
-    \frac{\partial \tilde{J}}{\partial \Wb} = \frac{1}{N}{\left(\psi(z^{(3)}) - \Delta\right)}^\top\ab + 2\lambda \Wb
+    \frac{\partial \tilde{J}}{\partial \Wb} = \frac{1}{N}{\ab}^\top\left(\psi(z^{(3)}) - \Delta\right) + 2\lambda \Wb
 \end{align*}
 
 \subsection*{(c)}
@@ -83,9 +83,9 @@ In case of $N = 1$, from the forumla of $\zc_i$ above we can derive that
 \end{align*}
 Thus the $N > 1$ case Jacobian matrix $\frac{\partial J}{\partial \bb}$ can be expressed as
 \begin{align*}
-    \frac{\partial J}{\partial \bb} &= \frac{\partial J}{\partial \zc} \cdot I\\
-    &= \frac{\partial J}{\partial \zc}\\
-    &= \frac{1}{N}\left(\psi(z^{(3)}) - \Delta\right)
+    \left(\frac{\partial J}{\partial \bb}\right)_i &= \sum_{n}^{N}\left(\frac{\partial J}{\partial \zc} \cdot I\right)_{ni}\\
+    &= \sum_{n}^{N}\left(\frac{\partial J}{\partial \zc}\right)_{ni}\\
+    &= \frac{1}{N}\sum_{n}^{N}\left(\psi(z^{(3)}) - \Delta\right)_{ni}
 \end{align*}
 Similarly
 \begin{align*}
@@ -114,10 +114,10 @@ for each input/row we have
 with this upstream gradient $\frac{\partial J}{\partial \zb}$
 the gradient for $\Wa$ and $\ba$ can be calculated in a similar way as $\Wb$ and $\bb$, literally
 \begin{align*}
-    \frac{\partial \tilde{J}}{\partial \Wa} = \frac{1}{N}{\left(\frac{\partial J}{\partial \zb}\right)}^\top X + 2\lambda\Wa
+    \frac{\partial \tilde{J}}{\partial \Wa} = X^\top\left(\frac{\partial J}{\partial \zb}\right) + 2\lambda\Wa
 \end{align*}
 and 
 \begin{align*}
-    \frac{\partial J}{\partial \ba} = \frac{1}{N}\left(\frac{\partial J}{\partial \zb}\right)
+    \left(\frac{\partial J}{\partial \ba}\right)_i = \sum_{n}^{N}\left(\frac{\partial J}{\partial \zb}\right)_{ni}
 \end{align*}
 \end{document}
