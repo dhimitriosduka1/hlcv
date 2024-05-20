@@ -19,7 +19,7 @@ class TwoLayerNetv1(object):
     The outputs of the second fully-connected layer are the scores for each class.
     """
 
-    def __init__(self, input_size, hidden_size, output_size, std=1e-4):
+    def __init__(self, input_size, hidden_size, output_size, dropout=0, std=1e-4):
         """
         Initialize the model. Weights are initialized to small random values and
         biases are initialized to zero. Weights and biases are stored in the
@@ -34,14 +34,19 @@ class TwoLayerNetv1(object):
         - input_size: The dimension D of the input data.
         - hidden_size: The number of neurons H in the hidden layer.
         - output_size: The number of classes C.
+        - dropout: The dropout probability between the two layers. If dropout is 0, then no dropout
+                   is applied.
         """
         np.random.seed(0)
         self.params = {}
-        self.params['W1'] = std * np.random.randn(input_size, hidden_size)
-        self.params['b1'] = np.zeros(hidden_size)
-        self.params['W2'] = std * np.random.randn(hidden_size, output_size)
-        self.params['b2'] = np.zeros(output_size)
-        
+        self.params["W1"] = std * np.random.randn(input_size, hidden_size)
+        self.params["b1"] = np.zeros(hidden_size)
+        self.params["W2"] = std * np.random.randn(hidden_size, output_size)
+        self.params["b2"] = np.zeros(output_size)
+
+        assert 0 <= dropout <= 1, "dropout must be between 0 and 1"
+        self.dropout = dropout
+
     def forward(self, X):
         """
         Compute the final outputs for a two layer fully connected neural
@@ -59,9 +64,18 @@ class TwoLayerNetv1(object):
         A matrix scores of shape (N, C) where scores[i, c] is
         the score for class c on input X[i].
         """
+
+        def dropout_layer(X, dropout):
+            """See: https://d2l.ai/chapter_multilayer-perceptrons/dropout.html"""
+            if dropout == 1:
+                return np.zeros_like(X)
+            mask = (np.random.rand(*X.shape) > dropout).astype(float)
+            # Scaling the weights during training to avoid scaling the weights during evaluation
+            return mask * X / (1.0 - dropout)
+
         # Unpack variables from the params dictionary
-        W1, b1 = self.params['W1'], self.params['b1']
-        W2, b2 = self.params['W2'], self.params['b2']
+        W1, b1 = self.params["W1"], self.params["b1"]
+        W2, b2 = self.params["W2"], self.params["b2"]
         N, D = X.shape
 
         # Compute the forward pass
@@ -75,10 +89,11 @@ class TwoLayerNetv1(object):
         A1 = X
         Z2 = A1 @ W1 + b1
         self.Z2 = Z2
-        A2 = relu(Z2) # ReLU
+        A2 = relu(Z2)  # ReLU
         self.A2 = A2
+        A2 = dropout_layer(A2, self.dropout)
         Z3 = A2 @ W2 + b2
-        A3 = softmax(Z3) # softmax
+        A3 = softmax(Z3)  # softmax
 
         # scores shape: (N, C)
         softmax_scores = A3
@@ -87,14 +102,14 @@ class TwoLayerNetv1(object):
 
         # If the targets are not given then jump out, we're done
         return softmax_scores
-    
+
     @abstractmethod
     def compute_loss(self, **kwargs):
         raise NotImplementedError
 
 
 class TwoLayerNetv2(TwoLayerNetv1):
-    
+
     def compute_loss(self, X, y=None, reg=0.0):
         """
         Compute the loss and gradients for a two layer fully connected neural
@@ -113,8 +128,8 @@ class TwoLayerNetv2(TwoLayerNetv1):
           samples.
         """
         # Unpack variables from the params dictionary
-        W1, b1 = self.params['W1'], self.params['b1']
-        W2, b2 = self.params['W2'], self.params['b2']
+        W1, b1 = self.params["W1"], self.params["b1"]
+        W2, b2 = self.params["W2"], self.params["b2"]
         N, D = X.shape
 
         # Compute the forward pass
@@ -129,8 +144,6 @@ class TwoLayerNetv2(TwoLayerNetv1):
         #############################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         softmax_scores = self.forward(X)
-
-
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
         # If the targets are not given then jump out, we're done
@@ -138,7 +151,7 @@ class TwoLayerNetv2(TwoLayerNetv1):
             return softmax_scores
 
         # Compute the loss
-        loss = 0.
+        loss = 0.0
         #############################################################################
         # TODO: Finish the forward pass, and compute the loss. This should include  #
         # both the data loss and L2 regularization for W1 and W2. Store the result  #
@@ -146,20 +159,22 @@ class TwoLayerNetv2(TwoLayerNetv1):
         # classifier loss.                                                          #
         #############################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-        loss = np.average(-np.log(softmax_scores[np.arange(N), y])) + reg * (np.sum(W1 * W1) + np.sum(W2 * W2))
-        
+        loss = np.average(-np.log(softmax_scores[np.arange(N), y])) + reg * (
+            np.sum(W1 * W1) + np.sum(W2 * W2)
+        )
+
         self.loss = loss
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
         return loss
-    
+
     @abstractmethod
     def back_propagation(self, **kwargs):
-        raise NotImplementedError # No need to implement here!
-    
+        raise NotImplementedError  # No need to implement here!
+
 
 class TwoLayerNetv3(TwoLayerNetv2):
-    
+
     def back_propagation(self, X, y=None, reg=0.0):
         """
         Compute the loss and gradients for a two layer fully connected neural
@@ -180,13 +195,12 @@ class TwoLayerNetv3(TwoLayerNetv2):
           with respect to the loss function; has the same keys as self.params.
         """
         # Unpack variables from the params dictionary
-        W1, b1 = self.params['W1'], self.params['b1']
-        W2, b2 = self.params['W2'], self.params['b2']
+        W1, b1 = self.params["W1"], self.params["b1"]
+        W2, b2 = self.params["W2"], self.params["b2"]
         N, D = X.shape
 
-
         # Compute the forward pass
-        scores = 0.
+        scores = 0.0
         #############################################################################
         # TODO: Perform the forward pass, computing the class probabilities for the   #
         # input. Store the result in the scores variable, which should be an array    #
@@ -197,7 +211,7 @@ class TwoLayerNetv3(TwoLayerNetv2):
         # Thus you can simply use the method from the parent class.                   #
         #############################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)****
-        
+
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
         # If the targets are not given then jump out, we're done
@@ -205,7 +219,7 @@ class TwoLayerNetv3(TwoLayerNetv2):
             return scores
 
         # Compute the loss
-        loss = 0.
+        loss = 0.0
         #############################################################################
         # TODO: Finish the forward pass, and compute the loss. This should include    #
         # both the data loss and L2 regularization for W1 and W2. Store the result    #
@@ -233,13 +247,13 @@ class TwoLayerNetv3(TwoLayerNetv2):
         pJ_pZ3 = (self.scores - np.eye(self.scores.shape[1])[y]) / N
         assert pJ_pZ3.shape == (N, C)
 
-        pJ_pW2 = self.A2.T @ pJ_pZ3 + 2*reg*W2
+        pJ_pW2 = self.A2.T @ pJ_pZ3 + 2 * reg * W2
         assert pJ_pW2.shape == W2.shape
-        grads['W2'] = pJ_pW2
+        grads["W2"] = pJ_pW2
 
         pJ_pb2 = pJ_pZ3.sum(axis=0)
         assert pJ_pb2.shape == b2.shape
-        grads['b2'] = pJ_pb2
+        grads["b2"] = pJ_pb2
 
         pJ_pA2 = pJ_pZ3 @ W2.T
         pJ_pZ2 = []
@@ -247,18 +261,18 @@ class TwoLayerNetv3(TwoLayerNetv2):
             pJ_pZ2.append(pJ_pA2[n] @ (np.diag(self.Z2[n]) > 0))
         pJ_pZ2 = np.array(pJ_pZ2)
 
-        pJ_pW1 = X.T @ pJ_pZ2  + 2*reg*W1
+        pJ_pW1 = X.T @ pJ_pZ2 + 2 * reg * W1
         assert pJ_pW1.shape == W1.shape
-        grads['W1'] = pJ_pW1
+        grads["W1"] = pJ_pW1
 
         pJ_pb1 = pJ_pZ2.sum(axis=0)
         assert pJ_pb1.shape == b1.shape
-        grads['b1'] = pJ_pb1
-        
+        grads["b1"] = pJ_pb1
+
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
         return loss, grads
-    
+
     @abstractmethod
     def train(self, **kwargs):
         raise NotImplementedError
@@ -266,14 +280,23 @@ class TwoLayerNetv3(TwoLayerNetv2):
     @abstractmethod
     def predict(self, **kwargs):
         raise NotImplementedError
-    
+
 
 class TwoLayerNetv4(TwoLayerNetv3):
-    
-    def train(self, X, y, X_val, y_val,
-              learning_rate=1e-3, learning_rate_decay=0.95,
-              reg=5e-6, num_iters=100,
-              batch_size=200, verbose=False):
+
+    def train(
+        self,
+        X,
+        y,
+        X_val,
+        y_val,
+        learning_rate=1e-3,
+        learning_rate_decay=0.95,
+        reg=5e-6,
+        num_iters=100,
+        batch_size=200,
+        verbose=False,
+    ):
         """
         Train this neural network using stochastic gradient descent.
 
@@ -314,7 +337,6 @@ class TwoLayerNetv4(TwoLayerNetv3):
             X_batch = X[rand_ind]
             y_batch = y[rand_ind]
             #########################################################################
-            
 
             # Compute loss and gradients using the current minibatch
             loss, grads = self.back_propagation(X_batch, y=y_batch, reg=reg)
@@ -334,7 +356,7 @@ class TwoLayerNetv4(TwoLayerNetv3):
             # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
             if verbose and it % 100 == 0:
-                print(f'iteration {it} / {num_iters}: loss {loss}', end='\r')
+                print(f"iteration {it} / {num_iters}: loss {loss}", end="\r")
 
             # Every epoch, check train and val accuracy and decay learning rate.
             if it % iterations_per_epoch == 0:
@@ -348,11 +370,11 @@ class TwoLayerNetv4(TwoLayerNetv3):
                 learning_rate *= learning_rate_decay
 
         return {
-          'loss_history': loss_history,
-          'train_acc_history': train_acc_history,
-          'val_acc_history': val_acc_history,
+            "loss_history": loss_history,
+            "train_acc_history": train_acc_history,
+            "val_acc_history": val_acc_history,
         }
-    
+
     def predict(self, X):
         """
         Use the trained weights of this two-layer network to predict labels for
@@ -375,7 +397,6 @@ class TwoLayerNetv4(TwoLayerNetv3):
         ###########################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         y_pred = np.argmax(self.forward(X), axis=1)
-
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
         return y_pred
