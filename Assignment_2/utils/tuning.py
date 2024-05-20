@@ -10,9 +10,12 @@ from itertools import product
 from os import cpu_count
 
 import numpy as np
+from skimage.feature import hog
+from sklearn.decomposition import PCA
 from sympy import pretty_print
-from models.twolayernet.model import TwoLayerNetv1
 from tqdm import tqdm  # conda install conda-forge::tqdm
+
+from models.twolayernet.model import TwoLayerNetv1
 from utils.utils import pretty_dict
 
 
@@ -170,3 +173,55 @@ class NetGridSearchCV:
         if self.best_params_ is None:
             raise ValueError("You must call `fit` before `get_best_params`.")
         return self.best_params_
+
+
+def apply_pca(X_train, X_val, X_test, variance=0.95) -> tuple:
+    pca = PCA(n_components=variance, svd_solver="full")
+    X_train_pca = pca.fit_transform(X_train)
+    X_val_pca = pca.transform(X_val)
+    X_test_pca = pca.transform(X_test)
+    return X_train_pca, X_val_pca, X_test_pca
+
+
+def compute_color_histograms(X):
+    num_bins = 32
+    histograms = []
+    for i in range(X.shape[0]):
+        img = X[i].reshape(32, 32, 3)
+        hist = np.concatenate(
+            [np.histogram(img[:, :, j], bins=num_bins, range=(0, 256))[0] for j in range(3)]
+        )
+        histograms.append(hist)
+    return np.array(histograms)
+
+
+def rgb_to_grayscale(X):
+    return np.dot(X[..., :3], [0.299, 0.587, 0.114])
+
+
+def compute_hog_features(X):
+    hog_features = []
+    for i in range(X.shape[0]):
+        img = X[i].reshape(32, 32, 3)
+        gray = rgb_to_grayscale(img)
+        hog_feature = hog(gray, pixels_per_cell=(8, 8), cells_per_block=(2, 2), visualize=False)
+        hog_features.append(hog_feature)
+    return np.array(hog_features)
+
+
+def add_features(X_train, X_val, X_test) -> tuple:
+    # Add more features to the input data
+    color_histograms_train = compute_color_histograms(X_train)
+    color_histograms_val = compute_color_histograms(X_val)
+    color_histograms_test = compute_color_histograms(X_test)
+
+    hog_train = compute_hog_features(X_train)
+    hog_val = compute_hog_features(X_val)
+    hog_test = compute_hog_features(X_test)
+
+    # Concatenate the original features with the color histograms
+    X_train = np.hstack((X_train, color_histograms_train, hog_train))
+    X_val = np.hstack((X_val, color_histograms_val, hog_val))
+    X_test = np.hstack((X_test, color_histograms_test, hog_test))
+
+    return X_train, X_val, X_test

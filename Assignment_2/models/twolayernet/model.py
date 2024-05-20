@@ -1,5 +1,7 @@
-import numpy as np
 from abc import abstractmethod
+from copy import deepcopy
+
+import numpy as np
 
 from utils.activation_funtions import relu, softmax
 
@@ -296,6 +298,8 @@ class TwoLayerNetv4(TwoLayerNetv3):
         num_iters=100,
         batch_size=200,
         verbose=False,
+        restore_best_weights=False,
+        validation_metric="train_loss",
     ):
         """
         Train this neural network using stochastic gradient descent.
@@ -313,7 +317,12 @@ class TwoLayerNetv4(TwoLayerNetv3):
         - num_iters: Number of steps to take when optimizing.
         - batch_size: Number of training examples to use per step.
         - verbose: boolean; if true print progress during optimization.
+        - restore_best_weights: boolean; if true restore the weights corresponding to the best
+          validation accuracy or loss (depending on `validation_metric`).
+        - validation_metric: string; either "val_acc" or "train_loss". The metric used to determine
+          the best weights.
         """
+        assert validation_metric in ("train_loss", "val_acc")
         num_train = X.shape[0]
         iterations_per_epoch = max(num_train / batch_size, 1)
 
@@ -321,6 +330,9 @@ class TwoLayerNetv4(TwoLayerNetv3):
         loss_history = []
         train_acc_history = []
         val_acc_history = []
+        best_loss = np.inf
+        best_acc = 0
+        best_at = ""
 
         for it in range(num_iters):
             X_batch = X
@@ -366,8 +378,25 @@ class TwoLayerNetv4(TwoLayerNetv3):
                 train_acc_history.append(train_acc)
                 val_acc_history.append(val_acc)
 
+                if best_loss > loss and validation_metric == "train_loss":
+                    best_loss = loss
+                    best_weights = deepcopy(self.params)
+                    best_at = f"{it} / {num_iters}"
+                elif best_acc < val_acc and validation_metric == "val_acc":
+                    best_acc = val_acc
+                    best_weights = deepcopy(self.params)
+                    best_at = f"{it} / {num_iters}"
+
                 # Decay learning rate
                 learning_rate *= learning_rate_decay
+
+        if restore_best_weights:
+            self.params = best_weights
+            if verbose:
+                print(
+                    f"Restored best weights at {best_at} with {validation_metric} = "
+                    + f"{best_loss if validation_metric == 'loss' else best_acc}"
+                )
 
         return {
             "loss_history": loss_history,

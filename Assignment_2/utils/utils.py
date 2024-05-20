@@ -36,6 +36,9 @@ def rel_error(x, y):
 
 def show_net_weights(net):
     W1 = net.params["W1"]
+    print(W1.shape)
+    if W1.shape[0] > 32 * 32 * 3:
+        W1 = W1[: 32 * 32 * 3]
     W1 = W1.reshape(32, 32, 3, -1).transpose(3, 0, 1, 2)
     plt.imshow(visualize_grid(W1, padding=3).astype("uint8"))
     plt.gca().axis("off")
