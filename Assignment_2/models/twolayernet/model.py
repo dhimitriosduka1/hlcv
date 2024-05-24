@@ -67,14 +67,6 @@ class TwoLayerNetv1(object):
         the score for class c on input X[i].
         """
 
-        def dropout_layer(X, dropout):
-            """See: https://d2l.ai/chapter_multilayer-perceptrons/dropout.html"""
-            if dropout == 1:
-                return np.zeros_like(X)
-            mask = (np.random.rand(*X.shape) > dropout).astype(float)
-            # Scaling the weights during training to avoid scaling the weights during evaluation
-            return mask * X / (1.0 - dropout)
-
         # Unpack variables from the params dictionary
         W1, b1 = self.params["W1"], self.params["b1"]
         W2, b2 = self.params["W2"], self.params["b2"]
@@ -82,24 +74,19 @@ class TwoLayerNetv1(object):
 
         # Compute the forward pass
         softmax_scores = None
-        #############################################################################
-        # TODO: Perform the forward pass, computing the class probabilities for the #
-        # input. Store the result in the scores variable, which should be an array  #
-        # of shape (N, C).                                                          #
-        #############################################################################
+        
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-        A1 = X
-        Z2 = A1 @ W1 + b1
+
+        Z2 = X @ W1 + b1
         self.Z2 = Z2
-        A2 = relu(Z2)  # ReLU
+        A2 = relu(Z2) #ReLU
         self.A2 = A2
-        A2 = dropout_layer(A2, self.dropout)
         Z3 = A2 @ W2 + b2
-        A3 = softmax(Z3)  # softmax
+        softmax_scores = softmax(Z3) #Softmax
 
         # scores shape: (N, C)
-        softmax_scores = A3
         self.scores = softmax_scores
+
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
         # If the targets are not given then jump out, we're done
@@ -136,16 +123,11 @@ class TwoLayerNetv2(TwoLayerNetv1):
 
         # Compute the forward pass
         softmax_scores = None
-        #############################################################################
-        # TODO: Perform the forward pass, computing the class probabilities for the   #
-        # input. Store the result in the scores variable, which should be an array    #
-        # of shape (N, C).                                                            #
-        # Note that you don't need to re-implement the forward pass here. This class  #
-        # inherits the v1 class implemented above. Thus you can simply use the method #
-        # from the parent (i.e v1) class.                                             #
-        #############################################################################
+        
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+        
         softmax_scores = self.forward(X)
+        
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
         # If the targets are not given then jump out, we're done
@@ -154,18 +136,15 @@ class TwoLayerNetv2(TwoLayerNetv1):
 
         # Compute the loss
         loss = 0.0
-        #############################################################################
-        # TODO: Finish the forward pass, and compute the loss. This should include  #
-        # both the data loss and L2 regularization for W1 and W2. Store the result  #
-        # in the variable loss, which should be a scalar. Use the Softmax           #
-        # classifier loss.                                                          #
-        #############################################################################
+
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+
         loss = np.average(-np.log(softmax_scores[np.arange(N), y])) + reg * (
             np.sum(W1 * W1) + np.sum(W2 * W2)
         )
 
         self.loss = loss
+
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
         return loss
