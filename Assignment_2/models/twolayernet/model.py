@@ -182,17 +182,11 @@ class TwoLayerNetv3(TwoLayerNetv2):
 
         # Compute the forward pass
         scores = 0.0
-        #############################################################################
-        # TODO: Perform the forward pass, computing the class probabilities for the   #
-        # input. Store the result in the scores variable, which should be an array    #
-        # of shape (N, C).                                                            #
-        #                                                                             #
-        # Note that you don't need to re-implement the forward pass here. This class  #
-        # inherits the v2 (thus also v1) class implemented above.                     #
-        # Thus you can simply use the method from the parent class.                   #
-        #############################################################################
+
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)****
 
+        scores = self.forward(X)
+      
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
         # If the targets are not given then jump out, we're done
@@ -201,17 +195,11 @@ class TwoLayerNetv3(TwoLayerNetv2):
 
         # Compute the loss
         loss = 0.0
-        #############################################################################
-        # TODO: Finish the forward pass, and compute the loss. This should include    #
-        # both the data loss and L2 regularization for W1 and W2. Store the result    #
-        # in the variable loss, which should be a scalar. Use the Softmax             #
-        # classifier loss.                                                            #
-        # Note that you don't need to re-implement the forward pass here. This class  #
-        # inherits the v2 class implemented above. Thus you can simply use the method #
-        # from the parent (i.e v2) class.                                             #
-        #############################################################################
+        
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+        
         loss = self.compute_loss(X, y, reg)
+        
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
         # Backward pass: compute gradients
