@@ -14,7 +14,13 @@ class ConvNet(BaseModel):
         # (basically store them in self)                                  #
         ###################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
+        
+        self.input_size = input_size
+        self.hidden_layers = hidden_layers
+        self.num_classes = num_classes
+        self.activation = activation
+        self.norm_layer = norm_layer
+        self.drop_prob = drop_prob
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         self._build_model()
@@ -32,6 +38,46 @@ class ConvNet(BaseModel):
         layers = []
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
+        CONV_KERNEL_SIZE = 3
+        CONV_STRIDE = 1
+        CONV_PADDING = 1
+
+        POOLING_KERNEL_SIZE = 2
+        POOLING_STRIDE = 2
+
+        input_size = self.input_size
+
+        # Features
+        for i in range(len(self.hidden_layers) - 1): # -1 ignores the FC layer
+            layers.append(nn.Conv2d(
+                in_channels=input_size,
+                out_channels=self.hidden_layers[i],
+                kernel_size=CONV_KERNEL_SIZE,
+                stride=CONV_STRIDE,
+                padding=CONV_PADDING
+            ))
+
+            # Add normalization
+            layers.append(self.norm_layer())
+
+            # Add MaxPool with kernel size and stride of 2
+            layers.append(nn.MaxPool2d(kernel_size=POOLING_KERNEL_SIZE, stride=POOLING_STRIDE))
+
+            # Add activation function
+            layers.append(self.activation())
+
+            # Add dropout if drop_prob is provided 
+            if self.drop_prob > 0:
+                layers.append(nn.Dropout(p=self.drop_prob))
+
+            input_size = self.hidden_layers[i] 
+
+
+        # Classification 
+        layers.append(nn.Flatten())  # self.hidden_layers[-1]x1x1 -> self.hidden_layers[-1]
+        layers.append(nn.Linear(self.hidden_layers[-1], self.num_classes))
+
+        self.layers = nn.Sequential(*layers)
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
@@ -56,14 +102,9 @@ class ConvNet(BaseModel):
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
     def forward(self, x):
-        #############################################################################
-        # TODO: Implement the forward pass computations                             #
-        # This can be as simple as one line :)
-        # Do not apply any softmax on the logits.                                   #
-        #############################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****        
-        out = None
-
+        
+        out = self.layers(x)
         
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         return out

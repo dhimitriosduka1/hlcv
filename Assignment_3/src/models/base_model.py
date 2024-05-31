@@ -25,6 +25,7 @@ class BaseModel(nn.Module):
         
         max_name_length = 0
         max_number_length = 0
+        total_trainable_params = 0
 
         for name, parameter in self.named_parameters():
             if not parameter.requires_grad:
