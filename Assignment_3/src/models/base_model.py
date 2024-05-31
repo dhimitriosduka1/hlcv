@@ -37,7 +37,7 @@ class BaseModel(nn.Module):
             if len(str(parameter.numel())) > max_number_length:
                 max_number_length = len(str(parameter.numel()))
 
-        header = '| {:<{name_width}} | {:<{number_width}} |\n'.format(
+        header = '\n\n| {:<{name_width}} | {:<{number_width}} |\n'.format(
             'Layer Name', 
             'Params', 
             name_width=max_name_length, 
