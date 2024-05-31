@@ -6,7 +6,15 @@ from ..base_model import BaseModel
 
 
 class ConvNet(BaseModel):
-    def __init__(self, input_size, hidden_layers, num_classes, activation, norm_layer, drop_prob=0.0):
+    def __init__(
+        self,
+        input_size,
+        hidden_layers,
+        num_classes,
+        activation,
+        norm_layer,
+        drop_prob=0.0,
+    ):
         super(ConvNet, self).__init__()
 
         ############## TODO ###############################################
@@ -14,7 +22,7 @@ class ConvNet(BaseModel):
         # (basically store them in self)                                  #
         ###################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-        
+
         self.input_size = input_size
         self.hidden_layers = hidden_layers
         self.num_classes = num_classes
@@ -48,33 +56,38 @@ class ConvNet(BaseModel):
         input_size = self.input_size
 
         # Features
-        for i in range(len(self.hidden_layers) - 1): # -1 ignores the FC layer
-            layers.append(nn.Conv2d(
-                in_channels=input_size,
-                out_channels=self.hidden_layers[i],
-                kernel_size=CONV_KERNEL_SIZE,
-                stride=CONV_STRIDE,
-                padding=CONV_PADDING
-            ))
+        for i in range(len(self.hidden_layers) - 1):  # -1 ignores the FC layer
+            layers.append(
+                nn.Conv2d(
+                    in_channels=input_size,
+                    out_channels=self.hidden_layers[i],
+                    kernel_size=CONV_KERNEL_SIZE,
+                    stride=CONV_STRIDE,
+                    padding=CONV_PADDING,
+                )
+            )
 
             # Add normalization
             layers.append(self.norm_layer())
 
             # Add MaxPool with kernel size and stride of 2
-            layers.append(nn.MaxPool2d(kernel_size=POOLING_KERNEL_SIZE, stride=POOLING_STRIDE))
+            layers.append(
+                nn.MaxPool2d(kernel_size=POOLING_KERNEL_SIZE, stride=POOLING_STRIDE)
+            )
 
             # Add activation function
             layers.append(self.activation())
 
-            # Add dropout if drop_prob is provided 
+            # Add dropout if drop_prob is provided
             if self.drop_prob > 0:
                 layers.append(nn.Dropout(p=self.drop_prob))
 
-            input_size = self.hidden_layers[i] 
+            input_size = self.hidden_layers[i]
 
-
-        # Classification 
-        layers.append(nn.Flatten())  # self.hidden_layers[-1]x1x1 -> self.hidden_layers[-1]
+        # Classification
+        layers.append(
+            nn.Flatten()
+        )  # self.hidden_layers[-1]x1x1 -> self.hidden_layers[-1]
         layers.append(nn.Linear(self.hidden_layers[-1], self.num_classes))
 
         self.layers = nn.Sequential(*layers)
@@ -83,14 +96,14 @@ class ConvNet(BaseModel):
 
     def _normalize(self, img):
         """
-        Helper method to be used for VisualizeFilter. 
+        Helper method to be used for VisualizeFilter.
         This is not given to be used for Forward pass! The normalization of Input for forward pass
         must be done in the transform presets.
         """
         max = np.max(img)
         min = np.min(img)
-        return (img-min)/(max-min)    
-    
+        return (img - min) / (max - min)
+
     def VisualizeFilter(self):
         ################################################################################
         # TODO: Implement the functiont to visualize the weights in the first conv layer#
@@ -107,10 +120,12 @@ class ConvNet(BaseModel):
             k = i // COLUMS
             j = i % COLUMS
 
-            normalized = self._normalize(self.layers[0].weight[i].cpu().detach().numpy())
+            normalized = self._normalize(
+                self.layers[0].weight[i].cpu().detach().numpy()
+            )
 
             axes[k, j].imshow(normalized)
-            axes[k, j].axis('off')
+            axes[k, j].axis("off")
 
         plt.subplots_adjust(wspace=0.1, hspace=0.1)
         plt.show()
@@ -118,9 +133,9 @@ class ConvNet(BaseModel):
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
     def forward(self, x):
-        # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****        
-        
+        # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+
         out = self.layers(x)
-        
+
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         return out
