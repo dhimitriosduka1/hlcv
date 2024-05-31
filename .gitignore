@@ -310,3 +310,4 @@ TSWLatexianTemp*
 
 # Torch stuff
 *.ckpt
+*.pth
