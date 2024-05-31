@@ -22,11 +22,43 @@ class BaseModel(nn.Module):
         """
 
         ret_str = super().__str__()
-    
-        #### TODO #######################################
-        # Print the number of **trainable** parameters  #
-        # by appending them to ret_str                  #
-        #################################################
         
-        
+        max_name_length = 0
+        max_number_length = 0
+
+        for name, parameter in self.named_parameters():
+            if not parameter.requires_grad:
+                continue
+
+            if len(name) > max_name_length:
+                max_name_length = len(name)
+
+            if len(str(parameter.numel())) > max_number_length:
+                max_number_length = len(str(parameter.numel()))
+
+        header = '| {:<{name_width}} | {:<{number_width}} |\n'.format(
+            'Layer Name', 
+            'Params', 
+            name_width=max_name_length, 
+            number_width=max_number_length
+        )
+
+        separator = '| {} | {} |\n'.format('-' * max_name_length, '-' * max_number_length)
+
+        ret_str = header + separator
+        for name, parameter in self.named_parameters():
+            if not parameter.requires_grad:
+                continue
+                
+            number_of_params = parameter.numel()
+            total_trainable_params += number_of_params 
+
+            ret_str += '| {:<{name_width}} | {:<{number_width}} |\n'.format(
+                name, 
+                number_of_params, 
+                name_width=max_name_length, 
+                number_width=max_number_length
+            )
+
+        ret_str += f'\nTotal number of trainable parameters: {total_trainable_params}\n'        
         return ret_str
