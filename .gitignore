@@ -311,3 +311,7 @@ TSWLatexianTemp*
 # Torch stuff
 *.ckpt
 *.pth
+
+*.gz
+*.meta
+*batch*

@@ -68,7 +68,12 @@ class ConvNet(BaseModel):
             )
 
             # Add normalization
-            layers.append(self.norm_layer())
+            if self.norm_layer == nn.BatchNorm2d:
+                layers.append(self.norm_layer(self.hidden_layers[i]))
+            elif self.norm_layer == nn.Identity:
+                layers.append(self.norm_layer())
+            else:
+                raise("Norm type not supported!")
 
             # Add MaxPool with kernel size and stride of 2
             layers.append(
