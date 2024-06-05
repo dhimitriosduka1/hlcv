@@ -27,6 +27,11 @@ class BaseModel(nn.Module):
         # Print the number of **trainable** parameters  #
         # by appending them to ret_str                  #
         #################################################
-        
-        
+        total = 0
+        for i, (name, param) in enumerate(self.named_parameters()):
+            ret_str += f'\nNumber of trainable parameters of {name}:\t{np.prod(param.size())}'
+            total += np.prod(param.size())
+
+        ret_str += f'\nTotal number of trainable parameters:\t{total}'
+
         return ret_str

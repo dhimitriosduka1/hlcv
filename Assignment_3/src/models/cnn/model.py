@@ -14,7 +14,12 @@ class ConvNet(BaseModel):
         # (basically store them in self)                                  #
         ###################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
+        self.input_size = input_size
+        self.num_classes = num_classes
+        self.hidden_layers = hidden_layers
+        self.activation = activation
+        self.norm_layer = norm_layer
+        self.drop_prob = drop_prob
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         self._build_model()
@@ -31,8 +36,19 @@ class ConvNet(BaseModel):
         #################################################################################
         layers = []
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+        for i in range(len(self.hidden_layers)):
+            hidden_layer_size = self.hidden_layers[i]
+            prev_layer_size = self.input_size if i == 0 else self.hidden_layers[i-1]
 
+            layers.append(nn.Conv2d(prev_layer_size, hidden_layer_size, kernel_size=3, padding=1))
+            layers.append(nn.MaxPool2d(kernel_size=2, stride=2))
+            layers.append(self.activation())
 
+        layers.append(nn.Flatten())
+        layers.append(nn.Linear(512, self.num_classes))
+        layers.append(self.activation())
+        self.layers = nn.Sequential(*layers)
+            
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
     def _normalize(self, img):
@@ -52,7 +68,14 @@ class ConvNet(BaseModel):
         # You can use matlplotlib.imshow to visualize an image in python                #
         #################################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-        pass
+        first_conv_layer_filters = next(self.layers[0].parameters()).detach().numpy()
+        
+        _, axs = plt.subplots(nrows=first_conv_layer_filters.shape[0] // 12, ncols=12)
+        for i, ax in axs.flat:
+            ax.imshow(self._normalize(first_conv_layer_filters[i]))
+            ax.axis('off')
+        plt.show()
+
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
     def forward(self, x):
@@ -62,7 +85,7 @@ class ConvNet(BaseModel):
         # Do not apply any softmax on the logits.                                   #
         #############################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****        
-        out = None
+        out = self.layers.forward(x)
 
         
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
