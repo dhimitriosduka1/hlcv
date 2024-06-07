@@ -71,12 +71,17 @@ q2a_normalization_experiment["model_args"]["norm_layer"] = nn.BatchNorm2d
 
 q2c_earlystop_experiment = ()
 
-q3a_aug1_experiment = ()
-# q3a_aug2_experiment = ()
-# q3a_aug3_experiment = ()
-# ...
+q3a_aug1_experiment = deepcopy(q2a_normalization_experiment)
+q3a_aug1_experiment["data_args"]["transform_preset"] = "CIFAR10_geo_aug"
+q3a_aug1_experiment["trainer_config"]["epochs"] = 30
 
+q3a_aug2_experiment = deepcopy(q2a_normalization_experiment)
+q3a_aug2_experiment["data_args"]["transform_preset"] = "CIFAR10_col_aug"
+q3a_aug2_experiment["trainer_config"]["epochs"] = 30
+
+q3a_aug3_experiment = deepcopy(q2a_normalization_experiment)
+q3a_aug3_experiment["data_args"]["transform_preset"] = "CIFAR10_geo_col_aug"
+q3a_aug3_experiment["trainer_config"]["epochs"] = 30
 
 q3b_dropout_experiment = ()
 
-# define more config dictionaries if needed...

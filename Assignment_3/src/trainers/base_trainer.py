@@ -130,9 +130,10 @@ class BaseTrainer:
                     # You may have to check for min or max value based on monitor_mode                              #
                     # (e.g for loss values we would want min, but for accuracy we want max.)                        #
                     #################################################################################################   
-
-                    pass
-
+                    if False:
+                        self.best_epoch = self.current_epoch
+                        checkpoint_path = self.checkpoint_dir + "/best_val_model.pth"
+                        self.save_model(path=checkpoint_path)
 
 
                     ############################################################################################
@@ -170,11 +171,7 @@ class BaseTrainer:
 
         returns a Boolean
         """
-        ###  TODO  ################################################
-        # Based on the self.current_epoch and self.eval_interval, determine if we should evaluate.
-        # You can take hint from saving logic implemented in BaseTrainer.train() method
-        return True
-        #########################################################
+        return self.current_epoch % self.eval_period == 0
     
     @abstractmethod # To be implemented by the child classes!
     def evaluate(self, loader=None):

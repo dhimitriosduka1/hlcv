@@ -1,38 +1,52 @@
 import torchvision.transforms as transforms
 
+def get_default_tranforms():
+    return [
+        transforms.ToTensor(),
+        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+    ]
+
+def get_geo_transforms():
+    return [
+        transforms.RandomHorizontalFlip(p=0.5),
+        transforms.RandomCrop(32, padding=4),
+        transforms.RandomRotation(15)
+    ]
+
+def get_col_transforms():
+    return [
+        transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
+        transforms.RandomGrayscale(p=0.3),
+        transforms.RandomAdjustSharpness(sharpness_factor=2, p=0.3),
+        transforms.RandomEqualize(p=0.4),
+    ]
 
 presets = dict(
     CIFAR10=dict(
-        train=transforms.Compose([
-            transforms.ToTensor(),
-            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
-        ]
-        ),
-        eval=transforms.Compose([
-            transforms.ToTensor(),
-            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
-        ]
-        )
+        train=transforms.Compose(get_default_tranforms()),
+        eval=transforms.Compose(get_default_tranforms())
     ),
-    #### TODO ####
-    # Define different presets here and try them by specifying their name in the config file
-    # Note that you usually need the augmentation **only** for training time!
-    # E.g. CIFAR10_WithFlip=dict()
-    ##############
-
-
-
-
     #  This one is for Question 4.
     CIFAR10_VGG=dict(
         train=transforms.Compose([
             transforms.ToTensor(),
             transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
         ]),
-        eval=transforms.Compose([
-            transforms.ToTensor(),
-            transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
-        ])
+        eval=transforms.Compose(get_default_tranforms())
     ),
+)
 
+presets["CIFAR10_geo_aug"] = dict(
+    train=transforms.Compose(get_geo_transforms() + get_default_tranforms()),
+    eval=transforms.Compose(get_default_tranforms())
+)
+
+presets["CIFAR10_col_aug"] = dict(
+    train=transforms.Compose(get_col_transforms() + get_default_tranforms()),
+    eval=transforms.Compose(get_default_tranforms())
+)
+
+presets["CIFAR10_geo_col_aug"] = dict(
+    train=transforms.Compose(get_geo_transforms() + get_col_transforms() + get_default_tranforms()),
+    eval=transforms.Compose(get_default_tranforms())
 )
