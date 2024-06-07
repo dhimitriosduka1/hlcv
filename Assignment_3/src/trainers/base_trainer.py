@@ -130,12 +130,13 @@ class BaseTrainer:
                     # You may have to check for min or max value based on monitor_mode                              #
                     # (e.g for loss values we would want min, but for accuracy we want max.)                        #
                     #################################################################################################   
-                    print(log)
                     if self.is_best_model(log):
                         self.monitor_best = log[self.monitor_metric]
                         self.best_epoch = self.current_epoch
                         checkpoint_path = os.path.join(self.checkpoint_dir, "best_val_model.pth")
                         self.save_model(path=checkpoint_path)
+
+                        self.not_improved_count = 0
 
                         info = f"Saved best model at epoch {self.best_epoch} with {self.monitor_metric}={self.monitor_best}"
                         self.logger.info(info)
@@ -145,8 +146,15 @@ class BaseTrainer:
                     # TODO: Q2.c: Based self.monitor_metric and whether we have had improvements in            #
                     # the last self.early_stop steps, see if you should break the training loop.               #
                     ############################################################################################
-
-
+                    
+                    # The model performance has not improved and early stopping is enabled 
+                    elif self.is_early_stoping_enabled():
+                        self.not_improved_count += 1
+                        if self.not_improved_count >= self.early_stop:
+                            info = f"Early stopping at epoch {self.current_epoch}"
+                            self.logger.info(info)
+                            print(info)
+                            break
 
                     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
                 else:
@@ -219,3 +227,6 @@ class BaseTrainer:
             return log[self.monitor_metric] > self.monitor_best
         else:
             raise ValueError(f"Invalid monitor mode: {self.monitor_mode}. Must be 'min' or 'max'.")
+        
+    def is_early_stoping_enabled(self):
+        return self.early_stop > 0
