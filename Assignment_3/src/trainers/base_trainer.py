@@ -229,4 +229,8 @@ class BaseTrainer:
             raise ValueError(f"Invalid monitor mode: {self.monitor_mode}. Must be 'min' or 'max'.")
         
     def is_early_stoping_enabled(self):
+        """
+        Check if early stopping is enabled.
+        :return: A boolean that indicates if early stopping is enabled.
+        """
         return self.early_stop > 0
