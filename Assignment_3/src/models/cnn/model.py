@@ -41,14 +41,15 @@ class ConvNet(BaseModel):
             prev_layer_size = self.input_size if i == 0 else self.hidden_layers[i-1]
 
             layers.append(nn.Conv2d(prev_layer_size, hidden_layer_size, kernel_size=3, padding=1))
+            # layers.append(self.norm_layer())
             layers.append(nn.MaxPool2d(kernel_size=2, stride=2))
             layers.append(self.activation())
 
         layers.append(nn.Flatten())
-        layers.append(nn.Linear(512, self.num_classes))
+        layers.append(nn.Linear(512, self.num_classes)) # WARNING: hard coded!
         layers.append(self.activation())
+
         self.layers = nn.Sequential(*layers)
-            
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
     def _normalize(self, img):
@@ -68,12 +69,14 @@ class ConvNet(BaseModel):
         # You can use matlplotlib.imshow to visualize an image in python                #
         #################################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-        first_conv_layer_filters = next(self.layers[0].parameters()).detach().numpy()
+        kernel = next(self.layers[0].parameters()).detach().cpu().numpy()
         
-        _, axs = plt.subplots(nrows=first_conv_layer_filters.shape[0] // 12, ncols=12)
-        for i, ax in axs.flat:
-            ax.imshow(self._normalize(first_conv_layer_filters[i]))
-            ax.axis('off')
+        _, axes = plt.subplots(nrows=kernel.shape[0] // 12, ncols=12, 
+                               sharex=True, sharey=True)
+        for i, ax in enumerate(axes.flat):
+            ax.imshow(self._normalize(kernel[i]))
+            ax.set_axis_off()
+        plt.tight_layout()
         plt.show()
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****

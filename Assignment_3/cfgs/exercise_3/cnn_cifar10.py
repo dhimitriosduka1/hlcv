@@ -23,7 +23,7 @@ q1_experiment = dict(
 
     datamodule = CIFAR10DataModule,
     data_args = dict(
-        data_dir = "data/exercise-2", # You may need to change this for Colab.
+        data_dir = "/content/drive/MyDrive/colab_mnt/hlcv/a3/data/exercise-2", # You may need to change this for Colab.
         transform_preset = 'CIFAR10',
         batch_size = 200,
         shuffle = True,
@@ -51,16 +51,16 @@ q1_experiment = dict(
     trainer_module = CNNTrainer,
     trainer_config = dict(
         n_gpu = 1,
-        epochs = 10,
+        epochs = 30,
         eval_period = 1,
-        save_dir = "Saved",
+        save_dir = "/content/drive/MyDrive/colab_mnt/hlcv/a3/Saved",
         save_period = 10,
         monitor = "off",
         early_stop = 0,
 
         log_step = 100,
-        tensorboard=True,
-        wandb=False,
+        tensorboard=False,
+        wandb=True,
     ),
 
 )
@@ -73,7 +73,62 @@ q1_experiment = dict(
 #  But make sure you have a separate config for every question so   #
 #  that we can use them for grading the assignment.                 #
 #####################################################################
-q2a_normalization_experiment = ()
+q2a_normalization_experiment = dict(
+    name = 'CIFAR10_CNN_BN',
+
+    model_arch = ConvNet,
+    model_args = dict(
+        input_size = 3,
+        num_classes = 10,
+        hidden_layers = [128, 512, 512, 512, 512],
+        activation = nn.ReLU,
+        norm_layer = nn.BatchNorm2d,
+        drop_prob = 0.0,
+    ),
+
+    datamodule = CIFAR10DataModule,
+    data_args = dict(
+        data_dir = "/content/drive/MyDrive/colab_mnt/hlcv/a3/data/exercise-2", # You may need to change this for Colab.
+        transform_preset = 'CIFAR10',
+        batch_size = 200,
+        shuffle = True,
+        heldout_split = 0.1,
+        num_workers = 6,
+    ),
+
+    optimizer = partial(
+        torch.optim.Adam,
+        lr=0.002, weight_decay=0.001, amsgrad=True,
+    ),
+    lr_scheduler = partial(
+        torch.optim.lr_scheduler.StepLR,
+        step_size=5, gamma=0.8
+    ),
+
+    criterion = nn.CrossEntropyLoss,
+    criterion_args = dict(),
+
+    metrics=dict(
+        top1 = TopKAccuracy(k=1),
+        top5 = TopKAccuracy(k=5),
+    ),
+
+    trainer_module = CNNTrainer,
+    trainer_config = dict(
+        n_gpu = 1,
+        epochs = 30,
+        eval_period = 1,
+        save_dir = "/content/drive/MyDrive/colab_mnt/hlcv/a3/Saved",
+        save_period = 10,
+        monitor = "off",
+        early_stop = 0,
+
+        log_step = 100,
+        tensorboard=False,
+        wandb=True,
+    ),
+
+)
 
 q2c_earlystop_experiment = ()
 
