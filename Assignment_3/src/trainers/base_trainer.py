@@ -130,11 +130,16 @@ class BaseTrainer:
                     # You may have to check for min or max value based on monitor_mode                              #
                     # (e.g for loss values we would want min, but for accuracy we want max.)                        #
                     #################################################################################################   
-                    if False:
+                    print(log)
+                    if self.is_best_model(log):
+                        self.monitor_best = log[self.monitor_metric]
                         self.best_epoch = self.current_epoch
-                        checkpoint_path = self.checkpoint_dir + "/best_val_model.pth"
+                        checkpoint_path = os.path.join(self.checkpoint_dir, "best_val_model.pth")
                         self.save_model(path=checkpoint_path)
 
+                        info = f"Saved best model at epoch {self.best_epoch} with {self.monitor_metric}={self.monitor_best}"
+                        self.logger.info(info)
+                        print(info)
 
                     ############################################################################################
                     # TODO: Q2.c: Based self.monitor_metric and whether we have had improvements in            #
@@ -201,3 +206,16 @@ class BaseTrainer:
         self.logger.info("Loading checkpoint: {} ...".format(path))
         self.model.load_state_dict(torch.load(path))
         self.logger.info("Checkpoint loaded.")
+
+    def is_best_model(self, log):
+        """
+        Check if the model performance has improved based on the evaluation result.
+        :param eval_result: A dictionary that contains the evaluation metrics.
+        :return: A boolean that indicates if the model performance has improved.
+        """
+        if self.monitor_mode == 'min':
+            return log[self.monitor_metric] < self.monitor_best
+        elif self.monitor_mode == 'max':
+            return log[self.monitor_metric] > self.monitor_best
+        else:
+            raise ValueError(f"Invalid monitor mode: {self.monitor_mode}. Must be 'min' or 'max'.")
