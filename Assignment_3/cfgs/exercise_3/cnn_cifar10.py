@@ -46,15 +46,15 @@ q1_experiment = dict(
     trainer_module=CNNTrainer,
     trainer_config=dict(
         n_gpu=1,
-        epochs=10,
+        epochs=50,
         eval_period=1,
         save_dir="Saved",
         save_period=10,
-        monitor="off",
+        monitor="max eval_top1", # Template: "monitor_mode monitor_metric"
         early_stop=0,
         log_step=100,
         tensorboard=True,
-        wandb=False,
+        wandb=True,
     ),
 )
 
@@ -67,19 +67,24 @@ q1_experiment = dict(
 #  that we can use them for grading the assignment.                 #
 #####################################################################
 q2a_normalization_experiment = deepcopy(q1_experiment)
+q2a_normalization_experiment["name"] = "CIFAR10_CNN_BN"
 q2a_normalization_experiment["model_args"]["norm_layer"] = nn.BatchNorm2d
+q2a_normalization_experiment["trainer_config"]["epochs"] = 50
 
 q2c_earlystop_experiment = ()
 
 q3a_aug1_experiment = deepcopy(q2a_normalization_experiment)
+q3a_aug1_experiment["name"] = "CIFAR10_CNN_Geo_Aug"
 q3a_aug1_experiment["data_args"]["transform_preset"] = "CIFAR10_geo_aug"
 q3a_aug1_experiment["trainer_config"]["epochs"] = 30
 
 q3a_aug2_experiment = deepcopy(q2a_normalization_experiment)
+q3a_aug2_experiment["name"] = "CIFAR10_CNN_Col_Aug"
 q3a_aug2_experiment["data_args"]["transform_preset"] = "CIFAR10_col_aug"
 q3a_aug2_experiment["trainer_config"]["epochs"] = 30
 
 q3a_aug3_experiment = deepcopy(q2a_normalization_experiment)
+q3a_aug3_experiment["name"] = "CIFAR10_CNN_Geo_Col_Aug"
 q3a_aug3_experiment["data_args"]["transform_preset"] = "CIFAR10_geo_col_aug"
 q3a_aug3_experiment["trainer_config"]["epochs"] = 30
 
