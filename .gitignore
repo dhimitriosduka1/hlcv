@@ -315,3 +315,6 @@ TSWLatexianTemp*
 *.gz
 *.meta
 *batch*
+
+# wandb
+wandb/

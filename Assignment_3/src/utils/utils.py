@@ -1,14 +1,28 @@
 import json
-import random
 import os
-import numpy as np
-import matplotlib.pyplot as plt
-from pathlib import Path
+import random
 from collections import OrderedDict
+from gc import collect as garbage_collect
+from pathlib import Path
+
+import matplotlib.pyplot as plt
+import numpy as np
 import torch
+from torch.cuda import empty_cache as cuda_empty_cache
+from torch.cuda import mem_get_info
 
 from .vis_utils import visualize_grid
 
+
+def clean(do_gpu: bool = True):
+    garbage_collect() # release memory
+    if do_gpu:
+        cuda_empty_cache()
+        mem_info = mem_get_info()
+        print(
+            f"Freeing GPU Memory\nFree: %d MB\tTotal: %d MB"
+            % (mem_info[0] // 1024**2, mem_info[1] // 1024**2)
+        )
 
 def seed_everything(seed=0):    
     random.seed(seed)
@@ -34,6 +48,9 @@ def prepare_device(n_gpu_use):
         n_gpu_use = n_gpu
     device = torch.device('cuda:0' if n_gpu_use > 0 else 'cpu')
     list_ids = list(range(n_gpu_use))
+
+    if n_gpu_use > 0:
+        clean()
     
     return device, list_ids
 
