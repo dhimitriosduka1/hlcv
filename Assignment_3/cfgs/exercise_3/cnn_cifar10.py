@@ -70,7 +70,10 @@ q2a_normalization_experiment["name"] = "CIFAR10_CNN_BN"
 q2a_normalization_experiment["model_args"]["norm_layer"] = nn.BatchNorm2d
 q2a_normalization_experiment["trainer_config"]["epochs"] = 50
 
-q2c_earlystop_experiment = ()
+q2c_earlystop_experiment = deepcopy(q2a_normalization_experiment)
+q2c_earlystop_experiment["name"] = "CIFAR10_CNN_BN_EarlyStop"
+q2c_earlystop_experiment["trainer_config"]["monitor"] = "max eval_top1"
+q2c_earlystop_experiment["trainer_config"]["early_stop"] = 4
 
 q3a_aug1_experiment = deepcopy(q2a_normalization_experiment)
 q3a_aug1_experiment["name"] = "CIFAR10_CNN_Geo_Aug"
