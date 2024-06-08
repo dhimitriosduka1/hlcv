@@ -159,6 +159,11 @@ class BaseTrainer:
                     elif self.is_early_stoping_enabled():
                         self.not_improved_count += 1
                         if self.not_improved_count >= self.early_stop:
+                            for key, value in log.items():
+                                self.logger.info(f'    {key[:15]}: {value:0.5f}')
+                            
+                            if self.wandb_enabled: wandb.log(log)
+                            
                             info = f"Early stopping at epoch {self.current_epoch}"
                             self.logger.info(info)
                             print(info)
