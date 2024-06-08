@@ -1,14 +1,13 @@
+from copy import deepcopy
 from functools import partial
 
 import torch
 import torch.nn as nn
-
+from numpy import linspace
 from src.data_loaders.data_modules import CIFAR10DataModule
-from src.trainers.cnn_trainer import CNNTrainer
-from src.models.cnn.model import ConvNet
 from src.models.cnn.metric import TopKAccuracy
-
-from copy import deepcopy
+from src.models.cnn.model import ConvNet
+from src.trainers.cnn_trainer import CNNTrainer
 
 q1_experiment = dict(
     name="CIFAR10_CNN",
@@ -83,5 +82,8 @@ q3a_aug3_experiment = deepcopy(q2a_normalization_experiment)
 q3a_aug3_experiment["data_args"]["transform_preset"] = "CIFAR10_geo_col_aug"
 q3a_aug3_experiment["trainer_config"]["epochs"] = 30
 
-q3b_dropout_experiment = ()
-
+q3b_dropout_experiment = deepcopy(q2a_normalization_experiment)
+q3b_dropout_experiment["name"] = "cnn_q3b_dropout"
+q3b_dropout_experiment["model_args"]["drop_prob"] = linspace(0.1, 0.9, 9).tolist()
+q3b_dropout_experiment["trainer_config"]["epochs"] = 30
+q3b_dropout_experiment["trainer_config"]["wandb"] = True
