@@ -105,15 +105,15 @@ class BaseTrainer:
         self.not_improved_count = 0        
         if self.wandb_enabled: 
             wandb.init(
-                project='HLCV-exercise-3',
+                project='hlcv-a3',
                 name=self.config['name'],
                 config=self.config,
-                entity="dhimitrios-duka1",
+                entity="hwga-cj",
                 dir="./"
             )
             wandb.watch(self.model, self.criterion, log='all')
 
-        for epoch in range(self.start_epoch, self.epochs + 1):
+        for epoch in range(self.start_epoch, self.epochs + 1):  
             self.current_epoch = epoch
             train_result = self._train_epoch()
 
@@ -184,6 +184,9 @@ class BaseTrainer:
         # Always save the last model
         path = os.path.join(self.checkpoint_dir, f'last_model.pth')
         self.save_model(path=path)
+
+        # Finish the wandb run
+        if self.wandb_enabled: wandb.finish()
 
     def should_evaluate(self):
         """
