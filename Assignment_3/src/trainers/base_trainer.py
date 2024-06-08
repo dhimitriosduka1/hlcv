@@ -103,7 +103,15 @@ class BaseTrainer:
         """
         self.logger.info("------------ New Training Session ------------")
         self.not_improved_count = 0        
-        if self.wandb_enabled: wandb.watch(self.model, self.criterion, log='all')
+        if self.wandb_enabled: 
+            wandb.init(
+                project='HLCV-exercise-3',
+                name=self.config['name'],
+                config=self.config,
+                entity="dhimitrios-duka1",
+                dir="./"
+            )
+            wandb.watch(self.model, self.criterion, log='all')
 
         for epoch in range(self.start_epoch, self.epochs + 1):
             self.current_epoch = epoch
