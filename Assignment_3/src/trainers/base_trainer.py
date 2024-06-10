@@ -7,6 +7,7 @@ from numpy import inf
 from os.path import join as ospj
 from src.logger import TensorboardWriter
 from src.utils.utils import prepare_device
+from src.utils.constants import PROJECT_ROOT, WANDB_ENTITY, WANDB_PROJECT_NAME
 
 try:
     import wandb
@@ -105,11 +106,11 @@ class BaseTrainer:
         self.not_improved_count = 0        
         if self.wandb_enabled: 
             wandb.init(
-                project='hlcv-a3',
+                project=WANDB_PROJECT_NAME,
                 name=self.config['name'],
                 config=self.config,
-                entity="hwga-cj",
-                dir="./"
+                entity=WANDB_ENTITY,
+                dir=PROJECT_ROOT
             )
             wandb.watch(self.model, self.criterion, log='all')
 
