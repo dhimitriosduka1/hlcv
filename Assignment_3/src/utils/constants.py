@@ -1,0 +1,4 @@
+WANDB_PROJECT_NAME = "hlcv-a3"
+WANDB_ENTITY = "hwga-cj"
+
+PROJECT_ROOT='./'
