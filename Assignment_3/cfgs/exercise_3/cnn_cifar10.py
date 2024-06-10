@@ -52,7 +52,7 @@ q1_experiment = dict(
         monitor="max eval_top1", # Template: "monitor_mode monitor_metric"
         early_stop=0,
         log_step=100,
-        tensorboard=True,
+        tensorboard=False,
         wandb=True,
     ),
 )
@@ -90,8 +90,10 @@ q3a_aug3_experiment["name"] = "CIFAR10_CNN_Geo_Col_Aug"
 q3a_aug3_experiment["data_args"]["transform_preset"] = "CIFAR10_geo_col_aug"
 q3a_aug3_experiment["trainer_config"]["epochs"] = 30
 
-q3b_dropout_experiment = deepcopy(q2a_normalization_experiment)
-q3b_dropout_experiment["name"] = "cnn_q3b_dropout"
-q3b_dropout_experiment["model_args"]["drop_prob"] = linspace(0.1, 0.9, 9).tolist()
-q3b_dropout_experiment["trainer_config"]["epochs"] = 30
-q3b_dropout_experiment["trainer_config"]["wandb"] = True
+q3b_dropout_experiments = []
+for drop_prob in linspace(0.1, 0.9, 9):
+    q3b_dropout_experiment = deepcopy(q1_experiment)
+    q3b_dropout_experiment["name"] = f"CIFAR10_CNN_Drop_{drop_prob}"
+    q3b_dropout_experiment["model_args"]["drop_prob"] = drop_prob
+    q3b_dropout_experiment["trainer_config"]["epochs"] = 30
+    q3b_dropout_experiments.append(q3b_dropout_experiment)
