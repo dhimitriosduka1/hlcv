@@ -7,6 +7,7 @@ from src.data_loaders.data_modules import CIFAR10DataModule
 from src.trainers.vgg_trainer import VGGTrainer
 from src.models.cnn.metric import TopKAccuracy
 from src.models.cnn.vgg11_bn import VGG11_bn
+from copy import deepcopy
 
 q4_dict = dict(
     name="CIFAR10_VGG",
@@ -69,3 +70,12 @@ q4_dict = dict(
         wandb = True
     ),
 )
+
+q4_dict_ft = deepcopy(q4_dict)
+q4_dict_ft["model_args"]["fine_tune"] = True
+q4_dict_ft["name"] = "CIFAR10_VGG_FineTune"
+
+q4_dict_ft_nw = deepcopy(q4_dict)
+q4_dict_ft_nw["model_args"]["fine_tune"] = True
+q4_dict_ft_nw["model_args"]["weights"] = None
+q4_dict_ft_nw["name"] = "CIFAR10_VGG_FineTune_NoWeights"
