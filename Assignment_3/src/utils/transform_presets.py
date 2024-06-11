@@ -8,9 +8,9 @@ def get_default_tranforms():
 
 def get_geo_transforms():
     return [
-        transforms.RandomHorizontalFlip(p=0.5),
-        transforms.RandomCrop(32, padding=4),
-        transforms.RandomRotation(15)
+        transforms.RandomHorizontalFlip(p=0.6),
+        transforms.RandomRotation(15),
+        transforms.RandomPerspective(distortion_scale=0.2, p=0.2)
     ]
 
 def get_col_transforms():
@@ -32,7 +32,10 @@ presets = dict(
             transforms.ToTensor(),
             transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
         ]),
-        eval=transforms.Compose(get_default_tranforms())
+        eval=transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
+        ])
     ),
 )
 
