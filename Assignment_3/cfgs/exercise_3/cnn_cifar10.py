@@ -88,7 +88,7 @@ q3a_aug2_experiment["trainer_config"]["epochs"] = 30
 q3a_aug3_experiment = deepcopy(q1_experiment)
 q3a_aug3_experiment["name"] = "CIFAR10_CNN_Geo_Col_Aug"
 q3a_aug3_experiment["data_args"]["transform_preset"] = "CIFAR10_geo_col_aug"
-q3a_aug3_experiment["trainer_config"]["epochs"] = 30
+q3a_aug3_experiment["trainer_config"]["epochs"] = 50
 
 q3a_aug4_experiment = deepcopy(q1_experiment)
 q3a_aug4_experiment["name"] = "CIFAR10_CNN_Geo_Col_Aug_AA_Policy"
