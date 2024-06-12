@@ -21,10 +21,11 @@ def get_geo_transforms():
 
 def get_col_transforms():
     return [
-        transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
-        transforms.RandomGrayscale(p=0.3),
-        transforms.RandomAdjustSharpness(sharpness_factor=2, p=0.3),
-        transforms.RandomEqualize(p=0.4),
+        transforms.RandomApply([
+            transforms.ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5, hue=0.1)
+        ], p=0.5),
+        transforms.RandomGrayscale(p=0.5),
+        transforms.RandomEqualize(p=0.5)
     ]
 
 presets = dict(
@@ -52,6 +53,13 @@ presets["CIFAR10_col_aug"] = dict(
 presets["CIFAR10_geo_col_aug"] = dict(
     train=transforms.Compose(get_geo_transforms() + get_col_transforms() + get_default_tranforms()),
     eval=transforms.Compose(get_default_tranforms())
+)
+
+presets["CIFAR10_geo_col_aug_aa_policy"] = dict(
+    train=transforms.Compose([
+        transforms.AutoAugment(transforms.AutoAugmentPolicy.CIFAR10),
+    ]),
+    eval=transforms.Compose([])
 )
 
 presets["CIFAR10_VGG_HF"] = dict(
