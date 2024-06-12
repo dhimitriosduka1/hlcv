@@ -90,6 +90,11 @@ q3a_aug3_experiment["name"] = "CIFAR10_CNN_Geo_Col_Aug"
 q3a_aug3_experiment["data_args"]["transform_preset"] = "CIFAR10_geo_col_aug"
 q3a_aug3_experiment["trainer_config"]["epochs"] = 30
 
+q3a_aug4_experiment = deepcopy(q1_experiment)
+q3a_aug4_experiment["name"] = "CIFAR10_CNN_Geo_Col_Aug_AA_Policy"
+q3a_aug4_experiment["data_args"]["transform_preset"] = "CIFAR10_geo_col_aug_aa_policy"
+q3a_aug4_experiment["trainer_config"]["epochs"] = 30
+
 q3b_dropout_experiments = []
 for drop_prob in linspace(0.1, 0.9, 9):
     q3b_dropout_experiment = deepcopy(q1_experiment)
