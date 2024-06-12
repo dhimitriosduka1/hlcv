@@ -98,7 +98,7 @@ q3a_aug4_experiment["trainer_config"]["epochs"] = 30
 q3b_dropout_experiments = []
 for drop_prob in linspace(0.1, 0.9, 9):
     q3b_dropout_experiment = deepcopy(q1_experiment)
-    q3b_dropout_experiment["name"] = f"CIFAR10_CNN_Drop_{drop_prob}"
+    q3b_dropout_experiment["name"] = f"cnn_q3b_dropout_{drop_prob}"
     q3b_dropout_experiment["model_args"]["drop_prob"] = drop_prob
     q3b_dropout_experiment["trainer_config"]["epochs"] = 30
     q3b_dropout_experiments.append(q3b_dropout_experiment)
