@@ -81,14 +81,14 @@ q4_dict_ft_nw["model_args"]["weights"] = None
 q4_dict_ft_nw["name"] = "CIFAR10_VGG_FineTune_NoWeights"
 
 q4_dict_ft_list = []
-for tp in ["CIFAR10_VGG_HF", "CIFAR10_VGG_ROT", "CIFAR10_VGG_PERSP", "CIFAR10_VGG_GEO_COMBINED"]:
+for tp in ["CIFAR10_VGG_HF", "CIFAR10_VGG_ROT", "CIFAR10_VGG_PERSP", "CIFAR10_VGG_GEO_COMBINED", "CIFAR10_VGG_GEO_COL_COMBINED"]:
     config = deepcopy(q4_dict)
     config["model_args"]["fine_tune"] = True
     config["name"] = f"CIFAR10_VGG_FineTune{tp.split("_VGG")[-1]}"
     q4_dict_ft_list.append(config)
 
 q4_dict_ft_nw_list = []
-for tp in ["CIFAR10_VGG_HF", "CIFAR10_VGG_ROT", "CIFAR10_VGG_PERSP", "CIFAR10_VGG_GEO_COMBINED"]:
+for tp in ["CIFAR10_VGG_HF", "CIFAR10_VGG_ROT", "CIFAR10_VGG_PERSP", "CIFAR10_VGG_GEO_COMBINED", "CIFAR10_VGG_GEO_COL_COMBINED"]:
     config = deepcopy(q4_dict)
     config["model_args"]["fine_tune"] = True
     config["model_args"]["weights"] = None

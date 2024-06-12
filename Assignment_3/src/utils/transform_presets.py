@@ -87,3 +87,8 @@ presets["CIFAR10_VGG_GEO_COMBINED"] = dict(
     train=transforms.Compose(get_geo_transforms() + get_default_tranforms_vgg()),
     eval=transforms.Compose(get_default_tranforms_vgg())
 )
+
+presets["CIFAR10_VGG_GEO_COL_COMBINED"] = dict(
+    train=transforms.Compose(get_geo_transforms() + get_col_transforms() + get_default_tranforms_vgg()),
+    eval=transforms.Compose(get_default_tranforms_vgg()),
+)
