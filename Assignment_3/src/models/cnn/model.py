@@ -17,10 +17,6 @@ class ConvNet(BaseModel):
     ):
         super(ConvNet, self).__init__()
 
-        ############## TODO ###############################################
-        # Initialize the different model parameters from the config file  #
-        # (basically store them in self)                                  #
-        ###################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
         self.input_size = input_size
@@ -34,15 +30,6 @@ class ConvNet(BaseModel):
         self._build_model()
 
     def _build_model(self):
-
-        #################################################################################
-        # TODO: Initialize the modules required to implement the convolutional layer    #
-        # described in the exercise.                                                    #
-        # For Q1.a make use of conv2d and relu layers from the torch.nn module.         #
-        # For Q2.a make use of BatchNorm2d layer from the torch.nn module.              #
-        # For Q3.b Use Dropout layer from the torch.nn module if drop_prob > 0          #
-        # Do NOT add any softmax layers.                                                #
-        #################################################################################
         layers = []
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
@@ -110,11 +97,6 @@ class ConvNet(BaseModel):
         return (img - min) / (max - min)
 
     def VisualizeFilter(self):
-        ################################################################################
-        # TODO: Implement the functiont to visualize the weights in the first conv layer#
-        # in the model. Visualize them as a single image fo stacked filters.            #
-        # You can use matlplotlib.imshow to visualize an image in python                #
-        #################################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         ROWS = 8
         COLUMS = 16

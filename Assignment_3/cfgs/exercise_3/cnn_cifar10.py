@@ -57,14 +57,6 @@ q1_experiment = dict(
     ),
 )
 
-
-#########  TODO #####################################################
-#  You would need to create the following config dictionaries       #
-#  to use them for different parts of Q2 and Q3.                    #
-#  Feel free to define more config files and dictionaries if needed.#
-#  But make sure you have a separate config for every question so   #
-#  that we can use them for grading the assignment.                 #
-#####################################################################
 q2a_normalization_experiment = deepcopy(q1_experiment)
 q2a_normalization_experiment["name"] = "CIFAR10_CNN_BN"
 q2a_normalization_experiment["model_args"]["norm_layer"] = nn.BatchNorm2d

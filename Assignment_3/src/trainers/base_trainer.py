@@ -128,17 +128,7 @@ class BaseTrainer:
                 log.update({f'eval_{key}': value for key, value in eval_result.items()})    
 
             if self.monitor_mode != 'off' : # Then there is a metric to monitor
-                if self.monitor_metric in log: # Then we have measured it in this epoch
-                    #################################################################################################
-                    # TODO: Q2.b: Use the dictionaries above to see if this is the best epoch based                 #
-                    # on self.monitor_metric. If so, use self.save_model() to save the best model checkpoint.       #
-                    # Don't forget to pre-pend self.checkpoint_dir to the path argument.                            #
-                    # We also recommend printing the epoch number so that later from the logs.                      #
-                    # check whether model performance improved or not, according to specified metric(monitor_metric)#
-                    # These were configured in the self._configure_monitoring()                                     #
-                    # You may have to check for min or max value based on monitor_mode                              #
-                    # (e.g for loss values we would want min, but for accuracy we want max.)                        #
-                    #################################################################################################   
+                if self.monitor_metric in log: # Then we have measured it in this epoch 
                     if self.is_best_model(log):
                         self.monitor_best = log[self.monitor_metric]
                         self.best_epoch = self.current_epoch
@@ -150,11 +140,6 @@ class BaseTrainer:
                         info = f"Saved best model at epoch {self.best_epoch} with {self.monitor_metric}={self.monitor_best}"
                         self.logger.info(info)
                         print(info)
-
-                    ############################################################################################
-                    # TODO: Q2.c: Based self.monitor_metric and whether we have had improvements in            #
-                    # the last self.early_stop steps, see if you should break the training loop.               #
-                    ############################################################################################
                     
                     # The model performance has not improved and early stopping is enabled 
                     elif self.is_early_stoping_enabled():
