@@ -64,10 +64,9 @@ q4_dict = dict(
         save_period = 10,
         monitor = "max eval_top1",
         early_stop = 5,
-
         log_step = 100,
         tensorboard = False,
-        wandb = True
+        wandb = False
     ),
 )
 

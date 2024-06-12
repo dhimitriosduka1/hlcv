@@ -53,7 +53,7 @@ q1_experiment = dict(
         early_stop=0,
         log_step=100,
         tensorboard=False,
-        wandb=True,
+        wandb=False,
     ),
 )
 
