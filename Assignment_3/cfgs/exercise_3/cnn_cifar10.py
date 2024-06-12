@@ -75,17 +75,17 @@ q2c_earlystop_experiment["name"] = "CIFAR10_CNN_EarlyStop"
 q2c_earlystop_experiment["trainer_config"]["monitor"] = "max eval_top1"
 q2c_earlystop_experiment["trainer_config"]["early_stop"] = 4
 
-q3a_aug1_experiment = deepcopy(q2a_normalization_experiment)
+q3a_aug1_experiment = deepcopy(q1_experiment)
 q3a_aug1_experiment["name"] = "CIFAR10_CNN_Geo_Aug"
 q3a_aug1_experiment["data_args"]["transform_preset"] = "CIFAR10_geo_aug"
 q3a_aug1_experiment["trainer_config"]["epochs"] = 30
 
-q3a_aug2_experiment = deepcopy(q2a_normalization_experiment)
+q3a_aug2_experiment = deepcopy(q1_experiment)
 q3a_aug2_experiment["name"] = "CIFAR10_CNN_Col_Aug"
 q3a_aug2_experiment["data_args"]["transform_preset"] = "CIFAR10_col_aug"
 q3a_aug2_experiment["trainer_config"]["epochs"] = 30
 
-q3a_aug3_experiment = deepcopy(q2a_normalization_experiment)
+q3a_aug3_experiment = deepcopy(q1_experiment)
 q3a_aug3_experiment["name"] = "CIFAR10_CNN_Geo_Col_Aug"
 q3a_aug3_experiment["data_args"]["transform_preset"] = "CIFAR10_geo_col_aug"
 q3a_aug3_experiment["trainer_config"]["epochs"] = 30
