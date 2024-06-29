@@ -110,6 +110,14 @@ Y. Kristian et al. \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024} focused on the fi
 \section{Methods}\label{sec:methods}
 
 What models/frameworks do you use to solve the challenges?
+We are expecting to use the following models to solve the challenges:
+\begin{enumerate}
+    \item \textbf{Fretboard Detection}: We will use YOLOv9 \cite{wang2024yolov9} and fine-tune it for fretboard detection using the datasets metioned in \cref{sec:datasets}.
+    \item \textbf{Chord Classification}: We will use a Single Shot Detection (SSD) model undergirded by a MobileNetV2 base model, pre-trained on the EgoHands dataset \cite{Bambach_2015_ICCV}.
+    \item \textbf{Seamless Audio Generation}: We will use a GAN-based model to generate the audio from the classified chords. We will start by using the model proposed by \cite{su2020audeo} and adapt it to our specific task.
+\end{enumerate}
+
+But, if deemed necessary, we will also explore other models.
 
 Why can the proposed method / analysis solve your problem?
 
