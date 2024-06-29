@@ -67,21 +67,10 @@ With the rise of deep learning, and especially computer vision, many researchers
 
 Inspired by the fact that for most people it is easier to distinguish a note from a visual aspect rather than the sound of it, researchers started to come up with methods that leverage this fact. \cite{su2020audeo} successfully reconstructed audio from a video of a piano being played. However, the technique was only applied to a digital render of a piano, which does not depict a real-world scenario as no human was interacting with it.
 
-Building on the concept of using visual information for musical applications, Y. Kristian et al. \cite[2024]{Kristian_Zaman_Tenoyo_Jodhinata_2024} employed a Single Shot Detection (SSD) model undergirded by a MobileNetV2 base model, pre-trained on the Ego-Hand dataset to achieve fretboard detection and chords classification. The subsystem processes the input image or video frame using a Deep Convolutional Neural Network (DCNN) model. The model generates coordinates for bounding boxes that outline the fretboard which in turn is used as the input for the chord classification model.
+Building on the concept of using visual information for musical applications, Y. Kristian et al. \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024} employed a Single Shot Detection (SSD) model undergirded by a MobileNetV2 base model, pre-trained on the EgoHands dataset to achieve fretboard detection and chords classification. Their model generates coordinates for bounding boxes that outline the fretboard which in turn is used as the input for the chord classification model.
 
-Task statement and definitions
-
-Motivation: Why do we need to explore this task?
-
-\textbf{Related work: How do existing papers solve this task or similar tasks (should include relevant citations)?}
-
-For the task of fretboard detection, Y. Kristian et al. \cite[2024]{Kristian_Zaman_Tenoyo_Jodhinata_2024} employed a Single Shot Detection (SSD) model undergirded by a MobileNetV2 base model, pre-trained on the EgoHands dataset \cite{Bambach_2015_ICCV}. The subsystem processes the input image or video frame using a Deep Convolutional Neural Network (DCNN) model. The model generates coordinates for bounding boxes that outline thefretboard.
-
-\textbf{Challenge: What are the major challenges that have not been solved in this task?}
-
-\cite{Kristian_Zaman_Tenoyo_Jodhinata_2024}
-\cite{du2023conditional}
-Our work builds on top of this idea and aims to improve the accuracy the chord recognition as well as implement a chord-to-audio generation model.
+Our work builds on top of the previously mentioned works \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024}
+\cite{du2023conditional} and aims to improve the accuracy the chord recognition as well as implement a chord-to-audio generation model.
 
 \section{Goals}
 
@@ -102,10 +91,7 @@ Our work builds on top of this idea and aims to improve the accuracy the chord r
 \end{enumerate}
 Y. Kristian et al. \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024} focused on the first two problems, while we aim to address the third problem as well. This is a challenging task since it requires the model to seamlessly generate audio from the classified chords, effectively crossing into the \emph{generative} side of Neural Networks. That is, we aim to move beyong chord classification to also include audio synthesis. In Section \cref{sec:methods} and \cref{sec:datasets}, we briefly cover the methods and datasets we plan to use to address these challenges.
 
-\textbf{What do you want to have completed by the mid-term? E.g., code for the task, data collection, results for baselines, etc.}
-
-
-
+By the mid-term, we aim to have completed data collection and pruning, the code for pre-training a YOLO architecture for the \emph{fretboard detection model}, and the \emph{guitar chords classifier model}. By the end of the project, we aim to have the \emph{seamless audio generation model} completed.
 
 \section{Methods}\label{sec:methods}
 
@@ -130,7 +116,7 @@ The chosen datasets have each their own features, thus each one is used to pre-t
     \item \textbf{GuitarSet}: This dataset is used for pre-training our \emph{seamless audio generation model} from the classified guitar chords. It provides high quality acoustic guitar recordings alongside time-aligned annotations including fret positions, chords, among others \cite{Xi2018}.
 \end{enumerate}
 
-A similar technique was used by \cite[2022]{Jadhav_transferlearning} for improving their model's performance by using the ImageNet dataset to pre-train their model and then fine-tuned it using the EgoHands dataset. This approach allowed them to achieve an overall higher accuracy.
+A similar technique was used by \cite{Jadhav_transferlearning} for improving their model's performance by using the ImageNet dataset to pre-train their model and then fine-tuned it using the EgoHands dataset. This approach allowed them to achieve an overall higher accuracy.
 
 \subsection{Fretboard Detection}
 This one has both: \cite{guitar-chords-daewp_dataset}. 
