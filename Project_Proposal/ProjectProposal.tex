@@ -13,6 +13,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{booktabs}
+\usepackage{enumitem}
 
 % It is strongly recommended to use hyperref, especially for the review version.
 % hyperref with option pagebackref eases the reviewers' job.
@@ -73,7 +74,7 @@ Motivation: Why do we need to explore this task?
 
 \textbf{Related work: How do existing papers solve this task or similar tasks (should include relevant citations)?}
 
-For the task of fretboard detection, Y. Kristian et al. \cite[2024]{Kristian_Zaman_Tenoyo_Jodhinata_2024} employed a Single Shot Detection (SSD) model undergirded by a MobileNetV2 base model, pre-trained on the Ego-Hand dataset. The subsystem processes the input image or video frame using a Deep Convolutional Neural Network (DCNN) model. The model generates coordinates for bounding boxes that outline thefretboard.
+For the task of fretboard detection, Y. Kristian et al. \cite[2024]{Kristian_Zaman_Tenoyo_Jodhinata_2024} employed a Single Shot Detection (SSD) model undergirded by a MobileNetV2 base model, pre-trained on the EgoHands dataset \cite{Bambach_2015_ICCV}. The subsystem processes the input image or video frame using a Deep Convolutional Neural Network (DCNN) model. The model generates coordinates for bounding boxes that outline thefretboard.
 
 \textbf{Challenge: What are the major challenges that have not been solved in this task?}
 
@@ -91,21 +92,20 @@ For the task of fretboard detection, Y. Kristian et al. \cite[2024]{Kristian_Zam
 \end{figure*}
 
 \textbf{What challenges do you aim to address in this task?}
-\cref{fig:model-diagram} illustrates a bird's eye view of our model architecture. Essentially, we aim to address the following 3 problems: 
-\begin{enumerate}
-    \item Fretboard Detection: Given an image or video frame, detect the fretboard of the guitar.
-    \item Chord Classification: Given an image or video frame, classify the chord being played.
-    \item Seamless Audio Generation: Given the chords being played, generate the audio of the music piece.
+\cref{fig:model-diagram} illustrates a bird's eye view of our model architecture. Essentially, we aim to address the following three problems: 
+\begin{enumerate}[label=\arabic*)]
+    \item \emph{Fretboard Detection}: Given an image or video frame, detect the bounding box that outlines the fretboard.
+    \item \emph{Chord Classification}: Given an image or video frame, classify the chord being played.
+    \item \emph{Seamless Audio Generation}: Given the chords being played, generate the audio of the music piece.
 \end{enumerate}
-the problem of chord recognition in a video. This is a challenging task since the video contains both audio and visual information. We aim to use both of these information to improve the accuracy of the chord recognition.
-
+Y. Kristian et al. \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024} focused on the first two problems, while we aim to address the third problem as well. This is a challenging task since it requires the model to seamlessly generate audio from the classified chords, effectively crossing into the \emph{generative} side of Neural Networks. That is, we aim to move beyong chord classification to also include audio synthesis. In Section \cref{sec:methods} and \cref{sec:datasets}, we briefly cover the methods and datasets we plan to use to address these challenges.
 
 \textbf{What do you want to have completed by the mid-term? E.g., code for the task, data collection, results for baselines, etc.}
 
 
 
 
-\section{Methods}
+\section{Methods}\label{sec:methods}
 
 What models/frameworks do you use to solve the challenges?
 
@@ -115,10 +115,20 @@ What are the main differences between your method and existing methods (if appli
 
 What is the required computational budget for the training/analysis? (E.g. are you planning on using pretrained backbones?)
 
-\section{Datasets}
+\section{Datasets}\label{sec:datasets}
 
-What datasets are you going to use/collect and why?
+We have chosen the following datasets to train and evaluate our models, depending on the specific task to address: \emph{fretboard detection}, \emph{chord classification}, and \emph{seamless audio generation}. Furthermore, we follow the contributions of Y. Kristian et al. \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024} by first using three different pre-trained datasets to start off our models and leverage transfer learning techniques to improve the overall performance.
+\subsection{Pre-trained Datasets}
+The chosen datasets have each their own features, thus each one is used to pre-train a specific model.
 
+\begin{enumerate}[label=\arabic*)]
+    \item \textbf{ImageNet Dataset}: This dataset is used for pre-training our \emph{guitar chords classifier model}. It has over 14 million images that cover 20,000 types of natural objects \cite{russakovsky2015imagenetlargescalevisual}.
+    \item \textbf{COCO Dataset}: This dataset is used for pre-training our \emph{fretboard detection model}. The dataset is of considerable size and is dedicated to object identification. Approximately 200,000 labeled images are organized into 80 distinct categories \cite{lin2015microsoftcococommonobjects}. Although somewhat comparable to ImageNet, the COCO dataset possesses a distinct emphasis.
+    \item \textbf{EgoHands Dataset}: Similar to ImageNet, this dataset is also used for pre-training our \emph{guitar chords classifier model}. The dataset includes over 15,000 hand images with high-quality labels \cite{Bambach_2015_ICCV}.
+    \item \textbf{GuitarSet}: This dataset is used for pre-training our \emph{seamless audio generation model} from the classified guitar chords. It provides high quality acoustic guitar recordings alongside time-aligned annotations including fret positions, chords, among others \cite{Xi2018}.
+\end{enumerate}
+
+A similar technique was used by \cite[2022]{Jadhav_transferlearning} for improving their model's performance by using the ImageNet dataset to pre-train their model and then fine-tuned it using the EgoHands dataset. This approach allowed them to achieve an overall higher accuracy.
 
 \subsection{Fretboard Detection}
 This one has both: \cite{guitar-chords-daewp_dataset}. 
@@ -128,7 +138,7 @@ Only fretboard: \cite{guitar-ppfil_dataset}, \cite{done-npcll_dataset}.
 For chord recognition: \cite{guitar-chord-tvon8_dataset}, \cite{guitar-chord-bounding-box_dataset}, \cite{guitar-chord-handshape_dataset}.
 
 \subsection{Seamless Audio Generation}
-\emph{GuitarSet}, a dataset that provides high quality acoustic guitar recordings alongside time-aligned annotations including fret positions, chords, among others \cite{Xi2018}.
+sdf
 
 \section{Evaluation}
 
@@ -137,8 +147,6 @@ How is your method going to be evaluated?
 What metrics are suitable?
 
 Do you need to define your own metric for evaluation?
-
-\clearpage 
 
 %%%%%%%%% REFERENCES
 {\small
