@@ -110,6 +110,7 @@ As we're using state-of-the-art models, we expect to achieve better results than
 Since the original video frames may be of different view points, orientations or environments, preprocessing the image with a fretboard detection model will help to standardize the input for the chord classification model.Though the visual transformer model has been shown to have ability to capture feature with a relatively small patch size, in our case, the fretboard cropping step will help us to focus on the finger positions with more details and reduce computational cost as well.
 
 What are the main differences between your method and existing methods (if applicable)?
+Unlike Y. Kristian et al. \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024}, we do not plan to use Convolutional Neural Networks (CNNs) as a backbone for our approach. They used MobileNetV2 and MobileNetV1, which are CNN-based, for the fretboard detection and a Deep CNN for the chord classification.
 Previous work 
 
 What is the required computational budget for the training/analysis? (E.g. are you planning on using pretrained backbones?)
