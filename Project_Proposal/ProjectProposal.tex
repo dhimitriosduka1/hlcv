@@ -82,7 +82,6 @@ Our work builds on top of the previously mentioned works \cite{Kristian_Zaman_Te
     \label{fig:model-diagram}
 \end{figure*}
 
-\textbf{What challenges do you aim to address in this task?}
 \cref{fig:model-diagram} illustrates a bird's eye view of our model architecture. Essentially, we aim to address the following three problems: 
 \begin{enumerate}[label=\arabic*)]
     \item \emph{Fretboard Detection}: Given an image or video frame, detect the bounding box that outlines the fretboard.
@@ -118,23 +117,23 @@ The chosen datasets have each their own features, thus each one is used to pre-t
 
 A similar technique was used by \cite{Jadhav_transferlearning} for improving their model's performance by using the ImageNet dataset to pre-train their model and then fine-tuned it using the EgoHands dataset. This approach allowed them to achieve an overall higher accuracy.
 
-\subsection{Fretboard Detection}
-This one has both: \cite{guitar-chords-daewp_dataset}. 
-Only fretboard: \cite{guitar-ppfil_dataset}, \cite{done-npcll_dataset}.
+\subsection{Fretboard Detection}\label{subsec:fretboard-detection}
+To fine-tune the previously pre-trained \emph{fretboard detection model}, we will use the following datasets publicly available in \href{https://universe.roboflow.com/}{Roboflow}: \cite{guitar-chords-daewp_dataset}, \cite{guitar-ppfil_dataset} and \cite{done-npcll_dataset}.
 
 \subsection{Chord Recognition}
-For chord recognition: \cite{guitar-chord-tvon8_dataset}, \cite{guitar-chord-bounding-box_dataset}, \cite{guitar-chord-handshape_dataset}.
+To fine-tune the \emph{guitar chords classifier model}, we will use \cite{guitar-chord-tvon8_dataset}, \cite{guitar-chord-bounding-box_dataset}, \cite{guitar-chord-handshape_dataset}. Since \cite{guitar-chords-daewp_dataset} contains both the fretboard and the chords, we will use it to fine-tune this model as well.
 
 \subsection{Seamless Audio Generation}
-sdf
+To fine-tune the \emph{seamless audio generation model}, we will use the \cite{Xi2018}.
 
 \section{Evaluation}
 
-How is your method going to be evaluated?
+\textbf{How is your method going to be evaluated?}
+For our \emph{guitar chords classifier model}, we have a baseline accuracy of 83.21\% achieved by Y. Kristian et al. \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024}.
 
-What metrics are suitable?
+\textbf{What metrics are suitable?}
 
-Do you need to define your own metric for evaluation?
+\textbf{Do you need to define your own metric for evaluation?}
 
 %%%%%%%%% REFERENCES
 {\small
