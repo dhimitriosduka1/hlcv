@@ -67,10 +67,10 @@ With the rise of deep learning, and especially computer vision, many researchers
 
 % Inspired by the fact that for most people it is easier to distinguish a note from a visual aspect rather than the sound of it, researchers started to come up with methods that leverage this fact. \cite{su2020audeo} successfully reconstructed audio from a video of a piano being played. However, the technique was only applied to a digital render of a piano, which does not depict a real-world scenario as no human was interacting with it.
 
-Building on the concept of using visual information for musical applications, Y. Kristian et al. \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024} employed a Single Shot Detection (SSD) model undergirded by a MobileNetV2 base model, pre-trained on the EgoHands dataset to achieve fretboard detection and chords classification. Their model generates coordinates for bounding boxes that outline the fretboard which in turn is used as the input for the chord classification model.
+Building on the concept of using visual information for musical applications, Y. Kristian et al. \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024} employed a Single Shot Detection (SSD) model undergirded by a MobileNetV2 \cite{sandler2018mobilenetv2} base model, pre-trained on the EgoHands \cite{Bambach_2015_ICCV} dataset to achieve fretboard detection and chords classification. Their model generates coordinates for bounding boxes that outline the fretboard which in turn is used as the input for the chord classification model.
 
 Our work builds on top of the previously mentioned works \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024}
-\cite{du2023conditional} and aims to improve the accuracy the chord recognition as well as implement a chord-to-audio generation model.
+\cite{du2023conditional} and aims to improve the accuracy of chord recognition as well as implement a chord-to-audio generation model.
 
 \section{Goals}
 
@@ -104,7 +104,7 @@ We are expecting to use the following models to solve the challenges\footnote{If
 Since the original video frames may be of different viewpoints, orientations or environments, preprocessing the image with a \emph{fretboard detection model} will help to standardize the input for the \emph{chord classifier model}. Although the visual transformer model has demonstrated the ability to capture features with a relatively small patch size, in our case, the fretboard cropping step will help us focus on the finger positions with more detail and reduce computational costs as well.
 Furthermore, by including the \emph{seamless audio generation model}, we aim to provide a more complete solution to the problem of automatic chord recognition.
 
-Unlike Y. Kristian et al. \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024}, we do not plan to use Convolutional Neural Networks (CNNs) as a backbone for our approach. They used MobileNetV2 and MobileNetV1, which are CNN-based, for the fretboard detection and a Deep CNN for the chord classification. 
+Unlike Y. Kristian et al. \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024}, we do not plan to use Convolutional Neural Networks (CNNs) as a backbone for our approach. They used MobileNetV2 and MobileNetV1 \cite{howard2017mobilenets}, which are CNN-based, for the fretboard detection and a Deep CNN for the chord classification. 
 
 We are planning to use mostly pre-trained models and leverage transfer learning techniques. For the \emph{seamless audio generation model}, we are expecting a higher computational budget, as most likely we will have to train the model from scratch.
 
