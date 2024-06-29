@@ -13,6 +13,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{booktabs}
+\usepackage{csquotes}
 
 % It is strongly recommended to use hyperref, especially for the review version.
 % hyperref with option pagebackref eases the reviewers' job.
@@ -59,23 +60,15 @@ Honglu Ma\\
 
 %%%%%%%%% BODY TEXT
 \section{Task and Motivation}
-Automatic cord recognition (ACR) consists of recognizing the chords being played in a music piece. This information is quite valuable since it can later be used for music analysis, music transcription, or even fixing corrupted musical performances. ACR was first introduced in 1999 by \cite{takuya1999realtime} where the author utilized lisp music to perform chord recognition at the signal level. Since then, many signal-level based approaches have been introduced. However, these methods proved to be quite challenging and not very accurate. 
+Automatic cord recognition (ACR) consists of recognizing the chords played in a music piece. This information is quite valuable since it can later be used for music analysis, music transcription, or even fixing corrupted musical performances. ACR was first introduced in 1999 by \cite{takuya1999realtime} where the author utilized lisp music to perform chord recognition at the signal level. Since then, many signal-level-based approaches have been introduced. However, these methods proved to be quite challenging and not very accurate. 
 
-With the rise of deep learning, and especially computer vision, many researches started to tackle this problem from a different perspective. They started to use spectrogram-based feature extraction methods to extract the features of the audio signal \cite{boulanger2013audio, korzeniowski2016feature, stark2009real}. However, despi
+With the rise of deep learning, and especially computer vision, many researchers started to tackle this problem from a different perspective. They began to use spectrogram-based feature extraction methods to extract the features of the audio signal \cite{boulanger2013audio, korzeniowski2016feature, stark2009real}. However, despite the success of these methods, improvements plated \blockquote{due to the inherent shortcomings of the aural approach in handling highly timbre sounds} \cite{du2023conditional}. 
 
+Inspired by the fact that for most people it is easier to distinguish a note from a visual aspect rather than the sound of it, researchers started to come up with methods that leverage this fact. \cite{su2020audeo} successfully reconstructed audio from a video of a piano being played. However, the technique was only applied to a digital render of a piano, which does not depict a real-world scenario as no human was interacting with it.
 
-Task statement and definitions
+Building on the concept of using visual information for musical applications, Y. Kristian et al. \cite[2024]{Kristian_Zaman_Tenoyo_Jodhinata_2024} employed a Single Shot Detection (SSD) model undergirded by a MobileNetV2 base model, pre-trained on the Ego-Hand dataset to achieve fretboard detection and chords classification. The subsystem processes the input image or video frame using a Deep Convolutional Neural Network (DCNN) model. The model generates coordinates for bounding boxes that outline the fretboard which in turn is used as the input for the chord classification model.
 
-Motivation: Why do we need to explore this task?
-
-\textbf{Related work: How do existing papers solve this task or similar tasks (should include relevant citations)?}
-
-For the task of fretboard detection, Y. Kristian et al. \cite[2024]{Kristian_Zaman_Tenoyo_Jodhinata_2024} employed a Single Shot Detection (SSD) model undergirded by a MobileNetV2 base model, pre-trained on the Ego-Hand dataset. The subsystem processes the input image or video frame using a Deep Convolutional Neural Network (DCNN) model. The model generates coordinates for bounding boxes that outline thefretboard.
-
-\textbf{Challenge: What are the major challenges that have not been solved in this task?}
-
-\cite{Kristian_Zaman_Tenoyo_Jodhinata_2024}
-\cite{du2023conditional}
+Our work builds on top of this idea and aims to improve the accuracy the chord recognition as well as implement a chord-to-audio generation model.
 
 \section{Goals}
 
