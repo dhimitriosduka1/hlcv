@@ -82,13 +82,8 @@ Our work builds on top of the previously mentioned works \cite{Kristian_Zaman_Te
     \label{fig:model-diagram}
 \end{figure*}
 
-<<<<<<< HEAD
-\cref{fig:model-diagram} illustrates a bird's eye view of our model architecture. Essentially, we aim to address the following three problems: 
-=======
-\textbf{What challenges do you aim to address in this task?}
 \cref{fig:model-diagram} illustrates a bird's eye view of our model architecture. Essentially, we aim to address the following three problems:
->>>>>>> 6b01d2c6c929cf7c95b24cbfca7b947aeb227f85
-\begin{enumerate}[label=\arabic*)]
+\begin{enumerate}[label=\arabic*), itemsep=0.25pt]
     \item \emph{Fretboard Detection}: Given an image or video frame, detect the bounding box that outlines the fretboard.
     \item \emph{Chord Classification}: Given an image or video frame, classify the chord being played.
     \item \emph{Seamless Audio Generation}: Given the chords being played, generate the audio of the music piece.
@@ -101,10 +96,10 @@ By the mid-term, we aim to have completed data collection and pruning, the code 
 
 What models/frameworks do you use to solve the challenges?
 We are expecting to use the following models to solve the challenges:
-\begin{enumerate}
+\begin{enumerate}[label=\arabic*), itemsep=0.25pt]
     \item \textbf{Fretboard Detection}: We plan to use YOLOv9 \cite{wang2024yolov9} and fine-tune it for fretboard detection using the datasets metioned in \cref{sec:datasets}.
     \item \textbf{Chord Classification}: We plan to use a tranformer based approach, mainly ViT \cite{dosovitskiy2020image}, and fine-tune it for guitar chord classification using the datasets metioned in \cref{sec:datasets}.
-    \item \textbf{Seamless Audio Generation}: We plane to try both a plain decoder architecture and a transformer based approach, MelodyDiffusion \cite{math11081915}.
+    \item \textbf{Seamless Audio Generation}: We plan to try both a plain decoder architecture and a transformer based approach, MelodyDiffusion \cite{math11081915}.
 \end{enumerate}
 
 But, if deemed necessary, we will also explore other models.
@@ -117,18 +112,16 @@ What is the required computational budget for the training/analysis? (E.g. are y
 
 \section{Datasets}\label{sec:datasets}
 
-We have chosen the following datasets to train and evaluate our models, depending on the specific task to address: \emph{fretboard detection}, \emph{chord classification}, and \emph{seamless audio generation}. Furthermore, we follow the contributions of Y. Kristian et al. \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024} by first using three different pre-trained datasets to start off our models and leverage transfer learning techniques to improve the overall performance.
+We have chosen the following datasets to train and evaluate our models, depending on the specific task to address: \emph{fretboard detection}, \emph{chord classification}, and \emph{seamless audio generation}. Furthermore, we follow the contributions of \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024} and \cite{Jadhav_transferlearning} by first using three different pre-trained datasets to start off our models and leverage transfer learning techniques to improve the overall performance.
 \subsection{Pre-trained Datasets}
 The chosen datasets have each their own features, thus each one is used to pre-train a specific model.
 
-\begin{enumerate}[label=\arabic*)]
+\begin{enumerate}[label=\arabic*), itemsep=0.25pt]
     \item \textbf{ImageNet Dataset}: This dataset is used for pre-training our \emph{guitar chords classifier model}. It has over 14 million images that cover 20,000 types of natural objects \cite{russakovsky2015imagenetlargescalevisual}.
     \item \textbf{COCO Dataset}: This dataset is used for pre-training our \emph{fretboard detection model}. The dataset is of considerable size and is dedicated to object identification. Approximately 200,000 labeled images are organized into 80 distinct categories \cite{lin2015microsoftcococommonobjects}. Although somewhat comparable to ImageNet, the COCO dataset possesses a distinct emphasis.
     \item \textbf{EgoHands Dataset}: Similar to ImageNet, this dataset is also used for pre-training our \emph{guitar chords classifier model}. The dataset includes over 15,000 hand images with high-quality labels \cite{Bambach_2015_ICCV}.
     \item \textbf{GuitarSet}: This dataset is used for pre-training our \emph{seamless audio generation model} from the classified guitar chords. It provides high quality acoustic guitar recordings alongside time-aligned annotations including fret positions, chords, among others \cite{Xi2018}.
 \end{enumerate}
-
-A similar technique was used by \cite{Jadhav_transferlearning} for improving their model's performance by using the ImageNet dataset to pre-train their model and then fine-tuned it using the EgoHands dataset. This approach allowed them to achieve an overall higher accuracy.
 
 \subsection{Fretboard Detection}\label{subsec:fretboard-detection}
 To fine-tune the previously pre-trained \emph{fretboard detection model}, we will use the following datasets publicly available in \href{https://universe.roboflow.com/}{Roboflow}: \cite{guitar-chords-daewp_dataset}, \cite{guitar-ppfil_dataset} and \cite{done-npcll_dataset}.
@@ -141,17 +134,18 @@ To fine-tune the \emph{seamless audio generation model}, we will use the \cite{X
 
 \section{Evaluation}
 
-\textbf{How is your method going to be evaluated?}
-For our \emph{guitar chords classifier model}, we have a baseline accuracy of 83.21\% achieved by Y. Kristian et al. \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024}.
+Given the nature of our tasks (object detection, classification and audio generation), we do not need to define our own metric for evaluation. Instead, we will use the following metrics to evaluate the performance of our models.
 
-\textbf{What metrics are suitable?}
-
-\textbf{Do you need to define your own metric for evaluation?}
+\begin{enumerate}[label=\arabic*), itemsep=0.25pt]
+    \item For the \emph{fretboard detection model}, we will use the \emph{Mean Average Precision (mAP)} and \emph{Intersection over Union (IoU)} to evaluate the model's performance.
+    \item For our \emph{guitar chords classifier model}, we will use the \emph{Cross-Entropy Loss} to evaluate the model's performance, along with \emph{accuracy}, which is more interpretable. Additionally, we have a baseline accuracy of 83.21\% achieved by Y. Kristian et al. \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024}.
+    \item Finally, for our \emph{seamless audio generation model}, we will use the Mean Squared Error (MSE) to evaluate the quality of the generated audio comparing it to the ground-truth audio found in \emph{GuitarSet} \cite{Xi2018}.
+\end{enumerate}
 
 %%%%%%%%% REFERENCES
 {\small
-\bibliographystyle{ieee_fullname}
-\bibliography{references}
+    \bibliographystyle{ieee_fullname}
+    \bibliography{references}
 }
 
 \end{document}
