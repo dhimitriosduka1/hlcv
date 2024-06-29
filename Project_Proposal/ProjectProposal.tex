@@ -14,7 +14,6 @@
 \usepackage{amssymb}
 \usepackage{booktabs}
 
-
 % It is strongly recommended to use hyperref, especially for the review version.
 % hyperref with option pagebackref eases the reviewers' job.
 % Please disable hyperref *only* if you encounter grave issues, e.g. with the
@@ -72,27 +71,38 @@ Task statement and definitions
 
 Motivation: Why do we need to explore this task?
 
-Related work: How do existing papers solve this task or similar tasks (should include relevant citations)?
+\textbf{Related work: How do existing papers solve this task or similar tasks (should include relevant citations)?}
 
-Challenge: What are the major challenges that have not been solved in this task?
+For the task of fretboard detection, Y. Kristian et al. \cite[2024]{Kristian_Zaman_Tenoyo_Jodhinata_2024} employed a Single Shot Detection (SSD) model undergirded by a MobileNetV2 base model, pre-trained on the Ego-Hand dataset. The subsystem processes the input image or video frame using a Deep Convolutional Neural Network (DCNN) model. The model generates coordinates for bounding boxes that outline thefretboard.
+
+\textbf{Challenge: What are the major challenges that have not been solved in this task?}
 
 \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024}
 \cite{du2023conditional}
 
 \section{Goals}
 
-What challenges do you aim to address in this task?
-
-What do you want to have completed by the mid-term? E.g., code for the task, data collection, results for baselines, etc.
-
-
-\begin{figure*}[h]\label{fig:diagram}
+\begin{figure*}[h]
     \centering
     \includegraphics[width=\textwidth]{images/task-diagram.pdf}
     \caption{Overview of the Model, showcasing the 2 most important tasks: 
     Fretboard Detection and Chord Classification, done for each frame of an input video. Image taken from \textit{Getty Stock Images}, confusion matrix image taken from \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024}.}
-    \label{fig:figure1}
+    \label{fig:model-diagram}
 \end{figure*}
+
+\textbf{What challenges do you aim to address in this task?}
+\cref{fig:model-diagram} illustrates a bird's eye view of our model architecture. Essentially, we aim to address the following 3 problems: 
+\begin{enumerate}
+    \item Fretboard Detection: Given an image or video frame, detect the fretboard of the guitar.
+    \item Chord Classification: Given an image or video frame, classify the chord being played.
+    \item Seamless Audio Generation: Given the chords being played, generate the audio of the music piece.
+\end{enumerate}
+the problem of chord recognition in a video. This is a challenging task since the video contains both audio and visual information. We aim to use both of these information to improve the accuracy of the chord recognition.
+
+
+\textbf{What do you want to have completed by the mid-term? E.g., code for the task, data collection, results for baselines, etc.}
+
+
 
 
 \section{Methods}
