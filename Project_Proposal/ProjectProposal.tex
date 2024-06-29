@@ -106,7 +106,14 @@ But, if deemed necessary, we will also explore other models.
 
 Why can the proposed method / analysis solve your problem?
 
+Since the original video frames may be of different view points, orientations or environments,
+preprocessing the image with a fretboard detection model will help to standardize the input for the chord classification model.
+Though the visual transformer model has been shown to have ability to capture feature with a relatively small patch size,
+in our case, the fretboard cropping step will help us to focus on the finger positions with more details and reduce computational cost as well.
+
+
 What are the main differences between your method and existing methods (if applicable)?
+Previous work 
 
 What is the required computational budget for the training/analysis? (E.g. are you planning on using pretrained backbones?)
 
