@@ -48,14 +48,14 @@
 \title{Team \#16: From Strings to Sequences --- Classifying and Generating Music from Acoustic Guitar Notes}
 
 \author{
-    Camilo Martínez\\
-    7057573\\
+ Camilo Martínez\\
+ 7057573\\
     \and
-    Dhimitrios Duka\\
-    7059153\\
+ Dhimitrios Duka\\
+ 7059153\\
     \and
-    Honglu Ma\\
-    7055053\\
+ Honglu Ma\\
+ 7055053\\
 }
 \maketitle
 
@@ -63,7 +63,7 @@
 \section{Task and Motivation}
 Automatic cord recognition (ACR) consists of recognizing the chords played in a music piece. This information is quite valuable since it can later be used for music analysis, music transcription, or even fixing corrupted musical performances. ACR was first introduced in 1999 by \cite{takuya1999realtime} where the author utilized lisp music to perform chord recognition at the signal level. Since then, many signal-level-based approaches have been introduced. However, these methods proved to be quite challenging and not very accurate.
 
-With the rise of deep learning, and especially computer vision, many researchers started to tackle this problem from a different perspective. They began to use spectrogram-based feature extraction methods to extract the features of the audio signal \cite{boulanger2013audio, korzeniowski2016feature, stark2009real}. However, despite the success of these methods, improvements plated \blockquote{due to the inherent shortcomings of the aural approach in handling highly timbre sounds} \cite{du2023conditional}.
+With the rise of deep learning, and especially computer vision, many researchers started to tackle this problem from a different perspective. They began to use spectrogram-based feature extraction methods to extract the features of the audio signal \cite{boulanger2013audio, korzeniowski2016feature, stark2009real}. However, despite the success of these methods, improvements plateaued \blockquote{due to the inherent shortcomings of the aural approach in handling highly timbre sounds} \cite{du2023conditional}.
 
 % Inspired by the fact that for most people it is easier to distinguish a note from a visual aspect rather than the sound of it, researchers started to come up with methods that leverage this fact. \cite{su2020audeo} successfully reconstructed audio from a video of a piano being played. However, the technique was only applied to a digital render of a piano, which does not depict a real-world scenario as no human was interacting with it.
 
@@ -78,7 +78,7 @@ Our work builds on top of the previously mentioned works \cite{Kristian_Zaman_Te
     \centering
     \includegraphics[width=\textwidth]{images/task-diagram.pdf}
     \caption{Overview of the Model, showcasing the 2 most important tasks:
-        Fretboard Detection and Chord Classification, done for each frame of an input video. Image taken from \textit{Getty Stock Images}, confusion matrix image taken from \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024}.}
+ Fretboard Detection and Chord Classification, are done for each frame of an input video. Image taken from \textit{Getty Stock Images}, confusion matrix image taken from \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024}.}
     \label{fig:model-diagram}
 \end{figure*}
 
@@ -88,7 +88,7 @@ Our work builds on top of the previously mentioned works \cite{Kristian_Zaman_Te
     \item \emph{Chord Classification}: Given an image or video frame, classify the chord being played.
     \item \emph{Seamless Audio Generation}: Given the chords being played, generate the audio of the music piece.
 \end{enumerate}
-Y. Kristian et al. \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024} focused on the first two problems, while we aim to address the third problem as well. This is a challenging task since it requires the model to seamlessly generate audio from the classified chords, effectively crossing into the \emph{generative} side of Neural Networks. That is, we aim to move beyong chord classification to also include audio synthesis. In Section \cref{sec:methods} and \cref{sec:datasets}, we briefly cover the methods and datasets we plan to use to address these challenges.
+Y. Kristian et al. \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024} focused on the first two problems, while we aim to address the third problem as well. This is a challenging task since it requires the model to seamlessly generate audio from the classified chords, effectively crossing into the \emph{generative} side of Neural Networks. That is, we aim to move beyond chord classification to also include audio synthesis. In Section \cref{sec:methods} and \cref{sec:datasets}, we briefly cover the methods and datasets we plan to use to address these challenges.
 
 By the mid-term, we aim to have completed data collection and pruning, the code for pre-training a YOLO architecture for the \emph{fretboard detection model}, and the \emph{guitar chords classifier model}.
 
@@ -96,12 +96,12 @@ By the mid-term, we aim to have completed data collection and pruning, the code 
 
 We are expecting to use the following models to solve the challenges\footnote{If deemed necessary, we will also explore other models.}:
 \begin{enumerate}[label=\arabic*), itemsep=0.25pt]
-    \item \textbf{Fretboard Detection}: We plan to use YOLOv9 \cite{wang2024yolov9}, a SOTA model in 2024, and fine-tune it for fretboard detection using the datasets metioned in \cref{sec:datasets}.
-    \item \textbf{Chord Classification}: We plan to use a tranformer based approach, mainly ViT \cite{dosovitskiy2020image}, and fine-tune it for guitar chord classification using the datasets metioned in \cref{sec:datasets}.
-    \item \textbf{Seamless Audio Generation}: We plan to try both a plain decoder architecture and a transformer based approach, MelodyDiffusion \cite{math11081915}.
+    \item \textbf{Fretboard Detection}: We plan to use YOLOv9 \cite{wang2024yolov9}, a SOTA model in 2024, and fine-tune it for fretboard detection using the datasets mentioned in \cref{sec:datasets}.
+    \item \textbf{Chord Classification}: We plan to use a tranformer-based approach, mainly ViT \cite{dosovitskiy2020image}, and fine-tune it for guitar chord classification using the datasets mentioned in \cref{sec:datasets}.
+    \item \textbf{Seamless Audio Generation}: We plan to try both a plain decoder architecture and a transformer-based approach, MelodyDiffusion \cite{math11081915}.
 \end{enumerate}
 
-Since the original video frames may be of different view points, orientations or environments, preprocessing the image with a \emph{fretboard detection model} will help to standardize the input for the \emph{chord classifier model}. Although the visual transformer model has demonstrated the ability to capture features with a relatively small patch size, in our case, the fretboard cropping step will help us focus on the finger positions with more detail and reduce computational cost as well.
+Since the original video frames may be of different viewpoints, orientations or environments, preprocessing the image with a \emph{fretboard detection model} will help to standardize the input for the \emph{chord classifier model}. Although the visual transformer model has demonstrated the ability to capture features with a relatively small patch size, in our case, the fretboard cropping step will help us focus on the finger positions with more detail and reduce computational costs as well.
 Furthermore, by including the \emph{seamless audio generation model}, we aim to provide a more complete solution to the problem of automatic chord recognition.
 
 Unlike Y. Kristian et al. \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024}, we do not plan to use Convolutional Neural Networks (CNNs) as a backbone for our approach. They used MobileNetV2 and MobileNetV1, which are CNN-based, for the fretboard detection and a Deep CNN for the chord classification. 
@@ -112,13 +112,13 @@ We are planning to use mostly pre-trained models and leverage transfer learning 
 
 We have chosen the following datasets to train and evaluate our models, depending on the specific task to address: \emph{fretboard detection}, \emph{chord classification}, and \emph{seamless audio generation}. Furthermore, we follow the contributions of \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024} and \cite{Jadhav_transferlearning} by first using three different pre-trained datasets to start off our models and leverage transfer learning techniques to improve the overall performance.
 \subsection{Pre-trained Datasets}
-The chosen datasets have each their own features, thus each one is used to pre-train a specific model.
+The chosen datasets have their own features, thus each one is used to pre-train a specific model.
 
 \begin{enumerate}[label=\arabic*), itemsep=0.25pt]
     \item \textbf{ImageNet Dataset}: This dataset is used for pre-training our \emph{guitar chords classifier model}. It has over 14 million images that cover 20,000 types of natural objects \cite{russakovsky2015imagenetlargescalevisual}.
     \item \textbf{COCO Dataset}: This dataset is used for pre-training our \emph{fretboard detection model}. The dataset is of considerable size and is dedicated to object identification. Approximately 200,000 labeled images are organized into 80 distinct categories \cite{lin2015microsoftcococommonobjects}. Although somewhat comparable to ImageNet, the COCO dataset possesses a distinct emphasis.
     \item \textbf{EgoHands Dataset}: Similar to ImageNet, this dataset is also used for pre-training our \emph{guitar chords classifier model}. The dataset includes over 15,000 hand images with high-quality labels \cite{Bambach_2015_ICCV}.
-    \item \textbf{GuitarSet}: This dataset is used for pre-training our \emph{seamless audio generation model} from the classified guitar chords. It provides high quality acoustic guitar recordings alongside time-aligned annotations including fret positions, chords, among others \cite{Xi2018}.
+    \item \textbf{GuitarSet}: This dataset is used for pre-training our \emph{seamless audio generation model} from the classified guitar chords. It provides high-quality acoustic guitar recordings alongside time-aligned annotations including fret positions, and chords, among others \cite{Xi2018}.
 \end{enumerate}
 
 \subsection{Fretboard Detection}\label{subsec:fretboard-detection}
@@ -132,7 +132,7 @@ To fine-tune the \emph{seamless audio generation model}, we will use the \cite{X
 
 \section{Evaluation}
 
-Given the nature of our tasks (object detection, classification and audio generation), we do not need to define our own metric for evaluation. Instead, we will use the following metrics to evaluate the performance of our models.
+Given the nature of our tasks (object detection, classification, and audio generation), we do not need to define our own metric for evaluation. Instead, we will use the following metrics to evaluate the performance of our models.
 
 \begin{enumerate}[label=\arabic*), itemsep=0.25pt]
     \item For the \emph{fretboard detection model}, we will use the \emph{Mean Average Precision (mAP)} and \emph{Intersection over Union (IoU)} to evaluate the model's performance.
