@@ -48,22 +48,22 @@
 \title{Team \#16: From Strings to Sequences --- Classifying and Generating Music from Acoustic Guitar Notes}
 
 \author{
-Camilo Martínez\\
-7057573\\
-\and
-Dhimitrios Duka\\
-7059153\\
-\and
-Honglu Ma\\
-7055053\\
+    Camilo Martínez\\
+    7057573\\
+    \and
+    Dhimitrios Duka\\
+    7059153\\
+    \and
+    Honglu Ma\\
+    7055053\\
 }
 \maketitle
 
 %%%%%%%%% BODY TEXT
 \section{Task and Motivation}
-Automatic cord recognition (ACR) consists of recognizing the chords played in a music piece. This information is quite valuable since it can later be used for music analysis, music transcription, or even fixing corrupted musical performances. ACR was first introduced in 1999 by \cite{takuya1999realtime} where the author utilized lisp music to perform chord recognition at the signal level. Since then, many signal-level-based approaches have been introduced. However, these methods proved to be quite challenging and not very accurate. 
+Automatic cord recognition (ACR) consists of recognizing the chords played in a music piece. This information is quite valuable since it can later be used for music analysis, music transcription, or even fixing corrupted musical performances. ACR was first introduced in 1999 by \cite{takuya1999realtime} where the author utilized lisp music to perform chord recognition at the signal level. Since then, many signal-level-based approaches have been introduced. However, these methods proved to be quite challenging and not very accurate.
 
-With the rise of deep learning, and especially computer vision, many researchers started to tackle this problem from a different perspective. They began to use spectrogram-based feature extraction methods to extract the features of the audio signal \cite{boulanger2013audio, korzeniowski2016feature, stark2009real}. However, despite the success of these methods, improvements plated \blockquote{due to the inherent shortcomings of the aural approach in handling highly timbre sounds} \cite{du2023conditional}. 
+With the rise of deep learning, and especially computer vision, many researchers started to tackle this problem from a different perspective. They began to use spectrogram-based feature extraction methods to extract the features of the audio signal \cite{boulanger2013audio, korzeniowski2016feature, stark2009real}. However, despite the success of these methods, improvements plated \blockquote{due to the inherent shortcomings of the aural approach in handling highly timbre sounds} \cite{du2023conditional}.
 
 Inspired by the fact that for most people it is easier to distinguish a note from a visual aspect rather than the sound of it, researchers started to come up with methods that leverage this fact. \cite{su2020audeo} successfully reconstructed audio from a video of a piano being played. However, the technique was only applied to a digital render of a piano, which does not depict a real-world scenario as no human was interacting with it.
 
@@ -77,12 +77,17 @@ Our work builds on top of the previously mentioned works \cite{Kristian_Zaman_Te
 \begin{figure*}[h]
     \centering
     \includegraphics[width=\textwidth]{images/task-diagram.pdf}
-    \caption{Overview of the Model, showcasing the 2 most important tasks: 
-    Fretboard Detection and Chord Classification, done for each frame of an input video. Image taken from \textit{Getty Stock Images}, confusion matrix image taken from \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024}.}
+    \caption{Overview of the Model, showcasing the 2 most important tasks:
+        Fretboard Detection and Chord Classification, done for each frame of an input video. Image taken from \textit{Getty Stock Images}, confusion matrix image taken from \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024}.}
     \label{fig:model-diagram}
 \end{figure*}
 
+<<<<<<< HEAD
 \cref{fig:model-diagram} illustrates a bird's eye view of our model architecture. Essentially, we aim to address the following three problems: 
+=======
+\textbf{What challenges do you aim to address in this task?}
+\cref{fig:model-diagram} illustrates a bird's eye view of our model architecture. Essentially, we aim to address the following three problems:
+>>>>>>> 6b01d2c6c929cf7c95b24cbfca7b947aeb227f85
 \begin{enumerate}[label=\arabic*)]
     \item \emph{Fretboard Detection}: Given an image or video frame, detect the bounding box that outlines the fretboard.
     \item \emph{Chord Classification}: Given an image or video frame, classify the chord being played.
@@ -95,6 +100,14 @@ By the mid-term, we aim to have completed data collection and pruning, the code 
 \section{Methods}\label{sec:methods}
 
 What models/frameworks do you use to solve the challenges?
+We are expecting to use the following models to solve the challenges:
+\begin{enumerate}
+    \item \textbf{Fretboard Detection}: We plan to use YOLOv9 \cite{wang2024yolov9} and fine-tune it for fretboard detection using the datasets metioned in \cref{sec:datasets}.
+    \item \textbf{Chord Classification}: We plan to use a tranformer based approach, mainly ViT \cite{dosovitskiy2020image}, and fine-tune it for guitar chord classification using the datasets metioned in \cref{sec:datasets}.
+    \item \textbf{Seamless Audio Generation}: We plane to try both a plain decoder architecture and a transformer based approach, MelodyDiffusion \cite{math11081915}.
+\end{enumerate}
+
+But, if deemed necessary, we will also explore other models.
 
 Why can the proposed method / analysis solve your problem?
 
