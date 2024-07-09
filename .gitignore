@@ -319,3 +319,5 @@ TSWLatexianTemp*
 # wandb
 wandb/
 Logs/
+
+Project/src/classification/dataset/*
