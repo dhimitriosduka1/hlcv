@@ -8,6 +8,7 @@ import shutil
 import zipfile
 import requests
 from roboflow import Roboflow
+from dataset import ChordsDataset
 from torch.utils.data import DataLoader
 from torch.utils.data import random_split
 from torchvision import transforms, datasets
@@ -23,11 +24,13 @@ def download_roboflow_data(config):
     version = project.version(roboflow_config["version"])
     dataset = version.download(model_format=roboflow_config["version_download"])
 
-    os.makedirs(config['data']['path'], exist_ok=True)
-    if not os.path.isdir(config['data']['path'] + "/" + dataset.name):
-        shutil.move(src=dataset.location, dst=config['data']['path'])
+    dest_path = config['data']['path'] + "/" + dataset.name
+
+    if not os.path.exists(dest_path):
+        shutil.move(src=dataset.location, dst=dest_path)
 
     print(f"Dataset downloaded and extracted to {config['data']['path']}")
+    return dataset, dest_path
 
 def load_config(config_path):
     with open(config_path, 'r') as file:
@@ -71,7 +74,7 @@ def main(config_path, wandb_config_path):
     
     # Download data from RoboFlow if specified
     if config['data'].get('use_roboflow', False):
-        download_roboflow_data(config)
+        _, location = download_roboflow_data(config)
     
     # Initialize wandb
     wandb.require("core")
@@ -87,10 +90,12 @@ def main(config_path, wandb_config_path):
     processor = ViTImageProcessor.from_pretrained(config['model']['pretrained_weights'])
     
     # Get transforms
-    train_transform, val_transform = get_transforms(config, processor)
+    train_transform, base_transform = get_transforms(config, processor)
 
-    # full_dataset = ChordClassificationDataset(config['data']['data_dir'], transform=None)
-    
+    train = ChordsDataset(location + "/train", location + "/train/_annotations.coco.json", transform=train_transform)
+    validation = ChordsDataset(location + "/valid", location + "/valid/_annotations.coco.json", transform=base_transform)
+    test = ChordsDataset(location + "/test", location + "/test/_annotations.coco.json", transform=base_transform)
+
     # # Split the dataset
     # total_size = len(full_dataset)
     # train_size = int(0.7 * total_size)
