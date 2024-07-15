@@ -321,3 +321,4 @@ wandb/
 Logs/
 
 Project/src/classification/dataset/*
+Guitar*
