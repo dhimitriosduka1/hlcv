@@ -1,4 +1,4 @@
-name: hlcv-ss2024
+name: hlcv
 channels:
   - pytorch
   - nvidia
