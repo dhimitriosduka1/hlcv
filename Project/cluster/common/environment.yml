@@ -1,4 +1,4 @@
-name: hlcv-ss23
+name: hlcv-ss24
 channels:
   - pytorch
   - nvidia
@@ -256,4 +256,4 @@ dependencies:
       - wandb==0.15.3
       - werkzeug==2.3.3
       - yarg==0.1.9
-prefix: /BS/text-to-3d/work/anaconda3/envs/hlcv-ss23
+prefix: /BS/text-to-3d/work/anaconda3/envs/hlcv-ss24
