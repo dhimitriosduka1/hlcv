@@ -2,17 +2,11 @@ wandb:
   project_name: "vit-fine-tuning"
 
 model:
+  name: "vit"
   pretrained_weights: "google/vit-base-patch16-224-in21k"
 
 data:
-  path: "./Project/src/classification/dataset"
-  use_roboflow: true  # Set to false if you don't want to download from RoboFlow
-  roboflow:
-    api_key: "yNn1Va9nIklUYwWWPSkC"
-    workspace: "my-work-3idwy"
-    project: "guitar-chord-tvon8"
-    version: 1
-    version_download: "coco" 
+  dataset: "dduka/guitar-chords"
   train_augmentation:
     random_resize_crop:
       size: [224, 224]

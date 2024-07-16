@@ -9,24 +9,16 @@
 # !pip install accelerate -U
 
 # %%
-import os
 import yaml
-import json
+
 import wandb
 import torch
-import shutil
 import numpy as np
 import torch.nn.functional as F
 import torchvision.transforms as transforms
 
-
-from PIL import Image
-from roboflow import Roboflow
-from torch.utils.data import Dataset
-from torchvision import transforms, datasets
-from sklearn.model_selection import train_test_split
 from datasets import load_dataset, DatasetDict, load_metric
-from transformers import ViTForImageClassification, ViTImageProcessor, TrainingArguments, Trainer, AutoImageProcessor
+from transformers import ViTForImageClassification, TrainingArguments, Trainer, AutoImageProcessor, ResNetForImageClassification
 
 # %%
 def load_config(config_path):
@@ -59,8 +51,8 @@ def get_transforms(config):
     return create_transform(config['data']['train_augmentation']), create_transform(config['data'].get('val_augmentation', {}))
 
 # %%
-f_run_config = "Project/src/classification/config.yml"
-f_wandb_config = "Project/src/classification/wandb.yml"
+f_run_config = "config-vit.yml"
+f_wandb_config = "wandb.yml"
 
 # %%
 # Load configuration
@@ -68,41 +60,58 @@ config = load_config(f_run_config)
 wandb_config = load_config(f_wandb_config)
 
 # %%
- # Load pre-trained model and processor
-model = ViTForImageClassification.from_pretrained(config['model']['pretrained_weights'])
-processor = ViTImageProcessor.from_pretrained(config['model']['pretrained_weights'])
-
-# %%
 # Get transforms
 train_transform, base_transform = get_transforms(config)
+
+# %%
+# Load the ds
+ds = load_dataset("dduka/guitar-chords")
+
+# %%
+labels = ds['train'].features['label']
+
+# %%
+model_name = config['model']['name']
+
+if model_name == 'vit':
+    model = ViTForImageClassification.from_pretrained(
+        config['model']['pretrained_weights'],
+        num_labels=len(labels.names),
+        id2label={str(i): c for i, c in enumerate(labels.names)},
+        label2id={c: str(i) for i, c in enumerate(labels.names)},
+        ignore_mismatched_sizes=True
+    )
+elif model_name == 'resnet152':
+    model = ResNetForImageClassification.from_pretrained(
+        config['model']['pretrained_weights'],
+        num_labels=len(labels.names)
+    )
+else:
+    raise ValueError(f"Model {model_name} not supported")
+
+processor = AutoImageProcessor.from_pretrained(config['model']['pretrained_weights'])
 
 # %%
 def transform(batch, is_train=True):
     # Resize the images to the desired size
     train_transforms, base_transforms = get_transforms(config)
     if is_train:
-        resized_images = [train_transforms(x.convert("RGB")) for x in batch['image']]
+        processed_images = [train_transforms(x.convert("RGB")) for x in batch['image']]
     else:
-        resized_images = [base_transforms(x.convert("RGB")) for x in batch['image']]
+        processed_images = [base_transforms(x.convert("RGB")) for x in batch['image']]
 
-    inputs = processor(resized_images, return_tensors='pt')
+    inputs = processor(processed_images, return_tensors='pt')
     inputs['label'] = batch['label']
 
     return inputs
 
 # %%
-# Load the ds
-ds = load_dataset("dduka/guitar-chords")
-
 # Split the data
 ds = DatasetDict({
     'train': ds['train'].with_transform(lambda batch: transform(batch, True)),
     'test': ds['test'].with_transform(lambda batch: transform(batch, False)),
     'valid': ds['validation'].with_transform(lambda batch: transform(batch, False))
 })
-
-# %%
-labels = ds['train'].features['label']
 
 # %%
 def collate_fn(batch):
@@ -116,18 +125,6 @@ metric = load_metric("accuracy")
 # %%
 def compute_metrics(p):
     return metric.compute(predictions=np.argmax(p.predictions, axis=1), references=p.label_ids)
-
-# %%
-model_name_or_path = 'google/vit-base-patch16-224-in21k'
-
-processor = AutoImageProcessor.from_pretrained(model_name_or_path)
-model = ViTForImageClassification.from_pretrained(
-    model_name_or_path,
-    num_labels=len(labels.names),
-    id2label={str(i): c for i, c in enumerate(labels.names)},
-    label2id={c: str(i) for i, c in enumerate(labels.names)},
-    ignore_mismatched_sizes=True
-)
 
 # %%
 # Initialize wandb
