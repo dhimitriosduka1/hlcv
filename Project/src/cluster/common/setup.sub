@@ -1,0 +1,16 @@
+universe                = docker
+docker_image            = continuumio/miniconda3
+should_transfer_files   = YES
+when_to_transfer_output = ON_EXIT_OR_EVICT
+getenv                  = HOME
++WantGPUHomeMounted     = true
+output                  = logs/setup.$(ClusterId).$(ProcId).out
+error                   = logs/setup.$(ClusterId).$(ProcId).err
+log                     = logs/setup.$(ClusterId).$(ProcId).log
+executable              = setup.sh
+environment             = PROJECT_ROOT=$ENV(PWD)
+request_GPUS            = 0
+request_CPUS            = 4
+request_memory          = 12G
+queue 1
+
