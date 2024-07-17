@@ -321,4 +321,4 @@ wandb/
 Logs/
 
 Project/src/classification/dataset/*
-Guitar*
+Project/src/cluster/logs/*
