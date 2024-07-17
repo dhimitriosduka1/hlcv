@@ -9,6 +9,7 @@
 # !pip install accelerate -U
 
 # %%
+import os
 import yaml
 
 import wandb
@@ -17,8 +18,11 @@ import numpy as np
 import torch.nn.functional as F
 import torchvision.transforms as transforms
 
+from huggingface_hub import login
 from datasets import load_dataset, DatasetDict, load_metric
 from transformers import ViTForImageClassification, TrainingArguments, Trainer, AutoImageProcessor, ResNetForImageClassification
+
+root_dir = str(os.getcwd()).split("src")[0]
 
 # %%
 def load_config(config_path):
@@ -51,19 +55,26 @@ def get_transforms(config):
     return create_transform(config['data']['train_augmentation']), create_transform(config['data'].get('val_augmentation', {}))
 
 # %%
-f_run_config = "config-vit.yml"
-f_wandb_config = "wandb.yml"
+f_run_config = root_dir + "src/classification/config-vit.yml"
+f_wandb_config = root_dir + "src/classification/wandb.yml"
+f_huggingface = root_dir + "src/classification/huggingface.yml"
 
 # %%
 # Load configuration
 config = load_config(f_run_config)
 wandb_config = load_config(f_wandb_config)
+huggingface = load_config(f_huggingface)
+
 
 # %%
 # Get transforms
 train_transform, base_transform = get_transforms(config)
 
 # %%
+
+# Login to Huggingface so that we don't get HTTP 429 error
+login(token=huggingface["token"])
+
 # Load the ds
 ds = load_dataset("dduka/guitar-chords")
 
@@ -120,7 +131,7 @@ def collate_fn(batch):
         'labels': torch.tensor([x['label'] for x in batch])
     }
 
-metric = load_metric("accuracy")
+metric = load_metric("accuracy", trust_remote_code=True)
 
 # %%
 def compute_metrics(p):
@@ -128,7 +139,7 @@ def compute_metrics(p):
 
 # %%
 # Initialize wandb
-wandb.require("core")
+wandb.login(key=wandb_config["token"])
 wandb.init(
     project=wandb_config["project"],
     name=wandb_config['name'] + "-" + wandb.util.generate_id(),
