@@ -1,0 +1,28 @@
+wandb:
+  project_name: "vit-fine-tuning"
+
+model:
+  name: "resnet152"
+  pretrained_weights: "microsoft/resnet-152"
+
+data:
+  dataset: "dduka/guitar-chords"
+  train_augmentation:
+    random_resize_crop:
+      size: [224, 224]
+      scale: [0.8, 1.0]
+      ratio: [0.75, 1.33]
+    random_horizontal_flip: 0.5
+    color_jitter:
+      brightness: 0.4
+      contrast: 0.4
+      saturation: 0.4
+      hue: 0.1
+    random_rotation: 15
+
+training:
+  output_dir: "output"
+  num_epochs: 5
+  batch_size: 16
+  learning_rate: 2e-5
+  final_model_path: "final_model"

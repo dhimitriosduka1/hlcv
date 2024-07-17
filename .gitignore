@@ -328,3 +328,6 @@ Guitar-necks-detector-1/
 
 # Others
 images/
+
+Project/src/classification/dataset/*
+Guitar*

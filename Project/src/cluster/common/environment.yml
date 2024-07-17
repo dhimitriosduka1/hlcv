@@ -1,0 +1,26 @@
+name: hlcv
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+dependencies:
+  - pytorch
+  - torchvision
+  - torchaudio
+  - pytorch-cuda=11.8
+  - matplotlib
+  - pandas
+  - notebook
+  - ipywidgets
+  - jupyter
+  - numpy
+  - sentencepiece
+  - protobuf
+  - datasets
+  - transformers
+  - diffusers
+  - peft
+  - h5py
+  - scikit-learn
+  - wandb
