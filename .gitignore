@@ -1,4 +1,5 @@
 ## Common
+.env
 .venv
 .vscode
 .idea
@@ -328,6 +329,7 @@ Guitar-necks-detector-1/
 
 # Others
 images/
-
 Project/src/classification/dataset/*
 Guitar*
+Project/src/fretboard-recognition/original_models
+Project/src/fretboard-recognition/pretrained_models
