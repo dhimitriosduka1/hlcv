@@ -311,6 +311,7 @@ TSWLatexianTemp*
 # Torch stuff
 *.ckpt
 *.pth
+*.pt
 
 *.gz
 *.meta
@@ -319,3 +320,11 @@ TSWLatexianTemp*
 # wandb
 wandb/
 Logs/
+*/runs/
+*/saved-models/
+
+# Datasets
+Guitar-necks-detector-1/
+
+# Others
+images/
