@@ -1,4 +1,5 @@
 ## Common
+.env
 .venv
 .vscode
 .idea
@@ -311,6 +312,7 @@ TSWLatexianTemp*
 # Torch stuff
 *.ckpt
 *.pth
+*.pt
 
 *.gz
 *.meta
@@ -319,6 +321,16 @@ TSWLatexianTemp*
 # wandb
 wandb/
 Logs/
+*/runs/
+*/saved-models/
 
+# Datasets
+Guitar-necks-detector-1/
+
+# Others
+images/
 Project/src/classification/dataset/*
 Project/src/cluster/logs/*
+Guitar*
+Project/src/fretboard-recognition/original_models
+Project/src/fretboard-recognition/pretrained_models

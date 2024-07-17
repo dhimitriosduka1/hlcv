@@ -1,0 +1,3 @@
+project: "fretboard-recognition"
+name: "yolo-v9"
+entity: "hwga-cj"
