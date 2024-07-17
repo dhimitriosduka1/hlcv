@@ -9,3 +9,20 @@ dependencies:
   - torchvision
   - torchaudio
   - pytorch-cuda=11.8
+  - matplotlib
+  - pandas
+  - notebook
+  - ipywidgets
+  - jupyter
+  - numpy
+  - sentencepiece
+  - protobuf
+  - datasets
+  - transformers
+  - diffusers
+  - peft
+  - h5py
+  - scikit-learn
+  - wandb
+  - libtiff 
+  - pillow
