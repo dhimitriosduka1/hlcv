@@ -29,7 +29,7 @@ def transform_and_encode(example, processor, transforms):
     """
     Apply transforms to an example and encode it using the processor.
     """
-    processed_images = [transforms(x.convert("RGB")) for x in example['img']]
+    processed_images = [transforms(x.convert("RGB")) for x in example['image']]
     inputs = processor(processed_images, return_tensors='pt')
     inputs['label'] = example['label']
 

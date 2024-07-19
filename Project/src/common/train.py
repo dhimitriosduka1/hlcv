@@ -52,7 +52,7 @@ def main(config_path):
     )
 
     # Start training
-    trainer.train()
+    # trainer.train()
 
     # Save the final model
     trainer.save_model(config['training']['final_model_path'])
