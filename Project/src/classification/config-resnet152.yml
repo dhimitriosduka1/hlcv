@@ -1,28 +1,42 @@
-wandb:
-  project_name: "vit-fine-tuning"
-
-model:
-  name: "resnet152"
-  pretrained_weights: "microsoft/resnet-152"
-
 data:
-  dataset: "dduka/guitar-chords"
-  train_augmentation:
-    random_resize_crop:
-      size: [224, 224]
-      scale: [0.8, 1.0]
-      ratio: [0.75, 1.33]
-    random_horizontal_flip: 0.5
-    color_jitter:
-      brightness: 0.4
-      contrast: 0.4
-      saturation: 0.4
-      hue: 0.1
-    random_rotation: 15
+  source: huggingface
+  name: dduka/guitar-chords
+  transforms:
+    train:
+      - name: RandomResizedCrop
+        params:
+          size: [224, 224]
+      - name: RandomHorizontalFlip
+        params:
+          p: 0.5
+      - name: ColorJitter
+        params:
+          brightness: 0.2
+          contrast: 0.2
+          saturation: 0.2
+          hue: 0.1
+      - name: ToTensor
+      - name: Normalize
+        params:
+          mean: [0.485, 0.456, 0.406]
+          std: [0.229, 0.224, 0.225]
+    base:
+      - name: Resize
+        params:
+          size: [224, 224]
+          
+model:
+  name: microsoft/resnet-152
+  num_labels: 14
 
 training:
-  output_dir: "output"
-  num_epochs: 5
-  batch_size: 16
-  learning_rate: 2e-5
-  final_model_path: "final_model"
+  output_dir: ./output
+  num_epochs: 20
+  batch_size: 32
+  learning_rate: 1e-4
+  logging_dir: ./logs
+  logging_steps: 100
+  final_model_path: ./resnet152_final_model
+
+wandb:
+  run_name: resnet152-guitar-chords
