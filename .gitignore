@@ -326,10 +326,11 @@ Logs/
 
 # Datasets
 Guitar-necks-detector-1/
+Project/src/fretboard-recognition/data
 
 # Others
-images/
 Project/src/classification/dataset/*
 Guitar*
 Project/src/fretboard-recognition/original_models
 Project/src/fretboard-recognition/pretrained_models
+Project/src/fretboard-recognition/guitar-necks-detector
