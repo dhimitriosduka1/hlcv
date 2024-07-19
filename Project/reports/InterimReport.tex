@@ -40,21 +40,20 @@
 \def\confName{CVPR}
 \def\confYear{2023}
 
-
 \begin{document}
 
 %%%%%%%%% TITLE - PLEASE UPDATE
-\title{Team \#16: Interim Report} 
+\title{Team \#16: Interim Report}
 
 \author{
- Camilo Martínez\\
- 7057573\\
+    Camilo Martínez\\
+    7057573\\
     \and
- Dhimitrios Duka\\
- 7059153\\
+    Dhimitrios Duka\\
+    7059153\\
     \and
- Honglu Ma\\
- 7055053\\
+    Honglu Ma\\
+    7055053\\
 }
 \maketitle
 
@@ -65,6 +64,46 @@
 \subsection{Creation of a custom dataset for chord classification}
 In the original paper, the authors train the models in a custom dataset that contains 14 classes (A, Am, B, Bm, C, Cm, D, Dm, E, Em, F, Fm, G, Gm). However, the datasets that we were able to find lacked some of them, mainly the minor chords. We employed two solutions to this problem. First, we enriched the dataset that we found by adding the missing classes. Second, we created our dataset. The setup was simple. First, a video for each chord was recorded using a smartphone. Each of the videos was 1:30 minutes long and was shot in 4k 60fps so that each retrieved frame would be of high quality and not subject to blurring. Second, we extracted each frame from the video and saved it as a downsampled image of size 640x360. In total, for each chord we had around 5000 frames, so we decided to use only 1 in 5 frames to reduce the overlap of the samples as much as possible. However, we still think that the sample overlapping could be an issue, so we will record more videos for each chord in the future.
 
+\begin{figure*}[h]
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/interim/dhimitrios-non-frozen.jpg}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/interim/dhimitrios.jpg}
+    \end{minipage}
+    \caption{\textbf{Left:} Prediction of our YOLOv9 \emph{fretboard detection model} finetuned without freezing the backbone. \textbf{Right:} Prediction of our YOLOv9 \emph{fretboard detection model} finetuned freezing every layer except the last one.}
+    \label{fig:dataset-example}
+\end{figure*}
+
+\begin{figure*}[h]
+    \begin{minipage}{0.33\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/interim/metrics-recall-fretboard.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.33\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/interim/metrics-mAP50-fretboard.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.33\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/interim/metrics-mAP50-95-fretboard.png}
+    \end{minipage}
+    \caption{\textbf{Left:} Prediction of our YOLOv9 \emph{fretboard detection model} finetuned without freezing the backbone. \textbf{Right:} Prediction of our YOLOv9 \emph{fretboard detection model} finetuned freezing every layer except the last one.}
+    \label{fig:metrics-fretboard}
+\end{figure*}
+
+\section{Fretboard Detection}
+
+
+\section{Fine Tuning Visual Transformer (ViT)}
+Different fine tuning methods were tried to adapt ViT to our inputs.
+\subsection{Full Fine Tuning}
+We first tried to fine tune the whole model. This was done by specifying the labels of our inputs to the pretrained model and it will attach a new MLP head to the classifier of the model which fits the dimensions of our labels and then the whole model were trained. We are getting a decent accuracy after adapting the model. \textbf{Attach figure of full fine tuning accuracy here.}
 \subsection{Fine-tuning ViT for chord classification}
 We tried to fine-tune the Vision Transformer (ViT) model for chord classification using different approaches.
 
@@ -85,10 +124,10 @@ Second, we faced some problems while fine-tuning YOLOv9 for fretboard detection.
 Lastly, during the classification phase, we faced some problems with data leakage. We noticed a rather high classification accuracy of 99\% in the validation set which was surprising to us. After some debugging, we found out that the problem originated from the preprocessing that we had applied to our classification dataset.
 
 
-%%%%%%%%% REFERENCES
-{\small
-\bibliographystyle{ieee_fullname}
-\bibliography{references}
-}
+    %%%%%%%%% REFERENCES
+    {\small
+        \bibliographystyle{ieee_fullname}
+        \bibliography{references}
+    }
 
 \end{document}
