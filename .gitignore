@@ -330,7 +330,9 @@ Project/src/fretboard-recognition/data
 
 # Others
 Project/src/classification/dataset/*
+Project/src/cluster/logs/*
 Guitar*
 Project/src/fretboard-recognition/original_models
 Project/src/fretboard-recognition/pretrained_models
 Project/src/fretboard-recognition/guitar-necks-detector
+Project/src/cluster/classification/output/*

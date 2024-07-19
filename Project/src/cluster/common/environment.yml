@@ -24,3 +24,5 @@ dependencies:
   - h5py
   - scikit-learn
   - wandb
+  - libtiff 
+  - pillow
