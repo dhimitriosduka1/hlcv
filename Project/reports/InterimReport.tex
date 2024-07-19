@@ -98,7 +98,27 @@ In the original paper, the authors train the models in a custom dataset that con
 \end{figure*}
 
 \section{Fretboard Detection}
+For our \emph{fretboard detection model}, we used a YOLOv9 backbone \cite{wang2024yolov9} pretrained on the COCO dataset. We tried two different fine-tuning methods: freezing every layer except the last one and not freezing any layer, that is, finetuning the whole model. The results of the two methods are shown in \cref{fig:dataset-example} and in \cref{fig:metrics-fretboard}. 
 
+Both methods are fundamentally different and serve different purposes. The first method is used to finetune the model to a specific task while keeping the backbone as it is. This allows us to keep the previous learned features and classes, i.e, the original 80 classes of the COCO dataset \cite{lin2015microsoftcococommonobjects}. On the other hand, the second method will finetune the whole model to the new task, while forgetting the previous learned features and classes. That is, the latter will have 2 classes after finetuning, the fretboard and the background.
+
+Table \ref{tab:fretboard-metrics} shows the metrics for the two methods. The results show that the full finetuning achieve the best metrics, with a precision of 96.4\%, a recall of 96.81\%, a mAP50 of 97.8\%, and a mAP50-95 of 85.3\%. On the other hand, the model finetuned by freezing every layer except the last one has a precision of 82.42\%, a recall of 74.80\%, a mAP50 of 87.02\%, and a mAP50-95 of 54.78\%. Eventhough the full finetuning method achieved better metrics, the other method has the added benefit that it will still predict the other 80 classes of the COCO dataset, plus the new \emph{fretboard} class. See \cref{fig:dataset-example} for a visual comparison of the two methods, where the left image shows only the \emph{fretboard} class and the right image shows the \emph{fretboard} class plus the other detected classes of the COCO dataset.
+
+\begin{table}[h!]
+    \centering
+    \caption{Summary of metrics for the 2 methods used to finetune our \emph{fretboard detection model}.}
+    \begin{tabular}{lcc}
+        \toprule
+        \textbf{Metric} & \textbf{Freezing layers except last} & \textbf{Full finetune} \\
+        \midrule
+        Precision (B)   & 0.8242 & 0.9643 \\
+        Recall (B)      & 0.7480 & 0.9681 \\
+        mAP50           & 0.8702 & 0.9778 \\
+        mAP50-95        & 0.5478 & 0.8530 \\
+        \bottomrule
+    \end{tabular}
+    \label{tab:fretboard-metrics}
+\end{table}
 
 \section{Fine Tuning Visual Transformer (ViT)}
 Different fine tuning methods were tried to adapt ViT to our inputs.
