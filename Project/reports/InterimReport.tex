@@ -66,12 +66,23 @@
 The datasets that we were able to find lacked some of the data that we needed in our training. This consited mostly of minor chords (Am, Dm, Em, etc.). To solve this issue, we decided to create our own dataset. The setup was simple. First, we recordered each a video for each chords using a smartphone. Each of the videos were shot in 60fps so that the each retreived frame would be of high quality and not subject to bluring. Each video was shot in 4k UHD and then downsampled to 640x360. In each frame we made sure that the freatboad was obvious so that spatial information could also be encoded from our classifier. Then, we wrote a script which would extract the frames from the video and save them as images. In total, for each chord we had around 5000 frames, so we decided to use only 1 in 5 frames so that we increase the diversity of the dataset. As far as vlaidation and testing goes,
 we will first try to use the previously mentioned datasets. However, we are expecting some issues because there could be different data distributions between the datasets. If this is the case, we will have to create our own validation and testing datasets as well.
 
+\section{Fine Tuning Visual Transformer (ViT)}
+Different fine tuning methods were tried to adapt ViT to our inputs.
+\subsection{Full Fine Tuning}
+We first tried to fine tune the whole model. This was done by specifying the labels of our inputs to the pretrained model and it will attach a new MLP head to the classifier of the model which fits the dimensions of our labels and then the whole model were trained. We are getting a decent accuracy after adapting the model. \textbf{Attach figure of full fine tuning accuracy here.}
 
+Next up, to be able to fine tune bigger models, we decided to try out other adaptation methods, especially the ones that reduce the trainable parameters of the model.
 
+\subsection{Training only the MLP head}
+We tried to train only the MLP head of the model. This was done by freezing the weights of the model and only training the weights of the classifier. However, this method was not successful and resulted in a bizarrely low accuracy. Our suspicion is that the pretrained model is not able to capture the features of our inputs and the extended MLP head is merely trying to predicting the labels on its own i.e. the same as a feed forward network.
+We also tried to unfreeze more layers of the model and they also didn't meet the expectation but the accuracy did increase which sorts of confirms our suspicion.
+\subsection{LoRA}
+To let the model extract useful features from our inputs, we cannot risk to freeze the encoders completely. Our next attempt was to use the low rank adaptation (LoRA) method. It is a method that reduces the number of parameters of the model by factorizing the weights of the projections in the attention part of the model. In this way, we hope to let the feature learned by the model and also decrease the number of trainable parameters. We are still in the process of trying this method and we are expecting to see some improvements in the accuracy.
 \section{Problems Encountered}
 The problems that we encountered are more of the technial nature. Maybe we can mention the problem with YOLO here where we removed every other class and we got a very high but not true accuracy. 
 
 Another problem was realted to teaining the model. We faced some issues with the provided cluster, but after some trial and errors, we were able to fix it and submit jobs to it. 
+
 
 %%%%%%%%% REFERENCES
 {\small
