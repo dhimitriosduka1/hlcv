@@ -44,24 +44,34 @@
 \begin{document}
 
 %%%%%%%%% TITLE - PLEASE UPDATE
-\title{Team N: Project Title}
+\title{Team \#16: Interim Report} 
 
 \author{
-Name 1\\
-Matriculation 1\\
-\and
-Name 2\\
-Matriculation 2\\
-\and
-Name 3\\
-Matriculation 3\\
+ Camilo Martínez\\
+ 7057573\\
+    \and
+ Dhimitrios Duka\\
+ 7059153\\
+    \and
+ Honglu Ma\\
+ 7055053\\
 }
 \maketitle
 
 %%%%%%%%% BODY TEXT
 \section{Progress Report}
-\section{Problems Encountered}
 
+
+\subsection{Creation of a custom dataset}
+The datasets that we were able to find lacked some of the data that we needed in our training. This consited mostly of minor chords (Am, Dm, Em, etc.). To solve this issue, we decided to create our own dataset. The setup was simple. First, we recordered each a video for each chords using a smartphone. Each of the videos were shot in 60fps so that the each retreived frame would be of high quality and not subject to bluring. Each video was shot in 4k UHD and then downsampled to 640x360. In each frame we made sure that the freatboad was obvious so that spatial information could also be encoded from our classifier. Then, we wrote a script which would extract the frames from the video and save them as images. In total, for each chord we had around 5000 frames, so we decided to use only 1 in 5 frames so that we increase the diversity of the dataset. As far as vlaidation and testing goes,
+we will first try to use the previously mentioned datasets. However, we are expecting some issues because there could be different data distributions between the datasets. If this is the case, we will have to create our own validation and testing datasets as well.
+
+
+
+\section{Problems Encountered}
+The problems that we encountered are more of the technial nature. Maybe we can mention the problem with YOLO here where we removed every other class and we got a very high but not true accuracy. 
+
+Another problem was realted to teaining the model. We faced some issues with the provided cluster, but after some trial and errors, we were able to fix it and submit jobs to it. 
 
 %%%%%%%%% REFERENCES
 {\small
