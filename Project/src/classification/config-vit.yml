@@ -36,6 +36,7 @@ training:
   learning_rate: 1e-4
   logging_dir: ./logs
   logging_steps: 100
+  early_stopping_patience: 3
   final_model_path: ./vit_final_model
 
 wandb:

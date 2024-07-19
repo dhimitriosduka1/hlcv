@@ -1,4 +1,3 @@
-# model.py
 from transformers import AutoFeatureExtractor, AutoModelForImageClassification
 
 def load_model_and_processor(model_config):

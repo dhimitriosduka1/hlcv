@@ -1,8 +1,6 @@
 # data_processing.py
 from datasets import load_dataset
-import torch
 from torchvision import transforms
-from PIL import Image
 
 def create_transform(transform_config):
     """
@@ -35,7 +33,7 @@ def transform_and_encode(example, processor, transforms):
 
     return inputs
 
-def load_and_prepare_dataset(data_config, model_config, processor):
+def load_and_prepare_dataset(data_config, processor):
     # Load dataset from Hugging Face datasets or local files
     if data_config['source'] == 'huggingface':
         dataset = load_dataset(data_config['name'], data_config.get('subset'))
