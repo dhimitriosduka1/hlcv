@@ -97,7 +97,7 @@ In the original paper, the authors train the models in a custom dataset that con
     \label{fig:metrics-fretboard}
 \end{figure*}
 
-\section{Fretboard Detection}
+\subsection{Fretboard Detection}
 For our \emph{fretboard detection model}, we used a YOLOv9 backbone \cite{wang2024yolov9} pretrained on the COCO dataset. We tried two different fine-tuning methods: freezing every layer except the last one and not freezing any layer, that is, finetuning the whole model. The results of the two methods are shown in \cref{fig:dataset-example} and in \cref{fig:metrics-fretboard}. 
 
 Both methods are fundamentally different and serve different purposes. The first method is used to finetune the model to a specific task while keeping the backbone as it is. This allows us to keep the previous learned features and classes, i.e, the original 80 classes of the COCO dataset \cite{lin2015microsoftcococommonobjects}. On the other hand, the second method will finetune the whole model to the new task, while forgetting the previous learned features and classes. That is, the latter will have 2 classes after finetuning, the fretboard and the background.
@@ -120,10 +120,6 @@ Table \ref{tab:fretboard-metrics} shows the metrics for the two methods. The res
     \label{tab:fretboard-metrics}
 \end{table}
 
-\section{Fine Tuning Visual Transformer (ViT)}
-Different fine tuning methods were tried to adapt ViT to our inputs.
-\subsection{Full Fine Tuning}
-We first tried to fine tune the whole model. This was done by specifying the labels of our inputs to the pretrained model and it will attach a new MLP head to the classifier of the model which fits the dimensions of our labels and then the whole model were trained. We are getting a decent accuracy after adapting the model. \textbf{Attach figure of full fine tuning accuracy here.}
 \subsection{Fine-tuning ViT for chord classification}
 We tried to fine-tune the Vision Transformer (ViT) model for chord classification using different approaches.
 
