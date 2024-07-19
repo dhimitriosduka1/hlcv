@@ -72,15 +72,15 @@ We tried to fine-tune the Vision Transformer (ViT) model for chord classificatio
 We first tried fine-tuning only the MLP head of ViT. This was done by freezing the weights of the model and only training the weights and biases of the classifier. We suspect that the pre-trained model is not able to capture the features of our inputs and the extended MLP head is merely trying to predict the labels on its own i.e. the same as a feed-forward network. We also tried to unfreeze more layers of the model and they also didn't meet the expectation but the accuracy did increase which sort of confirms our suspicion.
 
 \subsubsection{Full Fine Tuning}
-In our next approach, we implemented full fine-tuning of the entire model. This process involved specifying the labels of our inputs to the pre-trained model, which then automatically attached a new Multi-Layer Perceptron (MLP) head to its classifier. The results of this method were encouraging, as we observed a good performance on our task. Most notably, we achieved an accuracy of 86\% on the validation set.
+In our next approach, we implemented full fine-tuning of the entire model. This process involved specifying the labels of our inputs to the pre-trained model, which then automatically attached a new Multi-Layer Perceptron (MLP) head to its classifier. The results of this method were encouraging, as we observed a good performance on our task. Most notably, we achieved an accuracy of 86\% on the validation set of the enriched dataset.
 
 \subsubsection{Using PEFT methods}
-As our next step, we are also planning to use PEFT method to fine-tune the model. Specifically, we plan to use LoRA to reduce the number of parameters. We are still in the process of trying this method and we are expecting to see some improvements in training time without compromising on accuracy.
+As our next step, we are also planning to use PEFT \cite{peft} method to fine-tune the model. Specifically, we plan to use LoRA to reduce the number of parameters. We are still in the process of trying this method and we are expecting to see some improvements in training time without compromising on accuracy.
 
 \section{Problems Encountered}
 We encountered several issues during our work. Firstly, we faced some problems with the cluster. At first, we could not configure a conda environment or run our code. After some debugging, we were able to solve the problem by installing the packages in chunks instead of all at once.
 
-Second, we faced some problems while fine-tuning YOLOv9 for fretboard detection. At first, we were using Ultralytics to fine-tune the model. However, we noticed that the final model recognized only two classes: the fretboard and the background. This meant that the model was forgetting all other classes on which it was trained. We addressed this problem by implementing another approach based on \cite{}.
+Second, we faced some problems while fine-tuning YOLOv9 for fretboard detection. At first, we were using Ultralytics to fine-tune the model. However, we noticed that the final model recognized only two classes: the fretboard and the background. This meant that the model was forgetting all other classes on which it was trained. We addressed this problem by implementing another approach based on \cite{Extendin94:online}.
 
 Lastly, during the classification phase, we faced some problems with data leakage. We noticed a rather high classification accuracy of 99\% in the validation set which was surprising to us. After some debugging, we found out that the problem originated from the preprocessing that we had applied to our classification dataset.
 
