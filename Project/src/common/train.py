@@ -12,10 +12,13 @@ def main(config_path):
     # Load configuration
     config = load_config(config_path)
 
+    wandb_config = load_config("Project/src/common/wandb.yml")
+
     # Initialize wandb
     wandb.init(
-        project=config['wandb']['project'],
+        project=wandb_config['project'],
         name=config['wandb']['run_name'],
+        entity=wandb_config['entity'],
         config=config
     )
 
@@ -40,6 +43,7 @@ def main(config_path):
         load_best_model_at_end=True,
         report_to="wandb",
         metric_for_best_model="accuracy",
+        learning_rate=config['training']['learning_rate']
     )
 
     # Initialize Trainer
@@ -48,7 +52,7 @@ def main(config_path):
         args=training_args,
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
-        callbacks=[WandbCallback()],  # Add wandb callback
+        callbacks=[WandbCallback()],
     )
 
     # Start training
