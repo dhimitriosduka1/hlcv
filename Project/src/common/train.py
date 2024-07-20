@@ -1,10 +1,12 @@
 import os
 import wandb
 import argparse
+import datetime
 
 from transformers import Trainer, TrainingArguments, EarlyStoppingCallback
+from transformers.integrations import WandbCallback
 from config import load_config
-from metric import compute_metrics
+from metric_util import compute_metrics
 from data_processing import load_and_prepare_dataset, get_dataset_splits
 from model import load_model_and_processor
 
@@ -25,7 +27,7 @@ def main(args):
     model, processor = load_model_and_processor(config['model'])
 
     # Load and prepare dataset
-    processed_datasets = load_and_prepare_dataset(config['data'], config['model'], processor)
+    processed_datasets = load_and_prepare_dataset(config['data'], processor)
     train_dataset, eval_dataset, test_dataset = get_dataset_splits(processed_datasets)
 
     # Define training arguments
@@ -36,15 +38,17 @@ def main(args):
         per_device_eval_batch_size=config['training']['batch_size'],
         logging_dir=config['training']['logging_dir'],
         logging_steps=config['training']['logging_steps'],
-        evaluation_strategy="epoch",
-        save_strategy="epoch",
+        eval_strategy="steps",
+        save_strategy="steps",
+        eval_steps=10,
         remove_unused_columns=False,
         load_best_model_at_end=True,
         report_to="wandb",
         metric_for_best_model="accuracy",
-        learning_rate=config['training']['learning_rate'],
+        learning_rate=float(config['training']['learning_rate']),
         save_total_limit=2,
-        greater_is_better=True
+        greater_is_better=True,
+        logging_strategy="steps"
     )
 
     early_stopping_callback = EarlyStoppingCallback(
@@ -65,7 +69,9 @@ def main(args):
     trainer.train()
 
     # Save the final model
-    trainer.save_model(config['training']['final_model_path'])
+    trainer.save_model(
+        f"{config['training']['final_model_path']}_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S_%f')[:-3]}"
+    )
 
     # Evaluate on test set if available
     if test_dataset:
