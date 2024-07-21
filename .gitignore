@@ -28,7 +28,8 @@ Assignment_2/cifar-10-python.tar.gz
 # these rules might exclude image files for figures etc.
 # *.ps
 # *.eps
-*.pdf
+# *.pdf
+Project/reports/*.pdf
 
 ## Generated if empty string is given at "Please type another file name for output:"
 .pdf
@@ -336,7 +337,6 @@ Project/src/fretboard-recognition/original_models
 Project/src/fretboard-recognition/pretrained_models
 Project/src/fretboard-recognition/guitar-necks-detector
 Project/src/fretboard-recognition/final_models
-Project/src/fretboard-recognition/plots
 Project/src/cluster/classification/output/*
 Project/src/common/final_model/*
 Project/src/common/output/*
