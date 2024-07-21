@@ -340,3 +340,5 @@ Project/src/fretboard-recognition/plots
 Project/src/cluster/classification/output/*
 Project/src/common/final_model/*
 Project/src/common/output/*
+Project/src/common/*final_model*
+Project/src/cluster/classification/*json

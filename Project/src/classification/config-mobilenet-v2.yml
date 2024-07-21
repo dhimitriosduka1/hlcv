@@ -14,7 +14,7 @@ data:
           brightness: 0.2
           contrast: 0.2
           saturation: 0.2
-          hue: 0.1
+          hue: 0.1  
       - name: ToTensor
       - name: Normalize
         params:
@@ -26,7 +26,7 @@ data:
           size: [224, 224]
           
 model:
-  name: microsoft/resnet-152
+  name: google/mobilenet_v2_1.0_224
   num_labels: 14
 
 training:
@@ -37,7 +37,7 @@ training:
   logging_dir: ./logs
   logging_steps: 100
   early_stopping_patience: 5
-  final_model_path: ./resnet152_final_model
+  final_model_path: ./mobilenet_v2_final_model
 
 wandb:
-  run_name: resnet152-guitar-chords
+  run_name: mobilenet-v2-guitar-chords

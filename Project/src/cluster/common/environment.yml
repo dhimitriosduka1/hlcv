@@ -26,3 +26,5 @@ dependencies:
   - wandb
   - libtiff 
   - pillow
+  - metric
+  - evaluate
