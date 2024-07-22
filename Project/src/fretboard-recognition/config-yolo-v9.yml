@@ -3,6 +3,7 @@ wandb:
 
 model:
   name: "yolov9c"
+  freeze_layers: -1
 
 data:
   dataset: "guitar-necks-detector"
@@ -22,4 +23,3 @@ training:
   output_dir: "output"
   imgsz: 640
   epochs: 20
-  final_model_path: "final_models/yolov9c_final.pt"
