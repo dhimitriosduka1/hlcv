@@ -12,7 +12,7 @@ def create_transform(transform_config):
         params = transform.get('params', {})
         transform_class = getattr(transforms, name)
         transform_list.append(transform_class(**params))
-    
+
     return transforms.Compose(transform_list)
 
 def get_transforms(config):
@@ -36,10 +36,9 @@ def transform_and_encode(example, processor, transforms):
 def load_and_prepare_dataset(data_config, processor):
     # Load dataset from Hugging Face datasets or local files
     if data_config['source'] == 'huggingface':
-        dataset = load_dataset(data_config['name'], data_config.get('subset'))
+        dataset = load_dataset(data_config['name'])
     else:
-        # Implement custom data loading logic for local files
-        raise NotImplementedError("Local file loading not implemented")
+        dataset = load_dataset(data_config['source'], data_dir=data_config['name'])
 
     # Get transforms
     train_transforms, base_transforms = get_transforms(data_config)
@@ -49,7 +48,6 @@ def load_and_prepare_dataset(data_config, processor):
     for split in dataset.keys():
         is_train = split == 'train'
         transforms_to_apply = train_transforms if is_train else base_transforms
-        
         processed_datasets[split] = dataset[split].with_transform(
             lambda example: transform_and_encode(example, processor, transforms_to_apply)
         )

@@ -1,26 +1,29 @@
 data:
-  source: imagefolder
+  source: huggingface
   name: /home/hlcv_team015/datasets/guitar-chords-tiny
   transforms:
     train:
       - name: Resize
         params:
-          size: [244, 244]
+          size: [224, 224]
     base:
       - name: Resize
         params:
           size: [224, 224]
+          
 model:
-  name: google/vit-large-patch32-224-in21k
+  name: facebook/dinov2-large
   num_labels: 14
+
 training:
   output_dir: ./output
   num_epochs: 20
   batch_size: 16
-  learning_rate: 1e-4
+  learning_rate: 1e-5
   logging_dir: ./logs
   logging_steps: 100
   early_stopping_patience: 5
-  final_model_path: ./vit-large-patch32-224-in21k_final_model
+  final_model_path: dinov2-large_final_model
+
 wandb:
-  run_name: vit-large-patch32-224-in21k-guitar-chords
+  run_name: dinov2-large-guitar-chords-tiny

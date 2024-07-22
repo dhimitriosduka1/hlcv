@@ -9,6 +9,7 @@ from config import load_config
 from metric_util import compute_metrics
 from data_processing import load_and_prepare_dataset, get_dataset_splits
 from model import load_model_and_processor
+from collate_util import collate_fn
 
 def main(args):
     # Load configurations
@@ -62,7 +63,9 @@ def main(args):
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
         callbacks=[early_stopping_callback],
-        compute_metrics=compute_metrics
+        compute_metrics=compute_metrics,
+        data_collator=collate_fn,
+        tokenizer=processor
     )
 
     # Start training
