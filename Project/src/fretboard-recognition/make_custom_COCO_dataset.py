@@ -3,6 +3,7 @@ import os
 import shutil
 
 from common.utils import download_from
+from validate.download_coco import main as download_coco
 
 # Dataset name
 CUSTOM_DATASET_NAME = "guitar-necks-detector"
@@ -36,7 +37,7 @@ def download_custom_dataset() -> None:
     if os.path.exists(os.path.join(DATASETS_DIR, CUSTOM_DATASET_NAME)):
         print(f"The directory {CUSTOM_DATASET_NAME} already exists. Skipping download.")
         return
-    
+
     config = {
         "data": {
             "dataset": CUSTOM_DATASET_NAME,
@@ -61,7 +62,7 @@ def combine_custom_datasets() -> None:
     if os.path.exists(os.path.join(DATASETS_DIR, CUSTOM_DATASET_NAME)):
         print(f"The directory {CUSTOM_DATASET_NAME} already exists. Skipping combining.")
         return
-    
+
     # This will copy the .json files from the COCO version to the YOLOv9 version
     # and then delete the COCO version
     for set_ in ["train", "valid", "test"]:
@@ -94,8 +95,7 @@ def copy_coco_folder() -> None:
     """Copy the COCO dataset in the same folder."""
     # Make sure data/coco exists
     if not os.path.exists(COCO_DIR):
-        print("Please download the COCO dataset and place it in data/ or run validate/run.py once.")
-        exit(1)
+        download_coco()
 
     shutil.copytree(COCO_DIR, CUSTOM_COCO_DIR)
     print(f"Copied {COCO_DIR} to {CUSTOM_COCO_DIR}")
