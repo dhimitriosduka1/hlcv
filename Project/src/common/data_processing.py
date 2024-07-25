@@ -51,12 +51,25 @@ def load_and_prepare_dataset(data_config, processor):
         processed_datasets[split] = dataset[split].with_transform(
             lambda example: transform_and_encode(example, processor, transforms_to_apply)
         )
+    
+    additional_test_datasets = {}
+    # for dataset_name, dataset_info in data_config.get('additional_test_datasets', {}).items():
+    #     if dataset_info['source'] == 'huggingface':
+    #         dataset = load_dataset(dataset_info['name'])
+    #     else:
+    #         dataset = load_dataset(dataset_info['source'], data_dir=dataset_info['name'])
 
-    return processed_datasets
+    #     # Only process the test split for additional datasets
+    #     if 'test' in dataset:
+    #         additional_test_datasets[dataset_name] = dataset['test'].with_transform(
+    #             lambda example: transform_and_encode(example, processor, base_transforms)
+    #         )
+
+    return processed_datasets, additional_test_datasets
 
 def get_dataset_splits(processed_datasets):
     train_dataset = processed_datasets['train']
-    eval_dataset = processed_datasets['validation'] if 'validation' in processed_datasets else processed_datasets.get('test')
-    test_dataset = processed_datasets.get('test')
+    eval_dataset = processed_datasets['validation']
+    test_dataset = processed_datasets['test']
 
     return train_dataset, eval_dataset, test_dataset

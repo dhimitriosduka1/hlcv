@@ -1,0 +1,37 @@
+data:
+  source: imagefolder
+  name: /home/hlcv_team015/datasets/guitar-chords-ours-A-G
+  transforms:
+    train:
+      - name: Resize
+        params:
+          size: [244, 244]
+    base:
+      - name: Resize
+        params:
+          size: [224, 224]
+
+  additional_test_datasets:
+    guitar_chords_tiny:
+      name: /home/hlcv_team015/datasets/guitar-chords-tiny
+      source: "imagefolder"
+    guitar_chords_tiny_ours_A_G:
+      name: /home/hlcv_team015/datasets/guitar-chords-A-G
+      source: imagefolder
+
+model:
+  name: google/vit-base-patch16-224-in21k
+  num_labels: 7
+
+training:
+  output_dir: ./output
+  num_epochs: 5
+  batch_size: 32
+  learning_rate: 2e-5
+  logging_dir: Project/src/cluster/logs
+  logging_steps: 100
+  early_stopping_patience: 5
+  final_model_path: vit-base-patch16-224-in21k-final-model
+
+wandb:
+  run_name: vit-base-patch16-224-in21k
