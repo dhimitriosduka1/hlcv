@@ -1,6 +1,6 @@
 universe                = docker
 docker_image            = nvidia/cuda:11.4.3-runtime-ubuntu20.04
-executable              = submit.sh
+executable              = ../submit.sh
 
 # Python file to run, can also include arguments
 arguments               = train.py --config /home/hlcv_team015/hlcv/Project/src/classification/vit/config-vit-base.yml --wandb /home/hlcv_team015/hlcv/Project/src/common/wandb.yml
