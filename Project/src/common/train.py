@@ -13,7 +13,7 @@ from collate_util import collate_fn
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 
 def main(args):
-    EVAL_AND_SAVE_STEPS = 50
+    EVAL_AND_SAVE_STEPS = 2
     STRATEGY = "steps"
     SAVE_TOTAL_LIMIT = 2
     LOGING_STEPS = 100
@@ -70,6 +70,7 @@ def main(args):
         learning_rate=float(config['training']['learning_rate']),
         save_total_limit=SAVE_TOTAL_LIMIT,
         greater_is_better=True,
+        
         # WANDB
         report_to="wandb",
     )
