@@ -1,26 +1,15 @@
 data:
   source: imagefolder
   name: /home/hlcv_team015/datasets/guitar-chords-tiny
-  transforms:
-    train:
-      - name: Resize
-        params:
-          size: [244, 244]
-    base:
-      - name: Resize
-        params:
-          size: [224, 224]
+
 model:
   name: facebook/vit-mae-base
-  num_labels: 7
-training:
-  output_dir: ./output
+
+training:  
   num_epochs: 20
   batch_size: 16
-  learning_rate: 2e-5
-  logging_dir: ../../logs
-  logging_steps: 100
-  early_stopping_patience: 5
+  learning_rate: 1e-4
   final_model_path: vit-mae-base_final_model
+
 wandb:
   run_name: vit-mae-base-guitar-chords

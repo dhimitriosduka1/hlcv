@@ -1,27 +1,15 @@
 data:
   source: imagefolder
   name: /home/hlcv_team015/datasets/guitar-chords-A-G
-  transforms:
-    train:
-      - name: Resize
-        params:
-          size: [244, 244]
-    base:
-      - name: Resize
-        params:
-          size: [224, 224]
+
 model:
   name: facebook/dinov2-large
-  num_labels: 7
 
 training:
-  output_dir: ./output
   num_epochs: 20
   batch_size: 16
-  learning_rate: 2e-5
-  logging_dir: ../../logs
-  logging_steps: 100
-  early_stopping_patience: 3
+  learning_rate: 1e-4
   final_model_path: dinov2-large_final_model
+
 wandb:
   run_name: dinov2-large-guitar-chords

@@ -1,21 +1,26 @@
-import os
 import wandb
-import torch
 import argparse
 import datetime
 import numpy as np
 import matplotlib.pyplot as plt
 
 from transformers import Trainer, TrainingArguments, EarlyStoppingCallback
-from transformers.integrations import WandbCallback
 from config import load_config
 from metric_util import compute_metrics
 from data_processing import load_and_prepare_dataset, get_dataset_splits
 from model import load_model, load_processor
 from collate_util import collate_fn
-from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, recall_score
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 
 def main(args):
+    EVAL_AND_SAVE_STEPS = 50
+    STRATEGY = "steps"
+    SAVE_TOTAL_LIMIT = 2
+    LOGING_STEPS = 100
+    LOGING_DIR = "../../logs"
+    OUTPUT_DIR = "./output"
+    METRIC_FOR_BEST_MODEL = "accuracy"
+
     # Load configurations
     config = load_config(args.config)
     wandb_config = load_config(args.wandb)
@@ -38,37 +43,38 @@ def main(args):
     # Append current test ds to additional_test_datasets 
     additional_test_datasets["current_run"] = test_dataset
 
-    # Load model and processor
+    # Load labels
     labels = train_dataset.features["label"].names
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(f"Using device: {device}")
-
     model = load_model(config['model'], labels)
-    model.to(device)
 
     # Define training arguments
     training_args = TrainingArguments(
-        output_dir=config['training']['output_dir'],
+        use_cpu=False,
         num_train_epochs=config['training']['num_epochs'],
         per_device_train_batch_size=config['training']['batch_size'],
         per_device_eval_batch_size=config['training']['batch_size'],
-        logging_dir=config['training']['logging_dir'],
-        logging_steps=config['training']['logging_steps'],
-        eval_strategy="steps",
-        save_strategy="steps",
-        eval_steps=50,
-        save_steps=50,
         remove_unused_columns=False,
+        output_dir=OUTPUT_DIR,
+        logging_dir=LOGING_DIR,
+        logging_steps=LOGING_STEPS,
+        eval_strategy=STRATEGY,
+        save_strategy=STRATEGY,
+        eval_steps=EVAL_AND_SAVE_STEPS,
+        save_steps=EVAL_AND_SAVE_STEPS,
+        logging_strategy=STRATEGY,
+
+        # Early stopping 
         load_best_model_at_end=True,
-        report_to="wandb",
-        metric_for_best_model="accuracy",
+        metric_for_best_model=METRIC_FOR_BEST_MODEL,
         learning_rate=float(config['training']['learning_rate']),
-        save_total_limit=2,
+        save_total_limit=SAVE_TOTAL_LIMIT,
         greater_is_better=True,
-        logging_strategy="steps"
+        # WANDB
+        report_to="wandb",
     )
 
+    # Initialize EarlyStoppingCallback
     early_stopping_callback = EarlyStoppingCallback(
         early_stopping_patience=config['training'].get('early_stopping_patience', 3),
         early_stopping_threshold=0.01
@@ -98,6 +104,7 @@ def main(args):
     print(f"model_path:{ model_path}")
     print("-" * 100)
 
+    # Evaluate on additional test datasets
     for dataset_name, test_dataset in additional_test_datasets.items():
         print(f"Evaluating on {dataset_name}")
         test_results = trainer.evaluate(test_dataset)
