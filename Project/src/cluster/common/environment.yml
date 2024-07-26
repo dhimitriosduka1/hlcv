@@ -28,3 +28,4 @@ dependencies:
   - pillow
   - metric
   - evaluate
+  - seaborn

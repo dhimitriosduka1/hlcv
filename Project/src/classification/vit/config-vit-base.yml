@@ -1,0 +1,23 @@
+data:
+  source: imagefolder
+  name: /home/hlcv_team015/datasets/limited
+
+  additional_test_datasets:
+    guitar_chords_tiny:
+      name: /home/hlcv_team015/datasets/guitar-chords-tiny
+      source: imagefolder
+    guitar_chords_tiny_ours_A_G:
+      name: /home/hlcv_team015/datasets/guitar-chords-A-G
+      source: imagefolder
+
+model:
+  name: google/vit-base-patch16-224-in21k
+
+training:
+  num_epochs: 20
+  batch_size: 32
+  learning_rate: 1e-4
+  final_model_path: vit-base-patch16-224-in21k-final-model
+
+wandb:
+  run_name: vit-base-patch16-224-in21k

@@ -1,0 +1,15 @@
+data:
+  source: imagefolder
+  name: /home/hlcv_team015/datasets/guitar-chords-tiny
+
+model:
+  name: facebook/vit-mae-base
+
+training:  
+  num_epochs: 20
+  batch_size: 16
+  learning_rate: 1e-4
+  final_model_path: vit-mae-base_final_model
+
+wandb:
+  run_name: vit-mae-base-guitar-chords

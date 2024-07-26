@@ -1,17 +1,26 @@
-import os
 import wandb
 import argparse
 import datetime
+import numpy as np
+import matplotlib.pyplot as plt
 
 from transformers import Trainer, TrainingArguments, EarlyStoppingCallback
-from transformers.integrations import WandbCallback
 from config import load_config
 from metric_util import compute_metrics
 from data_processing import load_and_prepare_dataset, get_dataset_splits
-from model import load_model_and_processor
+from model import load_model, load_processor
 from collate_util import collate_fn
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 
 def main(args):
+    EVAL_AND_SAVE_STEPS = 2
+    STRATEGY = "steps"
+    SAVE_TOTAL_LIMIT = 2
+    LOGING_STEPS = 100
+    LOGING_DIR = "../../logs"
+    OUTPUT_DIR = "./output"
+    METRIC_FOR_BEST_MODEL = "accuracy"
+
     # Load configurations
     config = load_config(args.config)
     wandb_config = load_config(args.wandb)
@@ -24,36 +33,52 @@ def main(args):
         config=config
     )
 
-    # Load model and processor
-    model, processor = load_model_and_processor(config['model'])
+    # Load the processor
+    processor = load_processor(config['model'])
 
     # Load and prepare dataset
-    processed_datasets = load_and_prepare_dataset(config['data'], processor)
+    processed_datasets, additional_test_datasets = load_and_prepare_dataset(config['data'], processor)
     train_dataset, eval_dataset, test_dataset = get_dataset_splits(processed_datasets)
+
+    # Append current test ds to additional_test_datasets 
+    additional_test_datasets["current_run"] = test_dataset
+
+    # Load labels
+    labels = train_dataset.features["label"].names
+
+    model = load_model(config['model'], labels)
 
     # Define training arguments
     training_args = TrainingArguments(
-        output_dir=config['training']['output_dir'],
+        use_cpu=False,
         num_train_epochs=config['training']['num_epochs'],
         per_device_train_batch_size=config['training']['batch_size'],
         per_device_eval_batch_size=config['training']['batch_size'],
-        logging_dir=config['training']['logging_dir'],
-        logging_steps=config['training']['logging_steps'],
-        eval_strategy="steps",
-        save_strategy="steps",
-        eval_steps=10,
         remove_unused_columns=False,
+        output_dir=OUTPUT_DIR,
+        logging_dir=LOGING_DIR,
+        logging_steps=LOGING_STEPS,
+        eval_strategy=STRATEGY,
+        save_strategy=STRATEGY,
+        eval_steps=EVAL_AND_SAVE_STEPS,
+        save_steps=EVAL_AND_SAVE_STEPS,
+        logging_strategy=STRATEGY,
+
+        # Early stopping 
         load_best_model_at_end=True,
-        report_to="wandb",
-        metric_for_best_model="accuracy",
+        metric_for_best_model=METRIC_FOR_BEST_MODEL,
         learning_rate=float(config['training']['learning_rate']),
-        save_total_limit=2,
+        save_total_limit=SAVE_TOTAL_LIMIT,
         greater_is_better=True,
-        logging_strategy="steps"
+        
+        # WANDB
+        report_to="wandb",
     )
 
+    # Initialize EarlyStoppingCallback
     early_stopping_callback = EarlyStoppingCallback(
-        early_stopping_patience=config['training'].get('early_stopping_patience', 3)
+        early_stopping_patience=config['training'].get('early_stopping_patience', 3),
+        early_stopping_threshold=0.01
     )
 
     # Initialize Trainer
@@ -72,15 +97,34 @@ def main(args):
     trainer.train()
 
     # Save the final model
-    trainer.save_model(
-        f"{config['training']['final_model_path']}_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S_%f')[:-3]}"
-    )
+    model_dir = datetime.datetime.now().strftime('%Y%m%d_%H%M%S_%f')[:-3]
+    model_path = f"../models/{model_dir}/{config['training']['final_model_path']}"
+    model.save_pretrained(model_path, from_pt=True) 
 
-    # Evaluate on test set if available
-    if test_dataset:
+    print("-" * 100)
+    print(f"model_path:{ model_path}")
+    print("-" * 100)
+
+    # Evaluate on additional test datasets
+    for dataset_name, test_dataset in additional_test_datasets.items():
+        print(f"Evaluating on {dataset_name}")
         test_results = trainer.evaluate(test_dataset)
-        print(f"Test results: {test_results}")
-        wandb.log({"test": test_results})
+        print(f"Test results for {dataset_name}: {test_results}")
+        wandb.log({f"test_{dataset_name}": test_results})
+        
+        predictions = trainer.predict(test_dataset)
+        y_pred = np.argmax(predictions.predictions, axis=1)
+        y_true = predictions.label_ids
+
+        cm = confusion_matrix(y_true, y_pred)
+        disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=labels)
+        fig, ax = plt.subplots(figsize=(10, 8))
+        disp.plot(ax=ax, xticks_rotation=45)
+        plt.title(f'Confusion Matrix - {dataset_name}')
+
+        wandb.log({f"confusion_matrix_{dataset_name}": wandb.Image(plt)})
+
+        plt.close()
 
     # Finish wandb run
     wandb.finish()
