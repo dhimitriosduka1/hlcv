@@ -47,6 +47,8 @@ def load_and_prepare_dataset(data_config, processor):
     else:
         dataset = load_dataset(data_config['source'], data_dir=data_config['name'])
 
+    print(f"Using dataset: {data_config['name']}\n")
+
     # Get transforms
     train_transforms, base_transforms = get_transforms(data_config)
 

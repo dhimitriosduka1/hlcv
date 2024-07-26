@@ -6,7 +6,7 @@ def compute_metrics(eval_pred):
     labels = eval_pred.label_ids
     
     accuracy = accuracy_score(labels, predictions)
-    precision, recall, f1, _ = precision_recall_fscore_support(labels, predictions)
+    precision, recall, f1, _ = precision_recall_fscore_support(labels, predictions, average='weighted')
     
     metrics = {
         'accuracy': accuracy,

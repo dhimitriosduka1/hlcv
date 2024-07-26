@@ -3,7 +3,6 @@ import os
 import shutil
 
 from common.utils import download_from
-from validate.download_coco import main as download_coco
 
 # Dataset name
 CUSTOM_DATASET_NAME = "guitar-necks-detector"
@@ -91,14 +90,21 @@ def combine_custom_datasets() -> None:
     shutil.rmtree(os.path.join(DATASETS_DIR, "yolov9"))
 
 
-def copy_coco_folder() -> None:
+def copy_coco_folder() -> bool:
     """Copy the COCO dataset in the same folder."""
     # Make sure data/coco exists
     if not os.path.exists(COCO_DIR):
+        from validate.download_coco import main as download_coco
+
         download_coco()
 
-    shutil.copytree(COCO_DIR, CUSTOM_COCO_DIR)
-    print(f"Copied {COCO_DIR} to {CUSTOM_COCO_DIR}")
+    if not os.path.exists(CUSTOM_COCO_DIR):
+        shutil.copytree(COCO_DIR, CUSTOM_COCO_DIR)
+        print(f"Copied {COCO_DIR} to {CUSTOM_COCO_DIR}")
+        return True
+    else:
+        print(f"{CUSTOM_COCO_DIR} already exists. Skipping copy.")
+        return False
 
 
 def merge_annotations(
@@ -252,15 +258,15 @@ def delete_cache_file(file_="val2017.cache") -> None:
 def main() -> None:
     download_custom_dataset()
     combine_custom_datasets()
-    copy_coco_folder()
+    success = copy_coco_folder()
 
-    for subset in [("train", "train"), ("val", "valid"), ("test", "test")]:
-        print(f"Processing {subset}... ")
-        _ = merge_annotations(subset)
-        _ = copy_and_modify_files(subset)
-        print("... Done.")
-
-    delete_cache_file()
+    if success:
+        for subset in [("train", "train"), ("val", "valid"), ("test", "test")]:
+            print(f"Processing {subset}... ")
+            _ = merge_annotations(subset)
+            _ = copy_and_modify_files(subset)
+            print("... Done.")
+        delete_cache_file()
 
 
 if __name__ == "__main__":
