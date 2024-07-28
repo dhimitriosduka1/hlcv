@@ -94,11 +94,11 @@ def log_table_data(
     else:
         eval_results = trainer.predict(trainer.test_dataset)
 
-    losses_predictions, labels = eval_results
+    losses_predictions, labels, eval_metrics = eval_results
     _, _, predictions = losses_predictions
 
     if verbose:
-        print(f"Results: {eval_results[2]}")
+        print(f"Results: {eval_metrics}")
 
     predictions = preds_or_target_to_tensor(predictions)
     labels = preds_or_target_to_tensor(labels)

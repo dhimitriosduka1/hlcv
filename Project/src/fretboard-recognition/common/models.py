@@ -4,6 +4,8 @@ import torch
 from torchvision.models.detection import FasterRCNN_ResNet50_FPN_Weights, fasterrcnn_resnet50_fpn
 from transformers import PretrainedConfig, PreTrainedModel
 
+from common.utils import count_parameters, estimate_gflops, measure_inference_speed
+
 
 class FasterRCNN(PreTrainedModel):
     def __init__(self, config: PretrainedConfig) -> None:

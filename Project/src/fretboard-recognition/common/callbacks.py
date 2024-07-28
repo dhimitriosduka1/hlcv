@@ -56,6 +56,7 @@ class CustomWandbCallback(TrainerCallback):
 
         self.log_dict = {**self.log_dict, **log_dict}
 
+        # Log the training and validation metrics all at once with the same step being the epoch
         if (
             "train/loss" in self.log_dict
             and "val/loss" in self.log_dict
@@ -63,3 +64,12 @@ class CustomWandbCallback(TrainerCallback):
         ):
             wandb.log(self.log_dict, step=int(state.epoch))
             self.log_dict = {}
+
+        # Log model performance metrics
+        if "model/parameters" in logs:
+            performance_log_dict = {
+                "model/parameters": logs["model/parameters"],
+                "model/GFLOPs": logs["model/GFLOPs"],
+                "model/speed_PyTorch(ms)": logs["model/speed_PyTorch(ms)"],
+            }
+            wandb.log(performance_log_dict)

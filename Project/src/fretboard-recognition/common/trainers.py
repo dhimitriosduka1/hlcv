@@ -1,12 +1,14 @@
 from itertools import accumulate
 from transformers import Trainer
-from common.utils import safe_item
+from common.utils import count_parameters, estimate_gflops, measure_inference_speed, safe_item
 
 
 class CustomTrainer(Trainer):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, report_total_loss=True, log_performance_metrics=True, **kwargs):
         super().__init__(*args, **kwargs)
-        self.report_total_loss = True
+        self.report_total_loss = report_total_loss
+        self.log_performance_metrics = log_performance_metrics
+        self.model_performance_analyzed = False
         self.__reset_loss_tracking()
 
     def compute_loss(self, model, inputs, return_outputs=False):
@@ -55,6 +57,36 @@ class CustomTrainer(Trainer):
         # Reset loss tracking for the next epoch
         self.__reset_loss_tracking()
         super().log(output)
+
+    def model_performance_analysis(self, verbose=True) -> dict:
+        """Analyzes the model's performance in terms of the number of parameters, the number of
+        GigaFLOPs, and the inference speed in milliseconds.
+
+        Returns
+        -------
+        dict
+            A dictionary with keys being "model/parameters", "model/GFLOPs", and
+            "model/speed_PyTorch(ms)".
+        """
+        # Put model in eval mode for analysis
+        self.model.eval()
+
+        # Perform model performance analysis
+        num_params = count_parameters(self.model)
+        gflops = estimate_gflops(self.model)
+        inference_speed = measure_inference_speed(self.model)
+
+        if verbose:
+            print(f"Model Performance:")
+            print(f"Parameters: {num_params}")
+            print(f"GFLOPs: {gflops:.2f}")
+            print(f"Inference Speed: {inference_speed:.2f} ms")
+
+        return {
+            "model/parameters": num_params,
+            "model/GFLOPs": gflops,
+            "model/speed_PyTorch(ms)": inference_speed,
+        }
 
     def __reset_loss_tracking(self) -> None:
         self.total_train_loss = 0.0
