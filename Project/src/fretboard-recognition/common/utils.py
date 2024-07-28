@@ -3,6 +3,7 @@ import os
 import shutil
 from datetime import datetime
 from gc import collect as garbage_collect
+from typing import Any
 from warnings import warn
 
 import numpy as np
@@ -238,6 +239,16 @@ def predict(
     classes = classes[keep_score.cpu().numpy()] if classes is not None else None
 
     return boxes, classes, labels
+
+
+def safe_item(data: np.ndarray | torch.Tensor | float) -> Any:
+    """Safely gets the value of the data, whether it is a numpy array, torch tensor, or float."""
+    if isinstance(data, torch.Tensor) | isinstance(data, np.ndarray):
+        return data.item()
+    elif isinstance(data, float):
+        return data
+    else:
+        raise ValueError(f"Data type not supported: {type(data)} for {data}")
 
 
 def as_255(img: torch.Tensor | np.ndarray, astorch=True) -> torch.Tensor:

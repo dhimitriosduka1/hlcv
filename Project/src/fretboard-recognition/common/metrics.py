@@ -25,7 +25,8 @@ mean_average_precision_50_95 = MeanAveragePrecision(
 def compute_metrics(eval_pred: tuple[list[dict], list[dict]]) -> dict:
     """Returns a `dict` containing the mean average precision at 0.5, the mean average precision
     from 0.5 to 0.95, the precision, and the recall."""
-    predictions, labels = eval_pred
+    losses_predictions, labels = eval_pred
+    _, _, predictions = losses_predictions
 
     predictions = preds_or_target_to_tensor(predictions)
     labels = preds_or_target_to_tensor(labels)
@@ -93,8 +94,8 @@ def log_table_data(
     else:
         eval_results = trainer.predict(trainer.test_dataset)
 
-    predictions = eval_results[0]
-    labels = eval_results[1]
+    losses_predictions, labels = eval_results
+    _, _, predictions = losses_predictions
 
     if verbose:
         print(f"Results: {eval_results[2]}")
