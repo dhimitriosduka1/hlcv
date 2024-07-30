@@ -22,28 +22,26 @@ class CustomWandbCallback(TrainerCallback):
 
     def __init__(self):
         self.log_dict = {}
-        wandb.define_metric("Step")
-        wandb.define_metric("metrics/precision(B)", step_metric="Step")
 
     def on_log(self, args, state, control, logs=None, **kwargs):
         log_dict = {}
 
         # Log training metrics
-        if "loss" in logs:
+        if "train_loss" in logs:
             log_dict = {
                 **log_dict,
-                "train/loss": logs["loss"],
-                "train/cls_loss": logs.get("cls_loss", 0),
-                "train/box_loss": logs.get("box_loss", 0),
+                "train/loss": logs["train_loss"],
+                "train/cls_loss": logs.get("train_cls_loss", 0),
+                "train/box_loss": logs.get("train_box_loss", 0),
             }
 
         # Log evaluation metrics
         if "eval_loss" in logs:
             log_dict = {
                 **log_dict,
-                "eval/loss": logs["eval_loss"],
-                "eval/cls_loss": logs.get("eval_cls_loss", 0),
-                "eval/box_loss": logs.get("eval_box_loss", 0),
+                "val/loss": logs["eval_loss"],
+                "val/cls_loss": logs.get("eval_cls_loss", 0),
+                "val/box_loss": logs.get("eval_box_loss", 0),
             }
 
         # Log other evaluation metrics
@@ -58,11 +56,20 @@ class CustomWandbCallback(TrainerCallback):
 
         self.log_dict = {**self.log_dict, **log_dict}
 
+        # Log the training and validation metrics all at once with the same step being the epoch
         if (
             "train/loss" in self.log_dict
-            and "eval/loss" in self.log_dict
+            and "val/loss" in self.log_dict
             and "metrics/mAP50(B)" in self.log_dict
         ):
-            self.log_dict = {**self.log_dict, "Step": int(state.epoch)}
-            wandb.log(self.log_dict)
+            wandb.log(self.log_dict, step=int(state.epoch))
             self.log_dict = {}
+
+        # Log model performance metrics
+        if "model/parameters" in logs:
+            performance_log_dict = {
+                "model/parameters": logs["model/parameters"],
+                "model/GFLOPs": logs["model/GFLOPs"],
+                "model/speed_PyTorch(ms)": logs["model/speed_PyTorch(ms)"],
+            }
+            wandb.log(performance_log_dict)

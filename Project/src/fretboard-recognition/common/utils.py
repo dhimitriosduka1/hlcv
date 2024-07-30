@@ -1,8 +1,10 @@
 import colorsys
 import os
 import shutil
+import time
 from datetime import datetime
 from gc import collect as garbage_collect
+from typing import Any
 from warnings import warn
 
 import numpy as np
@@ -15,6 +17,7 @@ from dotenv import load_dotenv
 from matplotlib import font_manager as fm
 from matplotlib import pyplot as plt
 from roboflow import Roboflow
+from thop import profile
 from torch.cuda import empty_cache as cuda_empty_cache
 from torch.cuda import mem_get_info
 from torchvision.models.detection import FasterRCNN_ResNet50_FPN_Weights
@@ -240,6 +243,16 @@ def predict(
     return boxes, classes, labels
 
 
+def safe_item(data: np.ndarray | torch.Tensor | float) -> Any:
+    """Safely gets the value of the data, whether it is a numpy array, torch tensor, or float."""
+    if isinstance(data, torch.Tensor) | isinstance(data, np.ndarray):
+        return data.item()
+    elif isinstance(data, float):
+        return data
+    else:
+        raise ValueError(f"Data type not supported: {type(data)} for {data}")
+
+
 def as_255(img: torch.Tensor | np.ndarray, astorch=True) -> torch.Tensor:
     """Converts an image to a 255 scale."""
     if astorch:
@@ -373,3 +386,34 @@ def normalize_color_map(color_map: dict) -> dict:
     for key in color_map:
         color_map[key] = tuple([c / 255 for c in color_map[key]])
     return color_map
+
+
+def count_parameters(model: torch.nn.Module) -> int:
+    """Count the number of parameters in the `model`."""
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
+
+
+def estimate_gflops(model: torch.nn.Module, input_size=(1, 3, 640, 640)) -> float:
+    """Estimate the GFLOPs for the given `model` using the given `input_size`."""
+    input = torch.randn(input_size).to(next(model.parameters()).device)
+    flops, _ = profile(model, inputs=(input,))
+    return flops / 1e9  # Convert to GFLOPs
+
+
+def measure_inference_speed(model, input_size=(1, 3, 640, 640), num_iterations=100):
+    """Measure the inference speed of the `model` using the given `input_size` and `num_iterations`."""
+    input = torch.randn(input_size).to(next(model.parameters()).device)
+
+    # Warm-up
+    for _ in range(10):
+        _ = model(input)
+
+    # Measure
+    torch.cuda.synchronize()
+    start_time = time.time()
+    for _ in range(num_iterations):
+        _ = model(input)
+    torch.cuda.synchronize()
+    end_time = time.time()
+
+    return (end_time - start_time) / num_iterations * 1000  # ms

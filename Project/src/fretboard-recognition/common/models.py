@@ -4,6 +4,8 @@ import torch
 from torchvision.models.detection import FasterRCNN_ResNet50_FPN_Weights, fasterrcnn_resnet50_fpn
 from transformers import PretrainedConfig, PreTrainedModel
 
+from common.utils import count_parameters, estimate_gflops, measure_inference_speed
+
 
 class FasterRCNN(PreTrainedModel):
     def __init__(self, config: PretrainedConfig) -> None:
@@ -39,14 +41,32 @@ class FasterRCNN(PreTrainedModel):
                 raise ValueError("Labels must be provided during training")
         else:
             if labels is not None:
-                outputs = self.model(pixel_values, labels)
-                # Ensure we return a dictionary with 'loss' key for compatibility with Trainer
-                if isinstance(outputs, dict):
-                    if "loss" not in outputs:
-                        outputs["loss"] = torch.tensor(0.0)  # Add a dummy loss if not present
-                else:
-                    # If outputs is not a dict, wrap it in a dict
-                    outputs = {"loss": torch.tensor(0.0), "logits": outputs}
+                # Run the model in training model during evaluation, to get loss calculation
+                changed_state = False
+                if not self.model.training:
+                    self.model.train()
+                    changed_state = True
+
+                # Disable gradients mimicking eval mode
+                with torch.no_grad():
+                    outputs = self.model(pixel_values, labels)
+
+                if changed_state:
+                    self.model.eval()
+
+                # Return the predictions (instead of the loss, because we are in eval mode)
+                logits_outputs = self.model(pixel_values, labels)
+
+                # Calculate the loss
+                loss = sum(loss for loss in outputs.values() if isinstance(loss, torch.Tensor))
+
+                # Return the loss and the logits
+                return {
+                    "loss": loss,
+                    "cls_loss": outputs.get("loss_classifier", torch.tensor(0.0)),
+                    "box_loss": outputs.get("loss_box_reg", torch.tensor(0.0)),
+                    "logits": logits_outputs,
+                }
             else:
                 outputs = self.model(pixel_values)
 
