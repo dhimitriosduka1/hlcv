@@ -1,0 +1,47 @@
+# Ultralytics YOLO 🚀, AGPL-3.0 license
+# YOLOv9c object detection model. For Usage examples see https://docs.ultralytics.com/models/yolov9
+# 618 layers, 25590912 parameters, 104.0 GFLOPs
+
+# Parameters
+nc: 81 # number of classes
+
+# GELAN backbone
+backbone:
+  - [-1, 1, Conv, [64, 3, 2]] # 0-P1/2
+  - [-1, 1, Conv, [128, 3, 2]] # 1-P2/4
+  - [-1, 1, RepNCSPELAN4, [256, 128, 64, 1]] # 2
+  - [-1, 1, ADown, [256]] # 3-P3/8
+  - [-1, 1, RepNCSPELAN4, [512, 256, 128, 1]] # 4
+  - [-1, 1, ADown, [512]] # 5-P4/16
+  - [-1, 1, RepNCSPELAN4, [512, 512, 256, 1]] # 6
+  - [-1, 1, ADown, [512]] # 7-P5/32
+  - [-1, 1, RepNCSPELAN4, [512, 512, 256, 1]] # 8
+  - [-1, 1, SPPELAN, [512, 256]] # 9
+
+head:
+  - [-1, 1, nn.Upsample, [None, 2, "nearest"]]
+  - [[-1, 6], 1, Concat, [1]] # cat backbone P4
+  - [-1, 1, RepNCSPELAN4, [512, 512, 256, 1]] # 12
+
+  - [-1, 1, nn.Upsample, [None, 2, "nearest"]]
+  - [[-1, 4], 1, Concat, [1]] # cat backbone P3
+  - [-1, 1, RepNCSPELAN4, [256, 256, 128, 1]] # 15 (P3/8-small)
+
+  - [-1, 1, ADown, [256]]
+  - [[-1, 12], 1, Concat, [1]] # cat head P4
+  - [-1, 1, RepNCSPELAN4, [512, 512, 256, 1]] # 18 (P4/16-medium)
+
+  - [-1, 1, ADown, [512]]
+  - [[-1, 9], 1, Concat, [1]] # cat head P5
+  - [-1, 1, RepNCSPELAN4, [512, 512, 256, 1]] # 21 (P5/32-large)
+
+   # Layer 22. First list indicates the layers whose output are used as input.
+   # We indicate that this head has 80 outputs.
+  - [[15, 18, 21], 1, Detect, [80]] # Detect(P3, P4, P5)
+
+   # Layer 23. We indicate that this head has 2 outputs, because that's how
+   # many new classes we added.
+  - [[15, 18, 21], 1, Detect, [1]] # Detect(P3, P4, P5) #23 new classes
+
+  # ConcatHead takes in layer 22 and 23 and concatenates the output.
+  - [[22, 23], 1, ConcatHead, [80, 1]] # Concat #22 and #23
