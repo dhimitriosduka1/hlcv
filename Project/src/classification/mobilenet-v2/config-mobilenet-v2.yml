@@ -1,6 +1,14 @@
 data:
   source: imagefolder
-  name: /home/hlcv_team015/datasets/guitar-chords-A-G
+  name: /home/hlcv_team015/datasets/merged_ds
+
+  additional_test_datasets:
+    guitar_chords_tiny:
+      name: /home/hlcv_team015/datasets/guitar-chords-tiny
+      source: imagefolder
+    guitar_chords_tiny_ours_A_G:
+      name: /home/hlcv_team015/datasets/guitar-chords-A-G
+      source: imagefolder
           
 model:
   name: google/mobilenet_v2_1.0_224

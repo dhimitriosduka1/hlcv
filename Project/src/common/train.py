@@ -1,4 +1,5 @@
 import wandb
+import torch
 import argparse
 import datetime
 import numpy as np
@@ -13,7 +14,7 @@ from collate_util import collate_fn
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 
 def main(args):
-    EVAL_AND_SAVE_STEPS = 2
+    EVAL_AND_SAVE_STEPS = 10
     STRATEGY = "steps"
     SAVE_TOTAL_LIMIT = 2
     LOGING_STEPS = 100
@@ -47,6 +48,11 @@ def main(args):
     labels = train_dataset.features["label"].names
 
     model = load_model(config['model'], labels)
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print(f"Using device: {device}")
+
+    model.to(device)
 
     # Define training arguments
     training_args = TrainingArguments(

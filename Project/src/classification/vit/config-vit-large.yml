@@ -1,6 +1,6 @@
 data:
   source: imagefolder
-  name: /home/hlcv_team015/datasets/limited
+  name: /home/hlcv_team015/datasets/merged_ds
   
   additional_test_datasets:
     guitar_chords_tiny:
