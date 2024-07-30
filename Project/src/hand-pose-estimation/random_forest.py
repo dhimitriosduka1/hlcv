@@ -199,7 +199,7 @@ def main():
     logging.info("Starting chord classification script")
     
     # Load and preprocess data
-    base_path = '/home/dhimitrios-duka/Documents/UdS/SoSe 2024/High-Level Computer Vision/Assignments/hlcv/Project/src/hand-pose-ess/merged_ds'
+    base_path = 'merged_ds'
     logging.info(f"Loading data from {base_path}")
     X_train, X_test, y_train, y_test = load_data(base_path)
 
