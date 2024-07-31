@@ -3,7 +3,7 @@ docker_image            = nvidia/cuda:11.4.3-runtime-ubuntu20.04
 executable              = ../submit.sh
 
 # Python file to run, can also include arguments
-arguments               = train.py --config /home/hlcv_team015/hlcv/Project/src/classification/vit/config-vit-base.yml --wandb /home/hlcv_team015/hlcv/Project/src/common/wandb.yml --sweep
+arguments               = train_with_sweep.py --wandb /home/hlcv_team015/hlcv/Project/src/common/wandb.yml
 
 # Paths to output, error, and log files
 output                  = ../../logs/submit.$(ClusterId).$(ProcId).out

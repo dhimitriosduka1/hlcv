@@ -10,13 +10,13 @@ data:
       name: /home/hlcv_team015/datasets/guitar-chords-A-G
       source: imagefolder
           
-model:
+model:  
   name: google/mobilenet_v2_1.0_224
 
 training:
   num_epochs: 10
   batch_size: 32
-  learning_rate: 1e-4
+  learning_rate: 1e-5
   final_model_path: ./mobilenet_v2_final_model
 
 wandb:

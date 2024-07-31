@@ -1,8 +1,10 @@
+import torch
 import wandb
 import torch
 import argparse
 import datetime
 import numpy as np
+import mediapipe as mp
 import matplotlib.pyplot as plt
 
 from transformers import Trainer, TrainingArguments, EarlyStoppingCallback
@@ -12,6 +14,41 @@ from data_processing import load_and_prepare_dataset, get_dataset_splits
 from model import load_model, load_processor
 from collate_util import collate_fn
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+
+class HybridModel(torch.nn.Module):
+    def __init__(self, chord_model, hand_pose_model, num_classes):
+        super().__init__(HybridModel)
+        self.chord_model = chord_model
+        self.hand_pose_model = hand_pose_model
+        self.classifier = torch.nn.Linear(chord_model.config.hidden_size + hand_pose_model.config.hidden_size, num_classes)
+
+        # Freeze the hand pose model
+        for param in self.hand_pose_model.parameters():
+            param.requires_grad = False
+
+    def forward(self, pixel_values, hand_pose_pixel_values):
+        chord_outputs = self.chord_model(pixel_values)
+        with torch.no_grad():   
+            hand_pose_outputs = self.hand_pose_model(hand_pose_pixel_values)
+        
+        combined_features = torch.cat((chord_outputs.pooler_output, hand_pose_outputs.pooler_output), dim=1)
+        logits = self.classifier(combined_features)
+        return logits
+
+def combined_collate_fn(batch):
+    chord_inputs = [item['pixel_values'] for item in batch]
+    hand_pose_inputs = [item['hand_pose_pixel_values'] for item in batch]
+    labels = [item['label'] for item in batch]
+    
+    chord_inputs = torch.stack(chord_inputs)
+    hand_pose_inputs = torch.stack(hand_pose_inputs)
+    labels = torch.tensor(labels)
+    
+    return {
+        'pixel_values': chord_inputs,
+        'hand_pose_pixel_values': hand_pose_inputs,
+        'labels': labels
+    }
 
 def main(args):
     EVAL_AND_SAVE_STEPS = 10
@@ -47,12 +84,15 @@ def main(args):
     # Load labels
     labels = train_dataset.features["label"].names
 
-    model = load_model(config['model'], labels)
+    chord_model = load_model(config['model'], labels)
+    hand_pose_model = mp.solutions.hands.Hands(static_image_mode=True, max_num_hands=1, min_detection_confidence=0.5)
+
+    hybrid_model = HybridModel(chord_model, hand_pose_model, len(labels))
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
 
-    model.to(device)
+    hybrid_model.to(device)
 
     # Define training arguments
     training_args = TrainingArguments(
@@ -89,13 +129,13 @@ def main(args):
 
     # Initialize Trainer
     trainer = Trainer(
-        model=model,
+        model=hybrid_model,
         args=training_args,
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
         callbacks=[early_stopping_callback],
         compute_metrics=compute_metrics,
-        data_collator=collate_fn,
+        data_collator=combined_collate_fn,
         tokenizer=processor
     )
 
