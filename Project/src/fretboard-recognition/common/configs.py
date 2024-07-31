@@ -1,5 +1,3 @@
-from enum import EnumType
-
 from torch import nn
 from torchvision.models.detection import (
     FasterRCNN_MobileNet_V3_Large_320_FPN_Weights,
@@ -81,7 +79,7 @@ class ObjectDetectorConfig(PretrainedConfig):
                 f"Model type '{self.model_type}' not available. Choose one of {self.AVAILABLE_MODEL_TYPES}"
             )
 
-    def get_weights(self) -> EnumType:
+    def get_weights(self):
         """Returns the weights class based on the model type."""
         if self.model_type == "fasterrcnn_resnet50_fpn":
             return FasterRCNN_ResNet50_FPN_Weights
