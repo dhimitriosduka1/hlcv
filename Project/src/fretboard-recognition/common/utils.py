@@ -59,6 +59,18 @@ def ensure_directory_exists(directory: str, make=True, raise_error=False) -> Non
             print(f"The directory {directory} exists.")
 
 
+def rename_folder(old_name, new_name):
+    try:
+        os.rename(old_name, new_name)
+        print(f"Folder renamed successfully from '{old_name}' to '{new_name}'")
+    except FileNotFoundError:
+        print(f"Error: The folder '{old_name}' does not exist.")
+    except PermissionError:
+        print(f"Error: Permission denied. Unable to rename the folder.")
+    except OSError as e:
+        print(f"Error: An OS error occurred: {e}")
+
+
 def available_device(verbose=False) -> torch.device:
     """Returns the available device for training. If a GPU is available, it will return that,
     otherwise, it will return the CPU."""

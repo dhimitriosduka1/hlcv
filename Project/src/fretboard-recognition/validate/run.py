@@ -11,23 +11,33 @@ batch_size = 32
 conf = 0.001
 iou = 0.7
 device = 0
-weights_path = os.path.join(PARENT_DIR, "final_models", "yolov9c_finetuned.pt")
-save_dir = "yolov9c_finetuned_test"
+weights_path = os.path.join(
+    PARENT_DIR, "final_models", "fasterrcnn_mobilenet_v3_large_fpn_finetuned.pt"
+)
+save_dir = "fasterrcnn_mobilenet_v3_large_fpn_finetuned"
 
 # Construct the command
 command = [
     "python",
     os.path.join(CURRENT_DIR, "val.py"),
-    "--data", data_path,
-    "--img", str(img_size),
-    "--batch", str(batch_size),
-    "--conf", str(conf),
-    "--iou", str(iou),
-    "--device", str(device),
-    "--weights", weights_path,
+    "--data",
+    data_path,
+    "--img",
+    str(img_size),
+    "--batch",
+    str(batch_size),
+    "--conf",
+    str(conf),
+    "--iou",
+    str(iou),
+    "--device",
+    str(device),
+    "--weights",
+    weights_path,
     "--verbose",
     "--save-json",
-    "--name", save_dir
+    "--name",
+    save_dir,
 ]
 
 # Run the command

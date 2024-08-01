@@ -153,7 +153,7 @@ def merge_annotations(
         # Merge annotations
         max_ann_id = max(ann["id"] for ann in coco_data["annotations"])
         for ann in custom_data["annotations"]:
-            ann["id"] += max_ann_id
+            ann["id"] += max_ann_id + 1
             ann["image_id"] += max_image_id
             ann["category_id"] = new_category_id
             coco_data["annotations"].append(ann)

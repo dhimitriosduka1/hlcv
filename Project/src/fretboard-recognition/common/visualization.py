@@ -67,7 +67,7 @@ def draw_colored_boxes(
         ax.axis("off")
 
         # Add a legend for the classes
-        if class_names is not None and show_colorbar:
+        if class_names is not None and show_colorbar and classes is not None:
             show_classes = class_names
             if only_existing_classes_in_colorbar:
                 show_classes = np.unique(classes).tolist()

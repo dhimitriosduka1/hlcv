@@ -1,29 +1,29 @@
 import os
 
 import torch
-from torchvision.models.detection import FasterRCNN_ResNet50_FPN_Weights, fasterrcnn_resnet50_fpn
-from transformers import PretrainedConfig, PreTrainedModel
-
-from common.utils import count_parameters, estimate_gflops, measure_inference_speed
+from common.configs import ObjectDetectorConfig
+from transformers import PreTrainedModel
 
 
-class FasterRCNN(PreTrainedModel):
-    def __init__(self, config: PretrainedConfig) -> None:
+class ObjectDetector(PreTrainedModel):
+    def __init__(self, config: ObjectDetectorConfig) -> None:
         super().__init__(config)
+        self.model_type = config.model_type
         self.num_labels = config.num_labels
         self.trainable_backbone_layers = config.trainable_backbone_layers
         self.model_dir = config.model_dir
         if self.model_dir:
             os.environ["TORCH_HOME"] = self.model_dir
 
-        self.model = fasterrcnn_resnet50_fpn(
-            weights=FasterRCNN_ResNet50_FPN_Weights.COCO_V1,
+        self.model = config.get_model()(
+            weights=config.get_weights().COCO_V1,
             trainable_backbone_layers=self.trainable_backbone_layers,
         )
+        self.__config = config
 
     def get_transforms(self):
         """Returns the transforms defined for the pre-trained weights of the model."""
-        return FasterRCNN_ResNet50_FPN_Weights.COCO_V1.transforms()
+        return self.__config.get_weights().COCO_V1.transforms()
 
     def forward(self, pixel_values=None, labels=None):
         if self.training:
@@ -34,8 +34,8 @@ class FasterRCNN(PreTrainedModel):
 
                 return {
                     "loss": loss,
-                    "cls_loss": outputs["loss_classifier"],
-                    "box_loss": outputs["loss_box_reg"],
+                    "cls_loss": outputs.get("loss_classifier", torch.tensor(0.0)),
+                    "box_loss": outputs.get("loss_box_reg", torch.tensor(0.0))
                 }
             else:
                 raise ValueError("Labels must be provided during training")
