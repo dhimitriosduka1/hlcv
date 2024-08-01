@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from transformers import Trainer, TrainingArguments, EarlyStoppingCallback
 from config import load_config
 from metric_util import compute_metrics
-from data_processing import load_and_prepare_dataset, get_dataset_splits
+from data_processing import load_and_prepare_dataset, get_dataset_splits, load_datasets_for_irv2
 from model import load_model, load_processor
 from collate_util import collate_fn
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay

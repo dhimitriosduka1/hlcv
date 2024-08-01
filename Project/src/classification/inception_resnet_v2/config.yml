@@ -10,8 +10,6 @@ data:
       name: /home/hlcv_team015/datasets/guitar-chords-A-G
       source: imagefolder
 
-base_model: True
-
 training:
   num_epochs: 20
   batch_size: 32

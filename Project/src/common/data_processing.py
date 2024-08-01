@@ -5,6 +5,9 @@ import numpy as np
 from datasets import load_dataset
 from torchvision import transforms
 
+from timm.data import resolve_data_config
+from timm.data.transforms_factory import create_transform
+
 mp_hands = mp.solutions.hands
 hands = mp_hands.Hands(static_image_mode=True, max_num_hands=1, min_detection_confidence=0.5)
 
@@ -114,3 +117,39 @@ def get_dataset_splits(processed_datasets):
     test_dataset = processed_datasets['test']
 
     return train_dataset, eval_dataset, test_dataset
+
+def load_datasets_for_irv2(data_config, model):
+    # Loading the data for the InceptionResNetV2 model
+    config = resolve_data_config({}, model=model)
+    transform = create_transform(**config)
+    print(transform)
+
+    def __transform_and_encode(batch, transforms):
+        return {
+            "pixel_values": [transforms(x.convert("RGB")) for x in batch['image']],
+            "label": batch['label']
+        }
+    
+    dataset = load_dataset(data_config['source'], data_dir=data_config['name'])
+    
+    # Prepare datasets
+    processed_datasets = {}
+    for split in dataset.keys():
+        processed_datasets[split] = dataset[split].with_transform(
+            lambda example: __transform_and_encode(example, transform)
+        )
+    
+    extra_test_datasets = {}
+    for dataset_name, dataset_info in data_config.get('additional_test_datasets', {}).items():
+        if dataset_info['source'] == 'huggingface':
+            dataset = load_dataset(dataset_info['name'])
+        else:
+            dataset = load_dataset(dataset_info['source'], data_dir=dataset_info['name'])
+
+        # Only process the test split for additional datasets
+        if 'test' in dataset:
+            extra_test_datasets[dataset_name] = dataset['test'].with_transform(
+                lambda example: __transform_and_encode(example, transform)
+            )
+
+    return processed_datasets, extra_test_datasets
