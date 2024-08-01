@@ -4,6 +4,8 @@ from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 def compute_metrics(eval_pred):
     predictions = np.argmax(eval_pred.predictions, axis=1)
     labels = eval_pred.label_ids
+
+    print(labels)
     
     accuracy = accuracy_score(labels, predictions)
     precision, recall, f1, _ = precision_recall_fscore_support(labels, predictions, average='weighted')
@@ -14,5 +16,7 @@ def compute_metrics(eval_pred):
         'recall': recall,
         'f1': f1
     }
+
+    print(metrics)
     
     return metrics

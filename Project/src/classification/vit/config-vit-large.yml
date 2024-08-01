@@ -11,13 +11,13 @@ data:
       source: imagefolder
       
 model:
-  name: google/vit-large-patch16-224-in21k
+  name: google/vit-large-patch32-224-in21k
 
 training:
   num_epochs: 20
   batch_size: 32
-  learning_rate: 3e-6
-  final_model_path: vit-large-patch16-224-in21k
+  learning_rate: 1e-5
+  final_model_path: vit-large-patch32-224-in21k
 
 wandb:
-  run_name: vit-large-patch16-224-in21k
+  run_name: vit-large-patch32-224-in21k

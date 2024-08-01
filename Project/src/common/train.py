@@ -12,6 +12,8 @@ from data_processing import load_and_prepare_dataset, get_dataset_splits
 from model import load_model, load_processor
 from collate_util import collate_fn
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+from peft_util import apply_lora
+from hybrid_model import HybridModel
 
 def main(args):
     EVAL_AND_SAVE_STEPS = 10
@@ -19,12 +21,14 @@ def main(args):
     SAVE_TOTAL_LIMIT = 2
     LOGING_STEPS = 100
     LOGING_DIR = "../../logs"
-    OUTPUT_DIR = "./output"
+    OUTPUT_DIR = "./output" 
     METRIC_FOR_BEST_MODEL = "accuracy"
 
     # Load configurations
     config = load_config(args.config)
     wandb_config = load_config(args.wandb)
+
+    use_hybrid_model = config.get('use_hybrid', True)
 
     # Initialize wandb
     wandb.init(
@@ -38,7 +42,7 @@ def main(args):
     processor = load_processor(config['model'])
 
     # Load and prepare dataset
-    processed_datasets, additional_test_datasets = load_and_prepare_dataset(config['data'], processor)
+    processed_datasets, additional_test_datasets = load_and_prepare_dataset(config['data'], processor, use_hybrid_model)
     train_dataset, eval_dataset, test_dataset = get_dataset_splits(processed_datasets)
 
     # Append current test ds to additional_test_datasets 
@@ -48,6 +52,9 @@ def main(args):
     labels = train_dataset.features["label"].names
 
     model = load_model(config['model'], labels)
+
+    if use_hybrid_model:
+        model = HybridModel(model, len(labels))
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
@@ -69,6 +76,9 @@ def main(args):
         eval_steps=EVAL_AND_SAVE_STEPS,
         save_steps=EVAL_AND_SAVE_STEPS,
         logging_strategy=STRATEGY,
+
+        # Uncomment for peft
+        # label_names=["labels"],
 
         # Early stopping 
         load_best_model_at_end=True,
@@ -116,6 +126,10 @@ def main(args):
         print(f"Evaluating on {dataset_name}")
         test_results = trainer.evaluate(test_dataset)
         print(f"Test results for {dataset_name}: {test_results}")
+        
+        # Replacing eval_ with test
+        test_results = {key.replace('eval_', 'test_'): value for key, value in test_results.items()}
+
         wandb.log({f"test_{dataset_name}": test_results})
         
         predictions = trainer.predict(test_dataset)

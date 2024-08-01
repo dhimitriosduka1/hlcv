@@ -28,4 +28,5 @@ dependencies:
   - pillow
   - metric
   - evaluate
-  - seaborn
+  - peft
+  - mediapipe
