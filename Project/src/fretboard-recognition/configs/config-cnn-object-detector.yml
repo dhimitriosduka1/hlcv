@@ -1,17 +1,17 @@
 model:
-  name: fcos_resnet50_fpn
+  name: fasterrcnn_resnet50_fpn_v2
   model_dir: ./original_models
   num_labels: 2
-  trainable_backbone_layers: 5
+  trainable_backbone_layers: 1
 
 training:
-  output_dir: ./final_models/fasterrcnn_mobilenet_v3_large_fpn/output
+  output_dir: ./final_models/fasterrcnn_resnet50_fpn_v2/output
   num_epochs: 20
   batch_size: 8
   warmup_steps: 500
   weight_decay: 0.01
   learning_rate: 1e-4
-  logging_dir: ./final_models/fasterrcnn_mobilenet_v3_large_fpn/logs
+  logging_dir: ./final_models/fasterrcnn_resnet50_fpn_v2/logs
   logging_steps: 100
   eval_strategy: epoch
   eval_steps: 50

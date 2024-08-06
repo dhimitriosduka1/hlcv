@@ -33,7 +33,7 @@ def draw_colored_boxes(
     if class_names is not None:
         color_map = create_color_map(class_names)
 
-    if classes is not None and isinstance(classes[0], int):
+    if classes is not None and len(classes) > 0 and isinstance(classes[0], int):
         classes = [class_names[cls] for cls in classes]
 
     if classes is not None:
