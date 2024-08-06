@@ -5,16 +5,16 @@ CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 PARENT_DIR = os.path.dirname(CURRENT_DIR)
 
 # Specify your variables here
-data_path = os.path.join(CURRENT_DIR, "data", "coco-custom.yaml")
+data_path = os.path.join(CURRENT_DIR, "data", "coco.yaml")
 img_size = 640
 batch_size = 32
 conf = 0.001
 iou = 0.7
 device = 0
 weights_path = os.path.join(
-    PARENT_DIR, "final_models", "fasterrcnn_mobilenet_v3_large_fpn_finetuned.pt"
+    PARENT_DIR, "original_models", "yolov10l.pt"
 )
-save_dir = "fasterrcnn_mobilenet_v3_large_fpn_finetuned"
+save_dir = "yolov10l_original_model_baseline"
 
 # Construct the command
 command = [

@@ -23,6 +23,7 @@ from torch.cuda import mem_get_info
 from torchvision.models.detection import FasterRCNN_ResNet50_FPN_Weights
 from torchvision.ops import nms
 from transformers import Trainer
+from ultralytics import YOLO
 
 load_dotenv()
 
@@ -31,6 +32,14 @@ def load_config(config_path: str) -> dict:
     """Loads a YAML config file."""
     with open(config_path, "r") as file:
         return yaml.safe_load(file)
+
+
+def load_finetuned_yolo_model(model: str, architecture_yaml: str, state_dict_path: str) -> YOLO:
+    """Loads a finetuned YOLO model from the given `model`, `architecture_yaml`, and `state_dict_path`."""
+    model = YOLO(architecture_yaml, task="detect").load(model)
+    state_dict = torch.load(state_dict_path)
+    model.load_state_dict(state_dict, strict=False)
+    return model
 
 
 def clean_cache():

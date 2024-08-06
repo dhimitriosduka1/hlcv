@@ -343,6 +343,7 @@ Project/src/common/final_model/*
 Project/src/common/output/*
 Project/src/common/*final_model*
 Project/src/models
+Project/datasets
 
 *.json
 *.err
