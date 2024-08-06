@@ -1,3 +1,5 @@
+import torch.nn as nn
+import timm
 import wandb
 import torch
 import argparse
@@ -8,13 +10,44 @@ import matplotlib.pyplot as plt
 from transformers import Trainer, TrainingArguments, EarlyStoppingCallback
 from config import load_config
 from metric_util import compute_metrics
-from data_processing import load_and_prepare_dataset, get_dataset_splits, load_datasets_for_irv2
-from model import load_model, load_processor
+from data_processing import get_dataset_splits, load_datasets_for_irv2
 from collate_util import collate_fn
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
-from peft_util import apply_lora
-from hybrid_model import HybridModel
 
+class InceptionResnetV2(nn.Module):
+    def __init__(self, num_classes=7):
+        super(InceptionResnetV2, self).__init__()
+        
+        # Load pre-trained InceptionResNetV2 from timm
+        self.base_model = timm.create_model('inception_resnet_v2', pretrained=True)
+        
+        # Freeze the base model parameters
+        for param in self.base_model.parameters():
+            param.requires_grad = False
+        
+        # Remove the original classification layer
+        num_ftrs = self.base_model.classif.in_features
+        self.base_model.classif = nn.Identity()
+        
+        # Define the sequential model for additional layers
+        self.classifier = nn.Sequential(
+            nn.AdaptiveAvgPool2d((5, 5)),
+            nn.Flatten(),
+            nn.Linear(num_ftrs, 256),
+            nn.ReLU(),
+            nn.Dropout(0.3),
+            nn.Linear(256, 128),
+            nn.ReLU(),
+            nn.Dropout(0.3),
+            nn.Linear(128, num_classes)
+        )
+
+    def forward(self, x):
+        x = self.base_model(x)
+        x = self.classifier(x)
+        return x
+
+# There is some code duplication wrt train.py but I was lazy to refactor it
 def main(args):
     EVAL_AND_SAVE_STEPS = 10
     STRATEGY = "steps"
@@ -28,8 +61,6 @@ def main(args):
     config = load_config(args.config)
     wandb_config = load_config(args.wandb)
 
-    use_hybrid_model = config.get('use_hybrid', True)
-
     # Initialize wandb
     wandb.init(
         project=wandb_config['project'],
@@ -38,11 +69,10 @@ def main(args):
         config=config
     )
 
-    # Load the processor
-    processor = load_processor(config['model'])
+    model = InceptionResnetV2(num_classes=7)
 
     # Load and prepare dataset
-    processed_datasets, additional_test_datasets = load_and_prepare_dataset(config['data'], processor, use_hybrid_model)
+    processed_datasets, additional_test_datasets = load_datasets_for_irv2(config['data'], model)
     train_dataset, eval_dataset, test_dataset = get_dataset_splits(processed_datasets)
 
     # Append current test ds to additional_test_datasets 
@@ -50,11 +80,6 @@ def main(args):
 
     # Load labels
     labels = train_dataset.features["label"].names
-
-    model = load_model(config['model'], labels)
-
-    if use_hybrid_model:
-        model = HybridModel(model, len(labels))
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
@@ -76,11 +101,6 @@ def main(args):
         eval_steps=EVAL_AND_SAVE_STEPS,
         save_steps=EVAL_AND_SAVE_STEPS,
         logging_strategy=STRATEGY,
-
-        # Uncomment for peft
-        # label_names=["labels"],
-
-        # Early stopping 
         load_best_model_at_end=True,
         metric_for_best_model=METRIC_FOR_BEST_MODEL,
         learning_rate=float(config['training']['learning_rate']),
@@ -105,8 +125,7 @@ def main(args):
         eval_dataset=eval_dataset,
         callbacks=[early_stopping_callback],
         compute_metrics=compute_metrics,
-        data_collator=collate_fn,
-        tokenizer=processor
+        data_collator=collate_fn
     )
 
     # Start training

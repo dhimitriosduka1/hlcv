@@ -10,14 +10,16 @@ data:
       name: /home/hlcv_team015/datasets/guitar-chords-A-G
       source: imagefolder
 
+lora: true
+
 model:
   name: facebook/dinov2-large
 
 training:
   num_epochs: 20
-  batch_size: 16
+  batch_size: 256
   learning_rate: 1e-5
-  final_model_path: dinov2-large_final_model
+  final_model_path: dinov2-large
 
 wandb:
-  run_name: dinov2-large-guitar-chords
+  run_name: dinov2-large
