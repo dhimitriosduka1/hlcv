@@ -1,36 +1,7 @@
-# data_processing.py
-import mediapipe as mp
 import numpy as np
 
 from datasets import load_dataset
 from torchvision import transforms
-
-from timm.data import resolve_data_config
-from timm.data.transforms_factory import create_transform
-
-mp_hands = mp.solutions.hands
-hands = mp_hands.Hands(static_image_mode=True, max_num_hands=1, min_detection_confidence=0.5)
-
-def extract_hand_features(image):
-    results = hands.process(image)
-    if results.multi_hand_landmarks:
-        # Extract the 21 hand landmarks
-        landmarks = results.multi_hand_landmarks[0].landmark
-        return np.array([[lm.x, lm.y, lm.z] for lm in landmarks]).flatten()
-    else:
-        return np.zeros(21 * 3)
-
-def process_example(example):
-    # Process image for vision model
-    inputs = processor(images=example["image"], return_tensors="pt")
-    
-    # Extract hand features
-    hand_features = extract_hand_features(example["image"])
-    
-    # Combine inputs
-    inputs['hand_features'] = torch.tensor(hand_features)
-    
-    return inputs
 
 def create_transform(transform_config):
     """
@@ -56,7 +27,7 @@ def get_transforms(config):
     base_transforms = create_transform(config['transforms']['base'])
     return train_transforms, base_transforms
 
-def transform_and_encode(batch, processor, transforms, include_hand_features=False):
+def transform_and_encode(batch, processor, transforms):
     """
     Apply transforms to an example and encode it using the processor.
     """
@@ -67,15 +38,10 @@ def transform_and_encode(batch, processor, transforms, include_hand_features=Fal
 
     inputs = processor(processed_images, return_tensors='pt')
     inputs['label'] = batch['label']
-    
-    if include_hand_features:
-        # Extract hand features
-        hand_poses = [extract_hand_features(np.array(x)) for x in batch['image']]
-        inputs['hand_features'] = hand_poses
 
     return inputs
 
-def load_and_prepare_dataset(data_config, processor, include_hand_features=False):
+def load_and_prepare_dataset(data_config, processor):
     # Load dataset from Hugging Face datasets or local files
     if data_config['source'] == 'huggingface':
         dataset = load_dataset(data_config['name'])
@@ -93,7 +59,7 @@ def load_and_prepare_dataset(data_config, processor, include_hand_features=False
         is_train = split == 'train'
         transforms_to_apply = train_transforms if is_train else base_transforms
         processed_datasets[split] = dataset[split].with_transform(
-            lambda example: transform_and_encode(example, processor, transforms_to_apply, include_hand_features)
+            lambda example: transform_and_encode(example, processor, transforms_to_apply)
         )
     
     extra_test_datasets = {}
@@ -106,7 +72,7 @@ def load_and_prepare_dataset(data_config, processor, include_hand_features=False
         # Only process the test split for additional datasets
         if 'test' in dataset:
             extra_test_datasets[dataset_name] = dataset['test'].with_transform(
-                lambda example: transform_and_encode(example, processor, base_transforms, include_hand_features)
+                lambda example: transform_and_encode(example, processor, base_transforms)
             )
 
     return processed_datasets, extra_test_datasets
@@ -117,39 +83,3 @@ def get_dataset_splits(processed_datasets):
     test_dataset = processed_datasets['test']
 
     return train_dataset, eval_dataset, test_dataset
-
-def load_datasets_for_irv2(data_config, model):
-    # Loading the data for the InceptionResNetV2 model
-    config = resolve_data_config({}, model=model)
-    transform = create_transform(**config)
-    print(transform)
-
-    def __transform_and_encode(batch, transforms):
-        return {
-            "pixel_values": [transforms(x.convert("RGB")) for x in batch['image']],
-            "label": batch['label']
-        }
-    
-    dataset = load_dataset(data_config['source'], data_dir=data_config['name'])
-    
-    # Prepare datasets
-    processed_datasets = {}
-    for split in dataset.keys():
-        processed_datasets[split] = dataset[split].with_transform(
-            lambda example: __transform_and_encode(example, transform)
-        )
-    
-    extra_test_datasets = {}
-    for dataset_name, dataset_info in data_config.get('additional_test_datasets', {}).items():
-        if dataset_info['source'] == 'huggingface':
-            dataset = load_dataset(dataset_info['name'])
-        else:
-            dataset = load_dataset(dataset_info['source'], data_dir=dataset_info['name'])
-
-        # Only process the test split for additional datasets
-        if 'test' in dataset:
-            extra_test_datasets[dataset_name] = dataset['test'].with_transform(
-                lambda example: __transform_and_encode(example, transform)
-            )
-
-    return processed_datasets, extra_test_datasets

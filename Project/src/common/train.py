@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from transformers import Trainer, TrainingArguments, EarlyStoppingCallback
 from config import load_config
 from metric_util import compute_metrics
-from data_processing import load_and_prepare_dataset, get_dataset_splits, load_datasets_for_irv2
+from data_processing import load_and_prepare_dataset, get_dataset_splits
 from model import load_model, load_processor
 from collate_util import collate_fn
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
@@ -28,8 +28,6 @@ def main(args):
     config = load_config(args.config)
     wandb_config = load_config(args.wandb)
 
-    use_hybrid_model = config.get('use_hybrid', True)
-
     # Initialize wandb
     wandb.init(
         project=wandb_config['project'],
@@ -42,7 +40,7 @@ def main(args):
     processor = load_processor(config['model'])
 
     # Load and prepare dataset
-    processed_datasets, additional_test_datasets = load_and_prepare_dataset(config['data'], processor, use_hybrid_model)
+    processed_datasets, additional_test_datasets = load_and_prepare_dataset(config['data'], processor)
     train_dataset, eval_dataset, test_dataset = get_dataset_splits(processed_datasets)
 
     # Append current test ds to additional_test_datasets 
@@ -52,9 +50,6 @@ def main(args):
     labels = train_dataset.features["label"].names
 
     model = load_model(config['model'], labels)
-
-    if use_hybrid_model:
-        model = HybridModel(model, len(labels))
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
@@ -77,7 +72,7 @@ def main(args):
         save_steps=EVAL_AND_SAVE_STEPS,
         logging_strategy=STRATEGY,
 
-        # Uncomment for peft
+        # # Uncomment for peft
         # label_names=["labels"],
 
         # Early stopping 
