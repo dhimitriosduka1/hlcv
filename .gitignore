@@ -345,6 +345,11 @@ Project/src/common/*final_model*
 Project/src/models
 Project/datasets
 
+Project/src/video-to-chords-pipeline/chord-classifier-model/model.safetensors
+Project/src/video-to-chords-pipeline/videos/*
+Project/src/video-to-chords-pipeline/images/*
+
+
 *.json
 *.err
 *_stderror
