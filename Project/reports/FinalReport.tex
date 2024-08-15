@@ -12,6 +12,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{booktabs}
+\usepackage{subcaption}
 
 % It is strongly recommended to use hyperref, especially for the review version.
 % hyperref with option pagebackref eases the reviewers' job.
@@ -65,11 +66,24 @@
 
 \section{Method}
 
+\subsection{Datasets}
+We identified a significant gap in available datasets for the task of guitar chord recognition, which made us create our own. We recorded 90-second videos for each chord in three different environments, ensuring high quality by capturing them in 4K resolution at 60 frames per second. From these videos, we extracted frames and downsampled them to a resolution of 640 $\times$ 360 pixels. This process generated approximately 30,000 frames per chord.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.3\textwidth]{images/final/Guitar-chords-ours_tsne_plot.png}
+  \caption{t-SNE plot of our dataset. Each point represents a frame, and the color indicates the chord label. }
+  \label{fig:ours-tsne-plot}
+\end{figure}
+
+To reduce redundancy, we limit the dataset to 1,000 frames for each of the 14 chords. To increase the diversity of the dataset, we used two different sampling methods: simple random sampling and KNN-based sampling. In the former method, we selected 1,000 frames at random. In the latter method, we used the KNN algorithm to choose 1,000 frames that were the most distinct from one another.
+
+Unfortunately, both sampling strategies resulted in an overly simplistic dataset that failed to capture the real-world complexity of chords, as shown by Figure \ref{fig:ours-tsne-plot}. This resulted in poor model generalization. However, rather than abandoning our dataset, we used it as a test set to evaluate the generalizability of our model. In the end, we decided to use existing datasets \cite{guitar-chord-tvon8_dataset,guitar-chord-bounding-box_dataset, guitar-chord-handshape_dataset, guitar-chords-daewp_dataset} for training the models, merging them to create a more complex dataset, which resulted in significantly better results.
+
 \section{Experimental Results and Analyses}
+\label{sec:results}
 
 \section{Conclusion}
-
-\section{References}
 
  %%%%%%%%% REFERENCES
  {\small
