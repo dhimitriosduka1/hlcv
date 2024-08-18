@@ -1,4 +1,4 @@
-name: hlcv
+name: hlcv-24
 channels:
   - pytorch
   - nvidia
@@ -26,7 +26,7 @@ dependencies:
   - wandb
   - libtiff 
   - pillow
-  - metric
+  # - metric
   - evaluate
   - peft
-  - mediapipe
+  # - mediapipe

@@ -128,7 +128,7 @@ def main(args):
         wandb.log({f"test_{dataset_name}": test_results})
         
         predictions = trainer.predict(test_dataset)
-        y_pred = np.argmax(predictions.predictions, axis=1)
+        y_pred = np.argmax(predictions.predictions[0], axis=1)
         y_true = predictions.label_ids
 
         cm = confusion_matrix(y_true, y_pred)
