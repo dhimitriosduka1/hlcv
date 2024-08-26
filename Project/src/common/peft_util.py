@@ -1,8 +1,9 @@
 from peft import LoraConfig, get_peft_model
-from model import load_model, load_processor, print_trainable_parameters
+from model import print_trainable_parameters
 
 def apply_lora(model):
     # Logging the number of parameters before applying PEFT method
+    print("Applying PEFT method...")
     print_trainable_parameters(model)
 
     config = LoraConfig(

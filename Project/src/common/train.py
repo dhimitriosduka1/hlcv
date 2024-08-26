@@ -12,8 +12,6 @@ from data_processing import load_and_prepare_dataset, get_dataset_splits
 from model import load_model, load_processor
 from collate_util import collate_fn
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
-from peft_util import apply_lora
-from hybrid_model import HybridModel
 
 def main(args):
     EVAL_AND_SAVE_STEPS = 10
@@ -73,7 +71,7 @@ def main(args):
         logging_strategy=STRATEGY,
 
         # # Uncomment for peft
-        # label_names=["labels"],
+        label_names=["labels"],
 
         # Early stopping 
         load_best_model_at_end=True,
