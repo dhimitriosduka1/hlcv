@@ -14,7 +14,7 @@
 \usepackage{booktabs}
 \usepackage{caption}
 \usepackage{subcaption}
-
+\usepackage{adjustbox}
 
 
 % It is strongly recommended to use hyperref, especially for the review version.
@@ -80,40 +80,20 @@ With the rise of Computer Vision, researchers began exploring the potential of v
 Inspired by \cite{tran2019cnn, ooaku2018guitar}, \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024} employed a Single Shot Detection (SSD) model \cite{sandler2018mobilenetv2}, pre-trained on the EgoHands \cite{Bambach_2015_ICCV} and ImageNet \cite{deng2009imagenet}. In contrast to previous works, they used the entire fretboard as input to the model, allowing it to learn the spatial relationships between the chords and frets achieving SOTA performance.
 
 \section{Datasets}
-We identified a significant gap in available datasets for the task of guitar chord recognition, which made us create our own. We recorded 90-second videos for each chord in three different environments, ensuring high quality by capturing them in 4K resolution at 60 frames per second. From these videos, we extracted frames and downsampled them to a resolution of 640 $\times$ 360 pixels. This process generated approximately 30,000 frames per chord.
-
-
-\begin{figure}[!htbp]
-  \centering
-  \begin{minipage}[b]{0.2\textwidth}
-      \centering
-      \includegraphics[width=\textwidth]{images/final/guitar_chords.png}
-      \caption{Caption for image 1}
-  \end{minipage}
-  \hfil
-  \begin{minipage}[b]{0.2\textwidth}
-      \centering
-      \includegraphics[width=\textwidth]{images/final/guitar_chords_ours.png}
-      \caption{Caption for image 3}
-  \end{minipage}
-  \caption{Overall caption for the figure.}
-  \label{fig:three_images}
-\end{figure}
+We identified a significant gap in available datasets for the task of guitar chord recognition, which made us create our own. We recorded 90-second videos for each chord in three different environments, ensuring high quality by capturing them in 4K resolution at 60 frames per second. We extracted the frames from the video and downsampled them to a resolution of 640 $\times$ 360 pixels. This process generated approximately 30,000 frames per chord. To increase the diversity of the dataset, we used two different sampling methods: simple random sampling and KNN-based sampling. In the former method, we selected 1,000 frames at random, while in the latter, we used the KNN to choose the 1,000 frames that were the most distinct from one another.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.3\textwidth]{images/final/Guitar-chords-ours_tsne_plot.png}
+    \includegraphics[width=0.48\textwidth]{images/final/Guitar-chords-ours_t-sne_plot.png}
     \caption{The t-SNE plot of our dataset containing 14 chords. Each point represents a KNN-sampled frame, with the color indicating the corresponding chord label.}
     \label{fig:ours-tsne-plot}
 \end{figure}
 
-To increase the diversity of the dataset, we used two different sampling methods: simple random sampling and KNN-based sampling. In the former method, we selected 1,000 frames at random while in the latter, we used the KNN algorithm to choose 1,000 frames that were the most distinct from one another.
-
-Unfortunately, both sampling strategies resulted in an overly simplistic dataset that failed to capture the real-world complexity of chords, as shown by Figure \ref{fig:ours-tsne-plot}. This resulted in poor model generalization. However, rather than abandoning our dataset, \textbf{Guitrar\_chords\_ours}, we used it as a test set to evaluate the generalizability of our model. In the end, we decided to use existing datasets \cite{guitar-chord-tvon8_dataset,guitar-chord-bounding-box_dataset, guitar-chord-handshape_dataset, guitar-chords-daewp_dataset} for training the models, merging them to create a more complex dataset, \textbf{Guitar\_chords}, which resulted in significantly better results.
+Unfortunately, both sampling strategies resulted in an overly simplistic dataset that failed to capture the real-world complexity of chords, as shown by Figure \ref{fig:ours-tsne-plot}. This resulted in poor model generalization. However, rather than abandoning our dataset we used it as a test set to evaluate the generalizability of our model. In the end, we decided to use existing datasets \cite{guitar-chord-tvon8_dataset,guitar-chord-bounding-box_dataset, guitar-chord-handshape_dataset, guitar-chords-daewp_dataset} for training the models, merging them to create a more complex dataset which resulted in significantly better results.
 
 This change in our approach necessitated a change in the scope of our chord recognition task. As a consequence of using existing datasets, we were limited to only seven chords in total—A, B, C, D, E, F, and G—down from the 14 chords originally planned.
 
-\section{Method}
+\section{Methods}
 
 \subsection{Guitar Chord Classification}
 
@@ -123,8 +103,8 @@ First, we wanted to try a simple yet interesting approach. For a given sample im
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.5\textwidth]{images/final/hand_pose_estimation_classifier.png}
-    \caption{t-SNE plot of our dataset. Each point represents a sampled frame, and the color indicates the chord label. }
-    \label{fig:ours-tsne-plot}
+    \caption{The pipeline of the Hand Pose Estimation + Classifier approach. First, the image is passed through a hand pose estimation model to extract the landmarks. Then the result is passed through a classifier to determine the chord being played.}
+    \label{fig:hand-pose-estimation-classifier}
 \end{figure}
 
 We used MediaPipe to extract the hand shape followed by different classifiers—SVM \cite{cortes1995support}, Random Forest \cite{ho1995random}, and a simple MLP—to classify the chords.
@@ -136,7 +116,7 @@ Next, we wanted to explore the potential benefits of using more advanced archite
 \label{sec:results}
 
 \subsection{Guitar Chord Classification}
-To evaluate our approaches against those in the original paper, we implemented the InceptionResNetv2 model as described by the authors. After training the model using the hyperparameters provided on \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024} on our dataset, we obtained the results shown in Table \ref{tab:handpose-classifier-results}, which provided us with a baseline to compare our models against.
+To evaluate our approaches against those in the original paper, we implemented the InceptionResNetv2 model as described by the authors. After training the model using the hyperparameters provided by \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024} on our dataset, we obtained the results shown in Table \ref{tab:handpose-classifier-results}, which provided us with a baseline to compare our models against.
 
 \begin{figure}[h]
     \centering
@@ -148,7 +128,7 @@ To evaluate our approaches against those in the original paper, we implemented t
         \centering
         \includegraphics[width=\textwidth]{images/final/occlusion_trained.pdf}
     \end{subfigure}
-    \caption{Occlusion-based attribution for model interpretability on a 74x389 input image using a stride of 8 and a sliding window of 30x30. \textbf{Top}: Untrained DINOv2 model. \textbf{Bottom}: Our DINOv2 model.}
+    \caption{Occlusion-based attribution for model interpretability on a 74 $\times$ 389 input image using a stride of 8 and a sliding window of 30 $\times$ 30. \textbf{Top}: Untrained DINOv2 model. \textbf{Bottom}: Our DINOv2 model.}
     \label{fig:chord-classifier-visualization-fretboard}
 \end{figure}
 
@@ -162,9 +142,6 @@ To evaluate our approaches against those in the original paper, we implemented t
 \subsubsection{Hand Pose Estimation + Classifier}
 Surprisingly, this approach performed well, achieving good accuracy during validation and testing on two datasets. However, the model struggled to generalize to the third dataset, which was created by us. This outcome was anticipated, as the samples in our dataset were out of the training distribution, and the model lacked the complexity needed to generalize effectively to such data.
 
-
-\dhimitrios{Should we point out that Hand Pose Estimation + Classifier performed better than InceptionResNetv2?}
-
 \begin{table}[h]
     \centering
     \begin{tabular}{lccc}
@@ -173,12 +150,12 @@ Surprisingly, this approach performed well, achieving good accuracy during valid
         \midrule
         InceptionResNetv2 & 83.56\%     & 68.63\%      & 15.57\%      \\
         \midrule
-        SVM               & 95.27\%     & 85.71\%      & 18.61\%      \\
-        Random Forest     & 93.35\%     & 52.41\%      & 16.16\%      \\
-        MLP               & 89.44\%     & 78.57\%      & 14.39\%      \\
+        SVM            & 95.27\%     & 85.71\%      & 18.61\%      \\
+        Random Forest   & 93.35\%     & 52.41\%      & 16.16\%      \\
+        MLP & 89.44\%     & 78.57\%      & 14.39\%      \\
         \bottomrule
     \end{tabular}
-    \caption{Accuracy of the Hand Pose Estimation + Classifier in the test set of different datasets. \textbf{GC}: Guitar\_Chords, \textbf{GCT}: Guitar\_Chords\_Tiny, \textbf{GCO}: Guitar\_Chords\_Ours.}
+    \caption{Accuracy of the Hand Pose Estimation + Classifier in the test set of different datasets. The following parameters where used: \textbf{SVM} (C = 300), \textbf{Random Forest} (n\_estimators = 200), and \textbf{MLP} (hidden\_layer\_sizes = (100, 256, 100)). Datasets used: \textbf{GC}: Guitar\_Chords, \textbf{GCT}: Guitar\_Chords\_Tiny, \textbf{GCO}: Guitar\_Chords\_Ours.}
     \label{tab:handpose-classifier-results}
 \end{table}
 
