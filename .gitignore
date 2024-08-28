@@ -314,6 +314,7 @@ TSWLatexianTemp*
 *.ckpt
 *.pth
 *.pt
+*.safetensors
 
 *.gz
 *.meta
@@ -328,6 +329,7 @@ Logs/
 # Datasets
 Guitar-necks-detector-1/
 Project/src/fretboard-recognition/data
+Project/src/dataset_utils/Used Datasets/
 
 # Others
 Project/src/classification/dataset/*
