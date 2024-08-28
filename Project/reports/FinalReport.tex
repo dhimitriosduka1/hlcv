@@ -12,7 +12,10 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{booktabs}
+\usepackage{caption}
 \usepackage{subcaption}
+
+
 
 % It is strongly recommended to use hyperref, especially for the review version.
 % hyperref with option pagebackref eases the reviewers' job.
@@ -78,6 +81,24 @@ Inspired by \cite{tran2019cnn, ooaku2018guitar}, \cite{Kristian_Zaman_Tenoyo_Jod
 
 \section{Datasets}
 We identified a significant gap in available datasets for the task of guitar chord recognition, which made us create our own. We recorded 90-second videos for each chord in three different environments, ensuring high quality by capturing them in 4K resolution at 60 frames per second. From these videos, we extracted frames and downsampled them to a resolution of 640 $\times$ 360 pixels. This process generated approximately 30,000 frames per chord.
+
+
+\begin{figure}[!htbp]
+  \centering
+  \begin{minipage}[b]{0.2\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{images/final/guitar_chords.png}
+      \caption{Caption for image 1}
+  \end{minipage}
+  \hfil
+  \begin{minipage}[b]{0.2\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{images/final/guitar_chords_ours.png}
+      \caption{Caption for image 3}
+  \end{minipage}
+  \caption{Overall caption for the figure.}
+  \label{fig:three_images}
+\end{figure}
 
 \begin{figure}[h]
   \centering
