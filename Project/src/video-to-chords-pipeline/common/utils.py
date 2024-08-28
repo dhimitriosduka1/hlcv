@@ -493,24 +493,10 @@ def clean_cache():
     print(f"Freeing GPU Memory\nFree: %d MB\tTotal: %d MB" % (mem_info[0] // 1024**2, mem_info[1] // 1024**2))
 
 
-def initialize_untrained_dinov2(num_labels, image_size=518):
+def initialize_untrained_dinov2(config: dict | Dinov2Config) -> Dinov2ForImageClassification:
     # Define the configuration
-    config = Dinov2Config(
-        hidden_size=1024,
-        num_hidden_layers=24,
-        num_attention_heads=16,
-        intermediate_size=4096,
-        hidden_act="gelu",
-        hidden_dropout_prob=0.0,
-        attention_probs_dropout_prob=0.0,
-        initializer_range=0.02,
-        layer_norm_eps=1e-6,
-        image_size=image_size,
-        patch_size=14,
-        num_channels=3,
-        qkv_bias=True,
-        num_labels=num_labels,
-    )
+    if isinstance(config, dict):
+        config = Dinov2Config(**config)
 
     # Initialize the model
     model = Dinov2ForImageClassification(config)

@@ -46,14 +46,14 @@
 
 
 \author{
-  Camilo Martínez\\
-  7057573\\
-  \and
-  Dhimitrios Duka\\
-  7059153\\
-  \and
-  Honglu Ma\\
-  7055053\\
+    Camilo Martínez\\
+    7057573\\
+    \and
+    Dhimitrios Duka\\
+    7059153\\
+    \and
+    Honglu Ma\\
+    7055053\\
 }
 \maketitle
 
@@ -65,12 +65,12 @@
 \dhimitrios{We did not pre-train on EgoHands}
 
 \section{Introduction}
-Automatic chord recognition (ACR) is an information retrieval task that automatically recognizes the chords played in a music piece, whether it be an audio or video file. The ability to accurately recognize and identify chords is crucial for various downstream applications such as music analysis, music transcription, or even restoration of corrupted musical performances. 
+Automatic chord recognition (ACR) is an information retrieval task that automatically recognizes the chords played in a music piece, whether it be an audio or video file. The ability to accurately recognize and identify chords is crucial for various downstream applications such as music analysis, music transcription, or even restoration of corrupted musical performances.
 
 Our work aims to improve ACR in the context of acoustic guitars. We base our work on the previous work by \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024} and extend it by exploring the potential of using state-of-the-art deep learning models and techniques while also adding an audio generation module at the end. Specifically, we investigate the feasibility of using the models from the YOLO \cite{redmon2016you} family and Faster R-CNN \cite{ren2016faster} for fretboard recognition, alongside Vision Transformers \cite{dosovitskiy2020image} and DINOv2 \cite{oquab2023dinov2} for chord recognition. Additionally, we extend this work by implementing a chord-to-audio generation module, enabling the generation of audio directly from recognized chord labels.
 
-\section{Related Work}  
-Over recent decades, many different approaches have been proposed to tackle the ACR task. The first ACR system was introduced in the late 1999s by \cite{takuya1999realtime}, where LISP music was utilized to perform chord recognition at the signal level. Since then, many signal-level-based approaches have been introduced ranging from chromagram-based method \cite{stark2009real}, to deep chromagram extractors \cite{korzeniowski2016feature}, to spectrogram-based feature extraction methods utilizing recurrent neural networks \cite{boulanger2013audio}. However, due to the inherent shortcomings of the aural approach in handling highly timbre sounds \cite{du2023conditional}, improvements plateaued. 
+\section{Related Work}
+Over recent decades, many different approaches have been proposed to tackle the ACR task. The first ACR system was introduced in the late 1999s by \cite{takuya1999realtime}, where LISP music was utilized to perform chord recognition at the signal level. Since then, many signal-level-based approaches have been introduced ranging from chromagram-based method \cite{stark2009real}, to deep chromagram extractors \cite{korzeniowski2016feature}, to spectrogram-based feature extraction methods utilizing recurrent neural networks \cite{boulanger2013audio}. However, due to the inherent shortcomings of the aural approach in handling highly timbre sounds \cite{du2023conditional}, improvements plateaued.
 
 With the rise of Computer Vision, researchers began exploring the potential of visual-based approaches to tackle the ACR task making use of hand patterns to perform chord classification. This approach was heavily based on the fact that humans often find it easier to recognize chords based on visual cues rather than auditory ones. \cite{su2020audeo} was able to successfully classify the chords being played on a piano and later on produce sound out of that information. Furthermore, \cite{tran2019cnn} and \cite{ooaku2018guitar} tried to replicate the same idea but applied to acoustic guitars. Even though both works used different techniques, the overall pipeline was the same. First, a model would be responsible for detecting the fretting hand within the image, cropping the image, and passing it through a classifier to determine the chord being played. However, this approach ignored the valuable information that could be retrieved from the fretboard itself.
 
@@ -80,10 +80,10 @@ Inspired by \cite{tran2019cnn, ooaku2018guitar}, \cite{Kristian_Zaman_Tenoyo_Jod
 We identified a significant gap in available datasets for the task of guitar chord recognition, which made us create our own. We recorded 90-second videos for each chord in three different environments, ensuring high quality by capturing them in 4K resolution at 60 frames per second. From these videos, we extracted frames and downsampled them to a resolution of 640 $\times$ 360 pixels. This process generated approximately 30,000 frames per chord.
 
 \begin{figure}[h]
-  \centering
-  \includegraphics[width=0.3\textwidth]{images/final/Guitar-chords-ours_tsne_plot.png}
-  \caption{The t-SNE plot of our dataset containing 14 chords. Each point represents a KNN-sampled frame, with the color indicating the corresponding chord label.}
-  \label{fig:ours-tsne-plot}
+    \centering
+    \includegraphics[width=0.3\textwidth]{images/final/Guitar-chords-ours_tsne_plot.png}
+    \caption{The t-SNE plot of our dataset containing 14 chords. Each point represents a KNN-sampled frame, with the color indicating the corresponding chord label.}
+    \label{fig:ours-tsne-plot}
 \end{figure}
 
 To increase the diversity of the dataset, we used two different sampling methods: simple random sampling and KNN-based sampling. In the former method, we selected 1,000 frames at random while in the latter, we used the KNN algorithm to choose 1,000 frames that were the most distinct from one another.
@@ -100,13 +100,13 @@ This change in our approach necessitated a change in the scope of our chord reco
 First, we wanted to try a simple yet interesting approach. For a given sample image, we utilized a hand pose estimation model to extract the hand shape from it, which was then used as the input to a classifier.
 
 \begin{figure}[h]
-  \centering
-  \includegraphics[width=0.5\textwidth]{images/final/hand_pose_estimation_classifier.png}
-  \caption{t-SNE plot of our dataset. Each point represents a sampled frame, and the color indicates the chord label. }
-  \label{fig:ours-tsne-plot}
+    \centering
+    \includegraphics[width=0.5\textwidth]{images/final/hand_pose_estimation_classifier.png}
+    \caption{t-SNE plot of our dataset. Each point represents a sampled frame, and the color indicates the chord label. }
+    \label{fig:ours-tsne-plot}
 \end{figure}
 
-We used MediaPipe to extract the hand shape followed by different classifiers—SVM \cite{cortes1995support}, Random Forest \cite{ho1995random}, and a simple MLP—to classify the chords. 
+We used MediaPipe to extract the hand shape followed by different classifiers—SVM \cite{cortes1995support}, Random Forest \cite{ho1995random}, and a simple MLP—to classify the chords.
 
 \subsubsection{Classifier only approach}
 Next, we wanted to explore the potential benefits of using more advanced architectures to perform chord classification. We decided to experiment with Vision Transformers (ViT) \cite{dosovitskiy2020image}, specifically ViT-B/16, ViT-B/32, ViT-L/16, and ViT-L/32, to assess how different configurations of patch sizes and model sizes would impact performance. Additionally, we were also interested in evaluating the effectiveness of pre-trained self-supervised models in our task, so we also included DINOv2 \cite{oquab2023dinov2} in our experiments. More specifically, DINOv2-S and DINOv2-L. This allowed us to compare their performance against the ViT models and explore whether self-supervised learning offers advantages in this task.
@@ -117,6 +117,20 @@ Next, we wanted to explore the potential benefits of using more advanced archite
 \subsection{Guitar Chord Classification}
 To evaluate our approaches against those in the original paper, we implemented the InceptionResNetv2 model as described by the authors. After training the model using the hyperparameters provided on \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024} on our dataset, we obtained the results shown in Table \ref{tab:handpose-classifier-results}, which provided us with a baseline to compare our models against.
 
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/final/occlusion_untrained.pdf}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/final/occlusion_trained.pdf}
+    \end{subfigure}
+    \caption{Occlusion-based attribution for model interpretability on a 74x389 input image using a stride of 8 and a sliding window of 30x30. \textbf{Top}: Untrained DINOv2 model. \textbf{Bottom}: Our trained DINOv2 model.}
+    \label{fig:chord-classifier-visualization-fretboard}
+\end{figure}
+
 \subsubsection{Hand Pose Estimation + Classifier}
 Surprisingly, this approach performed well, achieving good accuracy during validation and testing on two datasets. However, the model struggled to generalize to the third dataset, which was created by us. This outcome was anticipated, as the samples in our dataset were out of the training distribution, and the model lacked the complexity needed to generalize effectively to such data.
 
@@ -124,43 +138,43 @@ Surprisingly, this approach performed well, achieving good accuracy during valid
 \dhimitrios{Should we point out that Hand Pose Estimation + Classifier performed better than InceptionResNetv2?}
 
 \begin{table}[h]
-  \centering
-  \begin{tabular}{lccc}
-    \toprule
-    \textbf{Model} & \textbf{GC} & \textbf{GCT} & \textbf{GCO} \\
-    \midrule
- InceptionResNetv2 & 83.56\% & 68.63\% & 15.57\% \\
-    \midrule
- SVM & 95.27\% & 85.71\% & 18.61\% \\
- Random Forest & 93.35\% & 52.41\% & 16.16\%  \\
- MLP & 89.44\% & 78.57\% & 14.39\% \\
-    \bottomrule
-  \end{tabular}
-  \caption{Accuracy of the Hand Pose Estimation + Classifier in the test set of different datasets. \textbf{GC}: Guitar\_Chords, \textbf{GCT}: Guitar\_Chords\_Tiny, \textbf{GCO}: Guitar\_Chords\_Ours.}
-  \label{tab:handpose-classifier-results}
+    \centering
+    \begin{tabular}{lccc}
+        \toprule
+        \textbf{Model}    & \textbf{GC} & \textbf{GCT} & \textbf{GCO} \\
+        \midrule
+        InceptionResNetv2 & 83.56\%     & 68.63\%      & 15.57\%      \\
+        \midrule
+        SVM               & 95.27\%     & 85.71\%      & 18.61\%      \\
+        Random Forest     & 93.35\%     & 52.41\%      & 16.16\%      \\
+        MLP               & 89.44\%     & 78.57\%      & 14.39\%      \\
+        \bottomrule
+    \end{tabular}
+    \caption{Accuracy of the Hand Pose Estimation + Classifier in the test set of different datasets. \textbf{GC}: Guitar\_Chords, \textbf{GCT}: Guitar\_Chords\_Tiny, \textbf{GCO}: Guitar\_Chords\_Ours.}
+    \label{tab:handpose-classifier-results}
 \end{table}
 
 \subsubsection{Classifier only approach}
 In the previous experiments, we found out that the Hand Pose Estimation + Classifier approach lacked the robustness necessary to generalize effectively to out-of-distribution data. To address this limitation, we decided to explore more complex models, such as Vision Transformers (ViT) and DINOv2. The results of our experiments are summarized in Table \ref{tab:transformer-models-results}.
 
 \begin{table}[h]
-  \centering
-  \begin{tabular}{lccc}
-    \toprule
-    \textbf{Model} & \textbf{GC} & \textbf{GCT} & \textbf{GCO} \\
-    \midrule
-    InceptionResNetv2 & 83.56\% & 68.63\% & 15.57\% \\
-    \midrule
-    ViT-B/16 & 98.96\% & 85.29\% & 96.24\% \\
-    ViT-B/32 & 93.07\% & 81.37\% & 95.83\% \\
-    ViT-L/16 & 95.84\% & 81.37\% & 12.29\% \\
-    ViT-L/32 & 77.03\% & 43.14\% & 13.43\% \\
-    DINOv2-S & 96.24\% & 88.24\% & 98.18\% \\
-    DINOv2-L & 96.44\% & 91.18\% & 97.92\% \\
-    \bottomrule
-  \end{tabular}
-  \caption{Accuracy of Classifier only apporach in the test set of different datasets.}
-  \label{tab:transformer-models-results}
+    \centering
+    \begin{tabular}{lccc}
+        \toprule
+        \textbf{Model}    & \textbf{GC} & \textbf{GCT} & \textbf{GCO} \\
+        \midrule
+        InceptionResNetv2 & 83.56\%     & 68.63\%      & 15.57\%      \\
+        \midrule
+        ViT-B/16          & 98.96\%     & 85.29\%      & 96.24\%      \\
+        ViT-B/32          & 93.07\%     & 81.37\%      & 95.83\%      \\
+        ViT-L/16          & 95.84\%     & 81.37\%      & 12.29\%      \\
+        ViT-L/32          & 77.03\%     & 43.14\%      & 13.43\%      \\
+        DINOv2-S          & 96.24\%     & 88.24\%      & 98.18\%      \\
+        DINOv2-L          & 96.44\%     & 91.18\%      & 97.92\%      \\
+        \bottomrule
+    \end{tabular}
+    \caption{Accuracy of Classifier only apporach in the test set of different datasets.}
+    \label{tab:transformer-models-results}
 \end{table}
 
 As can be seen from Table \ref{tab:transformer-models-results}, ViT models show varying performance across different datasets. The base models, ViT-B/16 and ViT-B/32, perform exceptionally well, with high accuracy on all datasets. However, the larger models, ViT-L/16 and ViT-L/32, do not outperform the base models, suggesting that increased model size does not necessarily correlate with improved performance for this particular task. We expect that the data available is not sufficient to train the larger models effectively. We can also see that the patch 16 versions of the ViT models perform better than the patch 32 versions. This is likely due to the fact that the patch 16 versions have a higher resolution, to capture fine details and maintain higher spatial resolution, which is important for accurately distinguishing between chord shapes and hand positions.
@@ -173,10 +187,10 @@ Both DINOv2 variants, demonstrated strong and consistent performance across all 
 Currently, we are missing a background class in the dataset.
 
 
- %%%%%%%%% REFERENCES
- {\small
-  \bibliographystyle{ieee_fullname}
-  \bibliography{references}
- }
+    %%%%%%%%% REFERENCES
+    {\small
+        \bibliographystyle{ieee_fullname}
+        \bibliography{references}
+    }
 
 \end{document}
