@@ -66,21 +66,19 @@
 \emph{First introduced in the late 1999s by \cite{takuya1999realtime}, Automatic Chord Recognition (ACR) is an information retrieval task that automatically recognizes the chords played in a music piece. During the last decades, many approaches—ranging from aural\footnote{Related to sense of hearing.} to visual-based methods—have been proposed to tackle this task. In this work, we explore a Computer Vision based approach, which aims to perform ACR based on hand patterns. We extend the work by \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024} by exploring the potential of using state-of-the-art deep learning models and techniques with an additional proposal for an audio generation module as future work.}
 
 \section{Introduction}
-Automatic Chord Recognition is an information retrieval task that automatically recognizes the chords played in a music piece, whether it be an audio or video file. The ability to accurately recognize and identify chords is crucial for various downstream applications such as music analysis, music transcription, or even restoration of corrupted musical performances.
+ACR is an information retrieval task that automatically recognizes the chords played in a music piece, whether it be an audio or video file. The ability to accurately recognize and identify chords is crucial for various downstream applications such as music analysis, music transcription, or even restoration of corrupted musical performances.
 
-Our work aims to improve ACR in the context of acoustic guitars. We base our work on the previous work by \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024} and extend it by exploring the potential of using state-of-the-art deep learning models and techniques while also proposing an audio generation module. Specifically, we investigate the feasibility of using the models from the YOLO \cite{redmon2016you} family and Faster R-CNN \cite{ren2016faster} for fretboard\footnote{The neck of the guitar.} recognition, alongside Vision Transformers \cite{dosovitskiy2020image} and DINOv2 \cite{oquab2023dinov2} for chord recognition. 
+Our work aims to improve ACR in the context of acoustic guitars. We base our work on \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024} and extend it by exploring the YOLO \cite{redmon2016you} and Faster R-CNN \cite{ren2016faster} family for fretboard\footnote{The neck of the guitar.} recognition, alongside ViT \cite{dosovitskiy2020image} and DINOv2 \cite{oquab2023dinov2} architectures for chord recognition.
 
 % Additionally, we extend this work by implementing a chord-to-audio generation module, enabling the generation of audio directly from recognized chord labels.
 
 \section{Related Work}
-Over recent decades, many different approaches have been proposed to tackle the ACR task. The first ACR system was introduced in the late 1999s by \cite{takuya1999realtime}, where LISP music was utilized to perform chord recognition at the signal level. Since then, many signal-level-based approaches have been introduced ranging from chromagram-based method \cite{stark2009real}, to deep chromagram extractors \cite{korzeniowski2016feature}, to spectrogram-based feature extraction methods utilizing recurrent neural networks \cite{boulanger2013audio}. However, due to the inherent shortcomings of the aural approach in handling highly timbre sounds \cite{du2023conditional}, improvements plateaued.
+Over recent decades, many different approaches have been proposed to tackle the ACR task. The first ACR system was introduced in the late 1999s by \cite{takuya1999realtime}, where LISP music was utilized to perform chord recognition at the signal level. With the rise of Computer Vision, researchers began exploring the potential of visual-based approaches to tackle the ACR task making use of hand patterns to perform chord classification. This approach was heavily based on the fact that humans often find it easier to recognize chords based on visual cues rather than auditory ones. \cite{su2020audeo} was able to successfully classify chords being played on a piano and produce sound; \cite{tran2019cnn} and \cite{ooaku2018guitar} replicated this idea on acoustic guitars.
 
-With the rise of Computer Vision, researchers began exploring the potential of visual-based approaches to tackle the ACR task making use of hand patterns to perform chord classification. This approach was heavily based on the fact that humans often find it easier to recognize chords based on visual cues rather than auditory ones. \cite{su2020audeo} was able to successfully classify the chords being played on a piano and later on produce sound out of that information. Furthermore, \cite{tran2019cnn} and \cite{ooaku2018guitar} tried to replicate the same idea but applied to acoustic guitars. Even though both works used different techniques, the overall pipeline was the same. First, a model would be responsible for detecting the fretting hand within the image, cropping the image, and passing it through a classifier to determine the chord being played. However, this approach ignored the valuable information that could be retrieved from the fretboard itself.
-
-Inspired by \cite{tran2019cnn, ooaku2018guitar}, \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024} employed a Single Shot Detection (SSD) model \cite{sandler2018mobilenetv2}, pre-trained on the EgoHands \cite{Bambach_2015_ICCV} and ImageNet \cite{deng2009imagenet}. In contrast to previous works, they used the entire fretboard as input to the model, allowing it to learn the spatial relationships between the chords and frets achieving state-of-the-art performance.
+Inspired by the previous works, \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024} employed a Single Shot Detection (SSD) model undergirded by a MobileNetV2 base  model \cite{sandler2018mobilenetv2},  pre-trained on the EgoHands \cite{Bambach_2015_ICCV}, for the fretboard detection and further refined the bounding box with a DCNN\footnote{Deep Convolutional Neural Network.} model. For chord classification, they used an InceptionResnetV2 with additional CNN layers. In contrast to previous works, they used the entire fretboard as input to the model, allowing it to learn the spatial relationships between the chords and frets achieving state-of-the-art performance.
 
 \section{Datasets}
-We identified a significant gap in available datasets for the task of guitar chord recognition, which made us create our own. We recorded 90-second videos for each chord in three different environments, ensuring high quality by capturing them in 4K resolution at 60 frames per second. We extracted the frames from the video and downsampled them to a resolution of 640 $\times$ 360 pixels. This process generated approximately 30,000 frames per chord. To increase the diversity of the dataset, we used two different sampling methods: simple random sampling and KNN-based sampling. In the former method, we selected 1,000 frames at random, while in the latter, we used the KNN to choose the 1,000 frames that were the most distinct from one another.
+We identified a significant gap in available datasets for the task of guitar chord recognition. Initially, we created our own by recording 90-second videos for each chord in three different environments, ensuring high quality by capturing them in 4K resolution at 60 fps. We extracted the frames from the video and downsampled them to a resolution of 640 $\times$ 360 pixels. This process generated approximately 30,000 frames per chord. To increase the diversity of the dataset, we used two different sampling methods: simple random sampling and kNN-based sampling. In the former method, we selected 1,000 frames at random, while in the latter, we used the kNN to choose 1,000 frames that were the most distinct from one another.
 
 \begin{figure}[h]
     \centering
@@ -93,11 +91,13 @@ Unfortunately, both sampling strategies resulted in an overly simplistic dataset
 
 This change in our approach necessitated a change in the scope of our chord recognition task. As a consequence of using existing datasets, we were limited to only seven chords in total—A, B, C, D, E, F, and G—down from the 14 chords originally planned.
 
-\section{Methods}
+For the fretboard detection task, we used pre-trained versions of the models on the COCO dataset\footnote{A dataset of considerable size commonly dedicated to object identification, where pproximately 200,000 labeled images are organized into 80 distinct categories \cite{lin2015microsoftcococommonobjects}. Although somewhat comparable to ImageNet, the COCO dataset possesses a distinct emphasis.}; this is further explained in Sec. \ref{sec:methods}. To finetune it, we used the following dataset publicly available in \href{https://universe.roboflow.com/}{Roboflow}: \cite{guitar-necks-detector}.
+
+\section{Methods}\label{sec:methods}
 In the following sections, we will give a overview of the methods used in our work for performing fretboard detection and guitar chord classification.
 
 \subsection{Fretboard Detection}
-For the freatboard detection task, we experimented with different models from the YOLO family and Faster R-CNN. We tried two different fine-tuning methods: freezing every layer except the last one and not freezing any layer, that is, finetuning the whole model. Both methods are fundamentally different and serve different purposes. The first method is used to finetune the model to a specific task while keeping the backbone as it is. This allows us to keep the previous learned features and classes. On the other hand, the second method will finetune the
+We experimented with different models from the YOLO \cite{redmon2016you} and Faster R-CNN family \cite{ren2016faster}. We tried two different fine-tuning methods: freezing every layer except the last one and not freezing any layer, that is, finetuning the whole model. Both methods are fundamentally different and serve different purposes. The first method is used to finetune the model to a specific task while keeping the backbone as it is. This allows us to keep the previous learned features and classes. On the other hand, the second method will finetune the
 whole model to the new task, while forgetting some of the previous learned features and classes. That is, the latter will have 2 classes after finetuning, the fretboard and the background.
 
 \dhimitrios{Do we need to add more here?}
@@ -135,18 +135,18 @@ In the following sections, we will present the results of our experiments and pr
     \centering
     \begin{tabular}{lcccc}
         \toprule
-        \textbf{Model}          & \textbf{P} & \textbf{R} & \textbf{mAP50-95} & \textbf{mAP50} \\
+        \textbf{Model}               & \textbf{P}      & \textbf{R}      & \textbf{mAP50-95} & \textbf{mAP50}  \\
         \midrule
-        YOLOv8                  & 98.9\%     & 93.0\%     & 88.7\%            & 98.2\%         \\
-        YOLOv9                  & 96.4\%     & 96.8\%     & 85.3\%            & 97.8\%         \\
-        YOLOv10                 & 94.2\%     & 87.0\%     & 80.0\%            & 94.4\%         \\
-        YOLOv8 (FB)             & 76.7\%     & 85.1\%     & 53.4\%            & 87.8\%         \\
-        YOLOv9 (FB)             & 82.4\%     & 74.7\%     & 54.7\%            & 87.0\%         \\
-        YOLOv10 (FB)            & 81.4\%     & 84.0\%     & 71.2\%            & 89.9\%         \\
-        Faster-RCNN-Resnet50         & 80.8\%     & 82.4\%     & 77.5\%            & 94.0\%         \\
-        Faster-RCNN-Resnet50 (FB)    & 62.9\%     & 66.3\%     & 59.0\%            & 93.4\%         \\
-        Faster-RCNN-MobileNetv3      & 79.4\%     & 81.6\%     & 75.7\%            & 94.9\%         \\
-        Faster-RCNN-MobileNetv3 (FB) & 71.7\%     & 73.6\%     & 68.3\%            & 93.0\%         \\
+        YOLOv8                       & \textbf{98.9\%} & 93.0\%          & \textbf{88.7\%}   & \textbf{98.2\%} \\
+        YOLOv9                       & 96.4\%          & \textbf{96.8\%} & 85.3\%            & 97.8\%          \\
+        YOLOv10                      & 94.2\%          & 87.0\%          & 80.0\%            & 94.4\%          \\
+        Faster-RCNN-Resnet50         & 80.8\%          & 82.4\%          & 77.5\%            & 94.0\%          \\
+        Faster-RCNN-MobileNetv3      & 79.4\%          & 81.6\%          & 75.7\%            & 94.9\%          \\
+        YOLOv8 (FB)                  & 76.7\%          & \textbf{85.1\%} & 53.4\%            & 87.8\%          \\
+        YOLOv9 (FB)                  & \textbf{82.4\%} & 74.7\%          & 54.7\%            & 87.0\%          \\
+        YOLOv10 (FB)                 & 81.4\%          & 84.0\%          & \textbf{71.2\%}   & 89.9\%          \\
+        Faster-RCNN-Resnet50 (FB)    & 62.9\%          & 66.3\%          & 59.0\%            & \textbf{93.4\%} \\
+        Faster-RCNN-MobileNetv3 (FB) & 71.7\%          & 73.6\%          & 68.3\%            & 93.0\%          \\
         \bottomrule
     \end{tabular}
     \caption{Performance metrics of different models on the evaluation dataset, shown in percentages. Each column represents a specific metric: Precision, Recall, mAP50-95, and mAP50. (FB) denotes models finetuned with a Frozen Backbone.}
@@ -220,13 +220,13 @@ Surprisingly, this approach performed well, achieving good accuracy during valid
     \centering
     \begin{tabular}{lccc}
         \toprule
-        \textbf{Model}    & \textbf{GC} & \textbf{GCT} & \textbf{GCO} \\
+        \textbf{Model}    & \textbf{GC}      & \textbf{GCT}     & \textbf{GCO}     \\
         \midrule
-        InceptionResNetv2 & 83.56\%     & 68.63\%      & 15.57\%      \\
+        InceptionResNetv2 & 83.56\%          & 68.63\%          & 15.57\%          \\
         \midrule
-        SVM               & \textbf{95.27\%}     & \textbf{85.71\%}     & \textbf{18.61\%}      \\
-        Random Forest     & 93.35\%     & 52.41\%      & 16.16\%      \\
-        MLP               & 89.44\%     & 78.57\%      & 14.39\%      \\
+        SVM               & \textbf{95.27\%} & \textbf{85.71\%} & \textbf{18.61\%} \\
+        Random Forest     & 93.35\%          & 52.41\%          & 16.16\%          \\
+        MLP               & 89.44\%          & 78.57\%          & 14.39\%          \\
         \bottomrule
     \end{tabular}
     \caption{Accuracy of the Hand Pose Estimation + Classifier in the test set of different datasets. The following parameters where used: \texttt{SVM (C = 300)}, \texttt{Random Forest (n\_estimators = 200)}, and \texttt{MLP (hidden\_layer\_sizes = (100, 256, 100))}. Datasets used: \textbf{GC}: Guitar\_Chords, \textbf{GCT}: Guitar\_Chords\_Tiny, \textbf{GCO}: Guitar\_Chords\_Ours.}
@@ -240,16 +240,16 @@ To address this limitation of the previous approach, we decided to explore more 
     \centering
     \begin{tabular}{lccc}
         \toprule
-        \textbf{Model}    & \textbf{GC} & \textbf{GCT} & \textbf{GCO} \\
+        \textbf{Model}    & \textbf{GC}       & \textbf{GCT}     & \textbf{GCO}      \\
         \midrule
-        InceptionResNetv2 & 83.56\%     & 68.63\%      & 15.57\%      \\
+        InceptionResNetv2 & 83.56\%           & 68.63\%          & 15.57\%           \\
         \midrule
-        ViT-B/16          & \textbf{98.96} \%     & 85.29\%      & 96.24\%      \\
-        ViT-B/32          & 93.07\%     & 81.37\%      & 95.83\%      \\
-        ViT-L/16          & 95.84\%     & 81.37\%      & 12.29\%      \\
-        ViT-L/32          & 77.03\%     & 43.14\%      & 13.43\%      \\
-        DINOv2-S          & 96.24\%     & 88.24\%      & \textbf{98.18} \%      \\
-        DINOv2-L          & 96.44\%     & \textbf{91.18}\%      & 97.92\%      \\
+        ViT-B/16          & \textbf{98.96} \% & 85.29\%          & 96.24\%           \\
+        ViT-B/32          & 93.07\%           & 81.37\%          & 95.83\%           \\
+        ViT-L/16          & 95.84\%           & 81.37\%          & 12.29\%           \\
+        ViT-L/32          & 77.03\%           & 43.14\%          & 13.43\%           \\
+        DINOv2-S          & 96.24\%           & 88.24\%          & \textbf{98.18} \% \\
+        DINOv2-L          & 96.44\%           & \textbf{91.18}\% & 97.92\%           \\
         \bottomrule
     \end{tabular}
     \caption{Accuracy of \textbf{Classifier only} apporach in the test set of different datasets.}
@@ -258,13 +258,13 @@ To address this limitation of the previous approach, we decided to explore more 
 
 ViT models show varying performance across different datasets. The base models perform exceptionally well, with high accuracy on all datasets. However, the larger models do not exhibit the same performance. We argue that this is happening because the available data is not sufficient to train the large version of the models effectively. Additionally, we can also observe that the patch 16 versions of the ViT models perform better than the patch 32 versions. This is likely due to the fact that the patch 16 versions have a higher resolution, which is important for accurately distinguishing between different hand positions.
 
-Moreover, both DINOv2 variants demonstrated strong and consistent performance across all datasets. The DINOv2-L model, in particular, achieved the highest accuracy on the \textbf{Guitar\_Chords\_Ours} dataset, slightly outperforming the small variant. The superior performance of DINOv2 can be attributed to its self-supervised learning approach. Unlike models pre-trained on ImageNet, which does not contain a specific class for \emph{hands,} DINOv2's self-supervised learning allows enables it to learn more generic and transferable representations, leading to better generalization in our task. This enhanced generalization is further supported by attention visualizations of the model when applied to images from \textbf{Guitar\_Chords\_Ours} dataset, where the model correctly focuses on the hand performing the fretting, Figure \ref{fig:chord-classifier-visualization-fretboard} and \ref{fig:chord-classifier-visualization-fretboard-2}. 
+Moreover, both DINOv2 variants demonstrated strong and consistent performance across all datasets. The DINOv2-L model, in particular, achieved the highest accuracy on the \textbf{Guitar\_Chords\_Ours} dataset, slightly outperforming the small variant. The superior performance of DINOv2 can be attributed to its self-supervised learning approach. Unlike models pre-trained on ImageNet, which does not contain a specific class for \emph{hands,} DINOv2's self-supervised learning allows enables it to learn more generic and transferable representations, leading to better generalization in our task. This enhanced generalization is further supported by attention visualizations of the model when applied to images from \textbf{Guitar\_Chords\_Ours} dataset, where the model correctly focuses on the hand performing the fretting, Figure \ref{fig:chord-classifier-visualization-fretboard} and \ref{fig:chord-classifier-visualization-fretboard-2}.
 
 \subsection{Audio Generation}
 
 
 
-he quality of the generated sound was not good enough to be used in a real-world scenario. There was a noticable synchronization issue between the audio, and the 
+he quality of the generated sound was not good enough to be used in a real-world scenario. There was a noticable synchronization issue between the audio, and the
 
 Moving forward, we propose implementing more advanced audio processing techniques such as the one used in \cite{su2020audeo}. This approach would enable us to generate the sound of the chords directly from the images and ultimately create a end-to-end pipeline for recognizing and reconstructing the sound from a silent video of someone playing the guitar.
 
