@@ -94,6 +94,13 @@ Unfortunately, both sampling strategies resulted in an overly simplistic dataset
 This change in our approach necessitated a change in the scope of our chord recognition task. As a consequence of using existing datasets, we were limited to only seven chords in total—A, B, C, D, E, F, and G—down from the 14 chords originally planned.
 
 \section{Methods}
+In the following sections, we will give a overview of the methods used in our work for performing fretboard detection and guitar chord classification.
+
+\subsection{Fretboard Detection}
+For the freatboard detection task, we experimented with different models from the YOLO family and Faster R-CNN. We tried two different fine-tuning methods: freezing every layer except the last one and not freezing any layer, that is, finetuning the whole model. Both methods are fundamentally different and serve different purposes. The first method is used to finetune the model to a specific task while keeping the backbone as it is. This allows us to keep the previous learned features and classes. On the other hand, the second method will finetune the
+whole model to the new task, while forgetting some of the previous learned features and classes. That is, the latter will have 2 classes after finetuning, the fretboard and the background.
+
+\dhimitrios{Do we need to add more here?}
 
 \subsection{Guitar Chord Classification}
 
@@ -110,10 +117,12 @@ First, we wanted to try a simple yet interesting approach. For a given sample im
 We used MediaPipe to extract the hand shape followed by different classifiers—SVM \cite{cortes1995support}, Random Forest \cite{ho1995random}, and a simple MLP—to classify the chords.
 
 \subsubsection{Classifier only approach}
-Next, we wanted to explore the potential benefits of using more advanced architectures to perform chord classification. We decided to experiment with Vision Transformers (ViT) \cite{dosovitskiy2020image}, specifically ViT-B/16, ViT-B/32, ViT-L/16, and ViT-L/32, to assess how different configurations of patch sizes and model sizes would impact performance. Additionally, we were also interested in evaluating the effectiveness of pre-trained self-supervised models in our task, so we also included DINOv2 \cite{oquab2023dinov2} in our experiments. More specifically, DINOv2-S and DINOv2-L. This allowed us to compare their performance against the ViT models and explore whether self-supervised learning offers advantages in this task.
+Next, we wanted to explore the potential benefits of using more advanced architectures to perform chord classification. We decided to experiment with Vision Transformers (ViT) \cite{dosovitskiy2020image}, specifically ViT-B/16, ViT-B/32, ViT-L/16, and ViT-L/32, to assess how different configurations of patch sizes and model sizes would impact performance. Additionally, we were also interested in evaluating the effectiveness of pre-trained self-supervised models in our task, so we also included DINOv2 \cite{oquab2023dinov2} in our experiments. This allowed us to compare their performance against the ViT models and explore whether self-supervised learning offers advantages in this task.
 
 \section{Experimental Results and Analyses}
 \label{sec:results}
+
+In the following sections, we will present the results of our experiments and provide an analysis of the performance of the models used in our work.
 
 \subsection{Fretboard Detection}
 
@@ -169,7 +178,7 @@ Since our YOLOv9 model did not lose its capability to detect the original 80 cla
         Off-diagonal                   & 4.10\%            & 21.11\%           \\
         \bottomrule
     \end{tabular}
-    \caption{Absolute sums of values (as \%) after taking the element-wise difference between the final confusion matrix obtained after finetuning the YOLOv9 model for our \emph{fretboard} class and the original confusion matrix of the pre-trained version on the COCO dataset. These values mean that, for the diagonal entries where the difference was positive (indicating increased correct classifications), the model improved by 1.41\%, while for the off-diagonal entries where the difference was negative (indicating reduced misclassifications), the model improved by 21.11\%.}
+    \caption{Absolute sums of values (as \%) after taking the element-wise difference between the final confusion matrix obtained after finetuning the YOLOv9 model for our \emph{fretboard} class and the original confusion matrix of the pre-trained version on the COCO dataset. These values mean that, for the diagonal entries where the difference was positive, the model improved by 1.41\%, while for the off-diagonal entries where the difference was negative, the model improved by 21.11\%.}
     \label{tab:confusion-matrix-results}
 \end{table}
 
@@ -220,7 +229,7 @@ Surprisingly, this approach performed well, achieving good accuracy during valid
 \end{table}
 
 \subsubsection{Classifier only approach}
-In the previous experiments, we found out that the Hand Pose Estimation + Classifier approach lacked the robustness necessary to generalize effectively to out-of-distribution data. To address this limitation, we decided to explore more complex models, such as Vision Transformers (ViT) and DINOv2. The results of our experiments are summarized in Table \ref{tab:transformer-models-results}.
+To address this limitation of the previous approach, we decided to explore more complex models, such as Vision Transformers (ViT) and DINOv2. The results of our experiments are summarized in Table \ref{tab:transformer-models-results}.
 
 \begin{table}[h]
     \centering
@@ -242,9 +251,9 @@ In the previous experiments, we found out that the Hand Pose Estimation + Classi
     \label{tab:transformer-models-results}
 \end{table}
 
-As can be seen from Table \ref{tab:transformer-models-results}, ViT models show varying performance across different datasets. The base models, ViT-B/16 and ViT-B/32, perform exceptionally well, with high accuracy on all datasets. However, the larger models. We expect that this is happening because the data available is not sufficient to train large models effectively. Additionally, we can also observe that the patch 16 versions of the ViT models perform better than the patch 32 versions. This is likely due to the fact that the patch 16 versions have a higher resolution,, which is important for accurately distinguishing between different hand positions.
+ViT models show varying performance across different datasets. The base models perform exceptionally well, with high accuracy on all datasets. However, the larger models do not exhibit the same performance. We argue that this is happening because the available is not sufficient to train large models effectively. Additionally, we can also observe that the patch 16 versions of the ViT models perform better than the patch 32 versions. This is likely due to the fact that the patch 16 versions have a higher resolution, which is important for accurately distinguishing between different hand positions.
 
-Both DINOv2 variants, demonstrated strong and consistent performance across all datasets. The DINOv2-L model, in particular, achieved the highest accuracy on the \textbf{Guitar\_Chords\_Ours} dataset, slightly outperforming the small variant. The superior performance of DINOv2 can be attributed to its self-supervised learning approach. Unlike models pre-trained on ImageNet, which does not contain specific classes related to 'hands,' DINOv2's self-supervised learning allows it to develop more general and transferable representations, leading to better generalization in our specific task. This enhanced generalization is further supported by attention visualizations of the model when applied to images from the 'ours' dataset, where the model correctly focuses on the hand performing the fretting, Figure \ref{fig:chord-classifier-visualization-fretboard} and \ref{fig:chord-classifier-visualization-fretboard-2}.
+Moreover, both DINOv2 variants, demonstrated strong and consistent performance across all datasets. The DINOv2-L model, in particular, achieved the highest accuracy on the \textbf{Guitar\_Chords\_Ours} dataset, slightly outperforming the small variant. The superior performance of DINOv2 can be attributed to its self-supervised learning approach. Unlike models pre-trained on ImageNet, which does not contain specific classes related to \emph{hands,} DINOv2's self-supervised learning allows it to develop more generic and transferable representations, leading to better generalization in our specific task. This enhanced generalization is further supported by attention visualizations of the model when applied to images from \textbf{Guitar\_Chords\_Ours} dataset, where the model correctly focuses on the hand performing the fretting, Figure \ref{fig:chord-classifier-visualization-fretboard} and \ref{fig:chord-classifier-visualization-fretboard-2}. However, an interesting thing that we noticed is that the model, if complex enougg, can learn to attent to the freting hand whithout providing it with the croped version of the image containing only the freatboard. This is a very interesting result that we will further investigate in the future and in order to do so, more data is needed because currently most of the data is in a croped format not including the compled fretboard too.
 
 \section{Conclusion}
 
