@@ -191,7 +191,7 @@ Surprisingly, this approach performed well, achieving good accuracy during valid
         MLP & 89.44\%     & 78.57\%      & 14.39\%      \\
         \bottomrule
     \end{tabular}
-    \caption{Accuracy of the Hand Pose Estimation + Classifier in the test set of different datasets. The following parameters where used: \textbf{SVM} (C = 300), \textbf{Random Forest} (n\_estimators = 200), and \textbf{MLP} (hidden\_layer\_sizes = (100, 256, 100)). Datasets used: \textbf{GC}: Guitar\_Chords, \textbf{GCT}: Guitar\_Chords\_Tiny, \textbf{GCO}: Guitar\_Chords\_Ours.}
+    \caption{Accuracy of the Hand Pose Estimation + Classifier in the test set of different datasets. The following parameters where used: \texttt{SVM (C = 300)}, \texttt{Random Forest (n\_estimators = 200)}, and \texttt{MLP (hidden\_layer\_sizes = (100, 256, 100))}. Datasets used: \textbf{GC}: Guitar\_Chords, \textbf{GCT}: Guitar\_Chords\_Tiny, \textbf{GCO}: Guitar\_Chords\_Ours.}
     \label{tab:handpose-classifier-results}
 \end{table}
 
@@ -206,21 +206,21 @@ In the previous experiments, we found out that the Hand Pose Estimation + Classi
         \midrule
         InceptionResNetv2 & 83.56\%     & 68.63\%      & 15.57\%      \\
         \midrule
-        ViT-B/16          & 98.96\%     & 85.29\%      & 96.24\%      \\
+        ViT-B/16          & \textbf{98.96} \%     & 85.29\%      & 96.24\%      \\
         ViT-B/32          & 93.07\%     & 81.37\%      & 95.83\%      \\
         ViT-L/16          & 95.84\%     & 81.37\%      & 12.29\%      \\
         ViT-L/32          & 77.03\%     & 43.14\%      & 13.43\%      \\
-        DINOv2-S          & 96.24\%     & 88.24\%      & 98.18\%      \\
-        DINOv2-L          & 96.44\%     & 91.18\%      & 97.92\%      \\
+        DINOv2-S          & 96.24\%     & 88.24\%      & \textbf{98.18} \%      \\
+        DINOv2-L          & 96.44\%     & \textbf{91.18}\%      & 97.92\%      \\
         \bottomrule
     \end{tabular}
     \caption{Accuracy of Classifier only apporach in the test set of different datasets.}
     \label{tab:transformer-models-results}
 \end{table}
 
-As can be seen from Table \ref{tab:transformer-models-results}, ViT models show varying performance across different datasets. The base models, ViT-B/16 and ViT-B/32, perform exceptionally well, with high accuracy on all datasets. However, the larger models, ViT-L/16 and ViT-L/32, do not outperform the base models, suggesting that increased model size does not necessarily correlate with improved performance for this particular task. We expect that the data available is not sufficient to train the larger models effectively. We can also see that the patch 16 versions of the ViT models perform better than the patch 32 versions. This is likely due to the fact that the patch 16 versions have a higher resolution, to capture fine details and maintain higher spatial resolution, which is important for accurately distinguishing between chord shapes and hand positions.
+As can be seen from Table \ref{tab:transformer-models-results}, ViT models show varying performance across different datasets. The base models, ViT-B/16 and ViT-B/32, perform exceptionally well, with high accuracy on all datasets. However, the larger models. We expect that this is happening because the data available is not sufficient to train large models effectively. Additionally, we can also observe that the patch 16 versions of the ViT models perform better than the patch 32 versions. This is likely due to the fact that the patch 16 versions have a higher resolution,, which is important for accurately distinguishing between different hand positions.
 
-Both DINOv2 variants, demonstrated strong and consistent performance across all datasets. The DINOv2-L model, in particular, achieved the highest accuracy on the \textbf{Guitar\_Chords\_Ours} dataset, slightly outperforming the small variant. The superior performance of DINOv2 can be attributed to its self-supervised learning approach. Unlike models pre-trained on ImageNet, which does not contain specific classes related to 'hands,' DINOv2's self-supervised learning allows it to develop more general and transferable representations, leading to better generalization in our specific task. This enhanced generalization is further supported by attention visualizations of the model when applied to images from the 'ours' dataset, where the model correctly focuses on the hand performing the fretting.
+Both DINOv2 variants, demonstrated strong and consistent performance across all datasets. The DINOv2-L model, in particular, achieved the highest accuracy on the \textbf{Guitar\_Chords\_Ours} dataset, slightly outperforming the small variant. The superior performance of DINOv2 can be attributed to its self-supervised learning approach. Unlike models pre-trained on ImageNet, which does not contain specific classes related to 'hands,' DINOv2's self-supervised learning allows it to develop more general and transferable representations, leading to better generalization in our specific task. This enhanced generalization is further supported by attention visualizations of the model when applied to images from the 'ours' dataset, where the model correctly focuses on the hand performing the fretting, Figure \ref{fig:chord-classifier-visualization-fretboard} and \ref{fig:chord-classifier-visualization-fretboard-2}.
 
 \section{Conclusion}
 
