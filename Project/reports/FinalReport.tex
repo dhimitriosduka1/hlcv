@@ -114,6 +114,42 @@ Next, we wanted to explore the potential benefits of using more advanced archite
 \section{Experimental Results and Analyses}
 \label{sec:results}
 
+\subsection{Fretboard Detection}
+
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{images/final/recall_vs_map50.pdf}
+    \caption{Recall vs. mAP@50 for the models tested and finetuned on the \emph{fretboard} class.}
+    \label{fig:fretboard-models-recall-map}
+\end{figure}
+
+Since our YOLOv9 model did not lose its capability to detect the original 80 classes from the COCO dataset \cite{lin2015microsoftcococommonobjects}, we decided to re-evaluate its performance on the whole COCO dataset to quantify how much the finetuning process affected the original pre-trained model's performance. The results are shown in Figure \ref{fig:yolo-diff-confusion-matrix}, which shows a subset\footnote{We are only showing a subset of the classes for better visualization and space contraints.} of the confusion matrix of our model, and in Table \ref{tab:confusion-matrix-results}, where positive values are desirable for diagonal entries (indicating correct classifications), and negative values are preferred for off-diagonal entries (indicating reduced misclassifications).
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{images/final/yolo_confusion_matrix_subset.pdf}
+    \caption{Confusion matrix of the YOLOv9 model on a subset of 10 classes from the original COCO dataset \cite{lin2015microsoftcococommonobjects}, plus our \emph{fretboard} class.}
+    \label{fig:yolo-diff-confusion-matrix}
+\end{figure}
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{lcc}
+        \toprule
+        \textbf{Confusion Matrix Pos.} & \textbf{Positive} & \textbf{Negative} \\
+        \midrule
+        Diagonal                       & 1.41\%            & 5.38\%            \\
+        \midrule
+        Off-diagonal                   & 4.10\%            & 21.11\%           \\
+        \bottomrule
+    \end{tabular}
+    \caption{Absolute sums of values (as \%) after taking the element-wise difference between the final confusion matrix obtained after finetuning the YOLOv9 model for our \emph{fretboard} class and the original confusion matrix of the pre-trained version on the COCO dataset. These values mean that, for the diagonal entries where the difference was positive (indicating increased correct classifications), the model improved by 1.41\%, while for the off-diagonal entries where the difference was negative (indicating reduced misclassifications), the model improved by 21.11\%.}
+    \label{tab:confusion-matrix-results}
+\end{table}
+
+
+
 \subsection{Guitar Chord Classification}
 To evaluate our approaches against those in the original paper, we implemented the InceptionResNetv2 model as described by the authors. After training the model using the hyperparameters provided on \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024} on our dataset, we obtained the results shown in Table \ref{tab:handpose-classifier-results}, which provided us with a baseline to compare our models against.
 
