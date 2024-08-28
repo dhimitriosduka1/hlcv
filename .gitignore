@@ -313,6 +313,7 @@ TSWLatexianTemp*
 # Torch stuff
 *.ckpt
 *.pth
+*.safetensors
 # *.pt
 
 *.gz
@@ -328,6 +329,7 @@ Logs/
 # Datasets
 Guitar-necks-detector-1/
 Project/src/fretboard-recognition/data
+Project/src/dataset_utils/Used Datasets/
 
 # Others
 Project/src/classification/dataset/*
