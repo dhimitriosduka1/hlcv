@@ -1,4 +1,5 @@
 import torch
+from peft_util import apply_lora
 from transformers import AutoImageProcessor, AutoModelForImageClassification, ViTForImageClassification
 
 def load_model(model_config, labels):
@@ -22,6 +23,10 @@ def load_model(model_config, labels):
             label2id={c: str(i) for i, c in enumerate(labels)},
             output_hidden_states=True
         )
+
+    if model_config['use_lora']:
+        model = apply_lora(model, model_config['lora'])
+        
     return model
 
 # Source: https://huggingface.co/docs/peft/main/en/task_guides/image_classification_lora

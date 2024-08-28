@@ -313,8 +313,8 @@ TSWLatexianTemp*
 # Torch stuff
 *.ckpt
 *.pth
-*.pt
 *.safetensors
+# *.pt
 
 *.gz
 *.meta
@@ -351,6 +351,8 @@ Project/src/video-to-chords-pipeline/videos/*
 Project/src/video-to-chords-pipeline/images/*
 
 
-*.json
+# *.json
 *.err
 *_stderror
+
+test.py

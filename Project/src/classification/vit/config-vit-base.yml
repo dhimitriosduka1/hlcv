@@ -12,6 +12,7 @@ data:
 
 model:
   name: google/vit-base-patch16-224-in21k
+  use_lora: True
 
 training:
   num_epochs: 20

@@ -20,17 +20,28 @@ class GuitarPlayer:
     def stop(self):
         self.session.stop_transcribing()
 
-    def play(self, chord, volume, length):
-        if chord not in self.chords:
+    def play(self, chord):
+        if chord['note'] not in self.chords:
             raise ValueError(f"Chord '{chord}' is not supported")
         print(f"Playing chord: {chord}")
-        self.instrument.play_note(self.chords[chord], volume, length)
+        self.instrument.play_note(self.chords[chord['note']], volume=chord['volume'], length=chord['length'])
 
-    def play_sequence(self, sequence, volume, length):
-        for pitch in sequence:
-            self.play(pitch, volume, length)
+    def play_sequence(self, sequence):
+        for chord in sequence:
+            self.play(chord)
 
 player = GuitarPlayer()
 player.start()
 
-player.play_sequence(['A', 'B', 'E', 'A', 'G', 'G', 'B', 'C'], 1, 2)
+player.play_sequence([
+    {'note': 'A', 'volume': 1, 'length': 2},
+    {'note': 'C', 'volume': 1, 'length': 2},
+    {'note': 'D', 'volume': 1, 'length': 2},
+    {'note': 'F', 'volume': 1, 'length': 2},
+    {'note': 'E', 'volume': 1, 'length': 2},
+    {'note': 'A', 'volume': 1, 'length': 2},
+    {'note': 'C', 'volume': 1, 'length': 2},
+    {'note': 'D', 'volume': 1, 'length': 2},
+    {'note': 'F', 'volume': 1, 'length': 2},
+    {'note': 'E', 'volume': 1, 'length': 2}
+])

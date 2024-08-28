@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Video Classification</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+      }
+      #videoElement {
+        width: 640px;
+        height: 480px;
+        background-color: #666;
+      }
+      #result {
+        margin-top: 20px;
+        font-size: 18px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Video Classification</h1>
+    <video id="videoElement" autoplay></video>
+    <div id="result"></div>
+
+    <script>
+      const video = document.getElementById("videoElement");
+      const resultDiv = document.getElementById("result");
+
+      let frame_c = 1;
+
+      // Access the user's webcam
+      navigator.mediaDevices
+        .getUserMedia({ video: true })
+        .then((stream) => {
+          video.srcObject = stream;
+        })
+        .catch((error) => {
+          console.error("Error accessing the webcam:", error);
+        });
+
+      // Function to capture a frame and send it to the server
+      function captureAndClassify() {
+        const canvas = document.createElement("canvas");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext("2d").drawImage(video, 0, 0);
+
+        // Convert the canvas to a base64-encoded JPEG
+        const imageData = canvas.toDataURL("image/jpeg").split(",")[1];
+
+        // Send the image data to the server
+        fetch("/classify", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ image: imageData }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            resultDiv.textContent = `Classified as ${frame_c}: ${data.class}`;
+            frame_c++;
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            resultDiv.textContent = "Classification failed";
+          });
+      }
+
+      // Capture and classify a frame every 3 seconds
+      setInterval(captureAndClassify, 1000);
+    </script>
+  </body>
+</html>
