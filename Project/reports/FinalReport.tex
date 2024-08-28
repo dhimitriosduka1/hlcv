@@ -97,7 +97,7 @@ For the fretboard detection task, we used pre-trained versions of the models on 
 In the following sections, we will give a overview of the methods used in our work for performing fretboard detection and guitar chord classification.
 
 \subsection{Fretboard Detection}
-We experimented with the YOLOv8, YOLOv9 and YOLOv10 models \cite{redmon2016you} and from the Faster R-CNN family \cite{ren2016faster}, we tried a ResNet-50-FPN backbone and a MobileNetV3-Large FPN backbone. Furthermore, we tried two different finetuning methods: freezing every layer and adding a classifier head for our new \emph{fretboard class} whose output is concatenated with the existing final layer output (from now on, models with ``(FB)'' next to the name), and not freezing any layer, i.e., finetuning the whole model. Both methods are fundamentally different and serve different purposes. The first method is used to finetune the model to a specific task while keeping the backbone as it is. This allows us to keep the previous learned features and classes. On the other hand, the second method will finetune the
+We experimented with the YOLOv8 (m), YOLOv9 (c) and YOLOv10 (l) models \footnote{For a similar parameter count, we chose these model sizes which are different for each version; m: $25.9$M, c: $25.3$M, l: $24.4$M.} \cite{redmon2016you} and from the Faster R-CNN family \cite{ren2016faster}, we tried a ResNet-50-FPN backbone and a MobileNetV3-Large FPN backbone. Furthermore, we tried two different finetuning methods: freezing every layer and adding a classifier head for our new \emph{fretboard class} whose output is concatenated with the existing final layer output (from now on, models with ``(FB)'' next to the name), and not freezing any layer, i.e., finetuning the whole model. Both methods are fundamentally different and serve different purposes. The first method is used to finetune the model to a specific task while keeping the backbone as it is. This allows us to keep the previous learned features and classes. On the other hand, the second method will finetune the
 whole model to the new task, while potentially forgetting the previous learned features and classes. In our finetuning process, this one had the effect of having only 2 classes in the end: the \emph{fretboard class} and the background.
 
 \subsection{Guitar Chord Classification}
@@ -128,6 +128,8 @@ In the following sections, we will present the results of our experiments and pr
 
 \subsection{Fretboard Detection}
 
+Table \ref{tab:fretboard-models-metrics-results} shows the performance metrics of the different models tested on the finetuning dataset \cite{guitar-necks-detector} and Figure \ref{fig:fretboard-models-recall-map} shows the Recall vs. mAP@50 for the models tested and finetuned on the \emph{fretboard} class, while showcasing the number of parameters. Naturally, the models finetuned with a Frozen Backbone (FB) performed slightly worse than the models finetuned without a Frozen Backbone; this was expected since the latter had the advantage of being able to learn the new task from scratch, using all layers, while the former only trained a smaller classifier head. Since we wanted to keep having the ability to recognize the other 80 valuable classes from the COCO dataset \cite{lin2015microsoftcococommonobjects}, we chose a model from the (FB) list, the YOLOv9 (FB) model as the best model for our task. This one obtained the highest precision and, after re-evaluating on the COCO dataset + \emph{fretboard class}, it was the one that gave better results in terms of confusion matrix and Precision-Recall curve.
+
 \begin{table}[thb]
     \scriptsize
     \centering
@@ -148,7 +150,7 @@ In the following sections, we will present the results of our experiments and pr
         \bottomrule
     \end{tabular}
     \caption{Performance metrics of different models on the evaluation dataset, shown in percentages. Each column represents a specific metric: Precision, Recall, mAP50-95, and mAP50. (FB) denotes models finetuned with a Frozen Backbone.}
-    \label{tab:metrics-results}
+    \label{tab:fretboard-models-metrics-results}
 \end{table}
 
 
@@ -160,8 +162,8 @@ In the following sections, we will present the results of our experiments and pr
     \label{fig:fretboard-models-recall-map}
 \end{figure}
 
-\dhimitrios{Change this a bit}
-Since our YOLOv9 model did not lose its capability to detect the original 80 classes from the COCO dataset \cite{lin2015microsoftcococommonobjects}, we decided to re-evaluate its performance on the whole COCO dataset to quantify how much the finetuning process affected the original pre-trained model's performance. The results are shown Table \ref{tab:confusion-matrix-results}, where positive values are desirable for diagonal entries (indicating correct classifications), and negative values are preferred for off-diagonal entries (indicating reduced misclassifications).
+
+We quantified how much the finetuning process affected the original pre-trained YOLOv9 model's performance on the COCO dataset \cite{lin2015microsoftcococommonobjects}. The results are shown Table \ref{tab:confusion-matrix-results}, where positive values are desirable for diagonal entries (indicating correct classifications), and negative values are preferred for off-diagonal entries (indicating reduced misclassifications).
 
 % \begin{figure}[h]
 %     \centering
