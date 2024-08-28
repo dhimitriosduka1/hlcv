@@ -113,7 +113,7 @@ First, we wanted to try a simple yet interesting approach. For a given sample im
 We used MediaPipe to extract the hand shape followed by different classifiers—SVM \cite{cortes1995support}, Random Forest \cite{ho1995random}, and a simple MLP—to classify the chords. 
 
 \subsubsection{Classifier only}
-Next, we wanted to explote the potential benefits of using more advanced architectures to perform chord classfication. We decided to experiment with Vision Transformers (ViT), specifically ViT-B/16, ViT-B/32, ViT-L/16, and ViT-L/32, to assess how different configurations of patch sizes and model sizes would impact performance. Additionally, we were also interesed in evaluationg the effectiveness of pre-treained self-supervised models in our task, so we also included DINOv2-S and DINOv2-L in our experiments, which allowed us to compare their performance against the ViT models and explore whether self-supervised learning offers advantages in this domain.
+Next, we wanted to explore the potential benefits of using more advanced architectures to perform chord classification. We decided to experiment with Vision Transformers (ViT) \cite{dosovitskiy2020image}, specifically ViT-B/16, ViT-B/32, ViT-L/16, and ViT-L/32, to assess how different configurations of patch sizes and model sizes would impact performance. Additionally, we were also interested in evaluating the effectiveness of pre-trained self-supervised models in our task, so we also included DINOv2 \cite{oquab2023dinov2} in our experiments. More specifically, DINOv2-S and DINOv2-L. This allowed us to compare their performance against the ViT models and explore whether self-supervised learning offers advantages in this task.
 
 \section{Experimental Results and Analyses}
 \label{sec:results}
