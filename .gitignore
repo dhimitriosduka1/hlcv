@@ -352,3 +352,5 @@ Project/src/video-to-chords-pipeline/images/*
 # *.json
 *.err
 *_stderror
+
+test.py
