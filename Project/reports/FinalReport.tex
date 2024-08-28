@@ -117,10 +117,34 @@ Next, we wanted to explore the potential benefits of using more advanced archite
 
 \subsection{Fretboard Detection}
 
-
-\begin{figure}[h]
+\begin{table}[thb]
+    \scriptsize
     \centering
-    \includegraphics[width=0.5\textwidth]{images/final/recall_vs_map50.pdf}
+    \begin{tabular}{lcccc}
+        \toprule
+        \textbf{Model}          & \textbf{P} & \textbf{R} & \textbf{mAP50-95} & \textbf{mAP50} \\
+        \midrule
+        YOLOv8                  & 98.0\%     & 93.6\%     & 88.7\%            & 97.4\%         \\
+        YOLOv9                  & 95.6\%     & 92.2\%     & 82.3\%            & 96.1\%         \\
+        YOLOv10                 & 89.4\%     & 85.2\%     & 76.1\%            & 92.2\%         \\
+        YOLOv8 (FB)             & 84.0\%     & 82.5\%     & 68.5\%            & 88.7\%         \\
+        YOLOv9 (FB)             & 84.0\%     & 82.5\%     & 77.2\%            & 94.1\%         \\
+        YOLOv10 (FB)            & 80.8\%     & 80.2\%     & 71.2\%            & 93.0\%         \\
+        Faster-RCNN-Resnet50         & 80.5\%     & 79.9\%     & 77.6\%            & 93.9\%         \\
+        Faster-RCNN-Resnet50 (FB)    & 61.4\%     & 65.4\%     & 52.2\%            & 85.6\%         \\
+        Faster-RCNN-MobileNetv3      & 68.9\%     & 71.1\%     & 57.8\%            & 86.1\%         \\
+        Faster-RCNN-MobileNetv3 (FB) & 76.9\%     & 74.6\%     & 65.7\%            & 93.0\%         \\
+        \bottomrule
+    \end{tabular}
+    \caption{Performance metrics of different models on the evaluation dataset, shown in percentages. Each column represents a specific metric: Precision, Recall, mAP50-95, and mAP50. (FB) denotes models finetuned with a Frozen Backbone.}
+    \label{tab:metrics-results}
+\end{table}
+
+
+
+\begin{figure}[thb]
+    \centering
+    \includegraphics[width=\columnwidth]{images/final/recall_vs_map50.pdf}
     \caption{Recall vs. mAP@50 for the models tested and finetuned on the \emph{fretboard} class.}
     \label{fig:fretboard-models-recall-map}
 \end{figure}
@@ -186,9 +210,9 @@ Surprisingly, this approach performed well, achieving good accuracy during valid
         \midrule
         InceptionResNetv2 & 83.56\%     & 68.63\%      & 15.57\%      \\
         \midrule
-        SVM            & 95.27\%     & 85.71\%      & 18.61\%      \\
-        Random Forest   & 93.35\%     & 52.41\%      & 16.16\%      \\
-        MLP & 89.44\%     & 78.57\%      & 14.39\%      \\
+        SVM               & 95.27\%     & 85.71\%      & 18.61\%      \\
+        Random Forest     & 93.35\%     & 52.41\%      & 16.16\%      \\
+        MLP               & 89.44\%     & 78.57\%      & 14.39\%      \\
         \bottomrule
     \end{tabular}
     \caption{Accuracy of the Hand Pose Estimation + Classifier in the test set of different datasets. The following parameters where used: \textbf{SVM} (C = 300), \textbf{Random Forest} (n\_estimators = 200), and \textbf{MLP} (hidden\_layer\_sizes = (100, 256, 100)). Datasets used: \textbf{GC}: Guitar\_Chords, \textbf{GCT}: Guitar\_Chords\_Tiny, \textbf{GCO}: Guitar\_Chords\_Ours.}
