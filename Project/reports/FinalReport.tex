@@ -63,11 +63,9 @@
 \emph{Lorem ipsum dolor sit amet, consectetur adipiscing elit}
 
 \section{Introduction}
-Automatic chord recognition (ACR) is an information retrieval task that consists of automatically recognizing the chords played in a music piece whether it be an audio or video file. The ability to accurately recognize and identify chords is crucial for a variety of downstream applications such as music analysis, music transcription, or even restoration of corrupted musical performances. 
+Automatic chord recognition (ACR) is an information retrieval task that automatically recognizes the chords played in a music piece, whether it be an audio or video file. The ability to accurately recognize and identify chords is crucial for various downstream applications such as music analysis, music transcription, or even restoration of corrupted musical performances. 
 
-\dhimitrios{Maybe make the transition to the next paragraph better.}
-
-Building on the work of \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024}, our research seeks to enhance the accuracy of existing ACR systems by leveraging state-of-the-art deep learning models and techniques. Specifically, we explore the potential of using YOLO \cite{redmon2016you} models for fretboard recognition, Vision Transformers (ViT) \cite{dosovitskiy2020image} and DINOv2 \cite{oquab2023dinov2} for chord recognition, as well as investigate the feasibility of using hand pose estimation models like MediaPipe \cite{zhang2020mediapipe} to improve the classification accuracy. Additionally, we intend to extend this work by implementing a chord-to-audio generation model, enabling the generation of audio directly from recognized chord labels.
+Our work aims to improve ACR in the context of acoustic guitars. We base our work on the previous work by \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024} and extend it by exploring the potential of using state-of-the-art deep learning models and techniques while also adding an audio generation module at the end. Specifically, we investigate the feasibility of using the models from the YOLO \cite{redmon2016you} family and Faster R-CNN \cite{ren2016faster} for fretboard recognition, alongside Vision Transformers \cite{dosovitskiy2020image} and DINOv2 \cite{oquab2023dinov2} for chord recognition. Additionally, we extend this work by implementing a chord-to-audio generation module, enabling the generation of audio directly from recognized chord labels.
 
 \section{Related Work}  
 Over recent decades, many different approaches have been proposed to tackle the ACR task. The first ACR system was introduced in the late 1999s by \cite{takuya1999realtime}, where LISP music was utilized to perform chord recognition at the signal level. Since then, many signal-level-based approaches have been introduced ranging from chromagram-based method \cite{stark2009real}, to deep chromagram extractors \cite{korzeniowski2016feature}, to spectrogram-based feature extraction methods utilizing recurrent neural networks \cite{boulanger2013audio}. However, due to the inherent shortcomings of the aural approach in handling highly timbre sounds \cite{du2023conditional}, improvements plateaued. 
@@ -112,22 +110,17 @@ First, we wanted to try a simple yet interesting approach. For a given sample im
 
 We used MediaPipe to extract the hand shape followed by different classifiers—SVM \cite{cortes1995support}, Random Forest \cite{ho1995random}, and a simple MLP—to classify the chords. 
 
-\subsubsection{Classifier only}
+\subsubsection{Classifier only approach}
 Next, we wanted to explore the potential benefits of using more advanced architectures to perform chord classification. We decided to experiment with Vision Transformers (ViT) \cite{dosovitskiy2020image}, specifically ViT-B/16, ViT-B/32, ViT-L/16, and ViT-L/32, to assess how different configurations of patch sizes and model sizes would impact performance. Additionally, we were also interested in evaluating the effectiveness of pre-trained self-supervised models in our task, so we also included DINOv2 \cite{oquab2023dinov2} in our experiments. More specifically, DINOv2-S and DINOv2-L. This allowed us to compare their performance against the ViT models and explore whether self-supervised learning offers advantages in this task.
 
 \section{Experimental Results and Analyses}
 \label{sec:results}
 
 \subsection{Guitar Chord Classification}
-To evaluate our approaches against those in the original paper, we implemented the InceptionResNetv2 model as described by the authors. After training the model on our datasets, we obtained the results shown in Table \ref{tab:handpose-classifier-results}, which provided us with a baseline to compare our models against.
+To evaluate our approaches against those in the original paper, we implemented the InceptionResNetv2 model as described by the authors. After training the model using the hyperparameters provided on \cite{Kristian_Zaman_Tenoyo_Jodhinata_2024} on our dataset, we obtained the results shown in Table \ref{tab:handpose-classifier-results}, which provided us with a baseline to compare our models against.
 
 \subsubsection{Hand Pose Estimation + Classifier}
-The results of this approach are summarized in Table \ref{tab:handpose-classifier-results}.
-
-Surprisingly, this approach performed well, achieving good accuracy during validation and testing on two datasets. However, the model struggled to generalize to the third dataset, which we created. This outcome was anticipated, as the samples in our dataset were out of distribution, and the model lacked the complexity needed to generalize effectively to such data.
-
-\subsubsection{Classifier only}
-
+Surprisingly, this approach performed well, achieving good accuracy during validation and testing on two datasets. However, the model struggled to generalize to the third dataset, which was created by us. This outcome was anticipated, as the samples in our dataset were out of the training distribution, and the model lacked the complexity needed to generalize effectively to such data.
 
 
 \dhimitrios{Should we point out that Hand Pose Estimation + Classifier performed better than InceptionResNetv2?}
@@ -149,8 +142,8 @@ Surprisingly, this approach performed well, achieving good accuracy during valid
   \label{tab:handpose-classifier-results}
 \end{table}
 
-\subsubsection{Classifier only}
-In the previous experiments, we found out that the Hand Pose Estimation + Classifier approach lacked the robustness necessary to generalize effectively to out-of-distribution data. To address this limitation, we decided to explore more complex models, such as Vision Transformers (ViT) and DINOv2. We evaluated various configurations of these models, including ViT-B/16, ViT-B/32, ViT-L/16, ViT-L/32, DINOv2-S, and DINOv2-L. The results of these experiments are summarized in Table \ref{tab:transformer-models-results}.
+\subsubsection{Classifier only approach}
+In the previous experiments, we found out that the Hand Pose Estimation + Classifier approach lacked the robustness necessary to generalize effectively to out-of-distribution data. To address this limitation, we decided to explore more complex models, such as Vision Transformers (ViT) and DINOv2. The results of our experiments are summarized in Table \ref{tab:transformer-models-results}.
 
 \begin{table}[h]
   \centering
@@ -168,17 +161,13 @@ In the previous experiments, we found out that the Hand Pose Estimation + Classi
     DINOv2-L & 96.44\% & 91.18\% & 97.92\% \\
     \bottomrule
   \end{tabular}
-  \caption{Accuracy of Classifier only in the test set of different datasets.}
+  \caption{Accuracy of Classifier only apporach in the test set of different datasets.}
   \label{tab:transformer-models-results}
 \end{table}
 
-As can be seen from Table \ref{tab:transformer-models-results}, ViT models show varying performance across different datasets. The base models, ViT-B/16 and ViT-B/32, perform exceptionally well, with high accuracy on all datasets. However, the larger models, ViT-L/16 and ViT-L/32, do not outperform the base models, suggesting that increased model size does not necessarily correlate with improved performance for this particular task. We expect that the larger models are overfitting the data, as they have more parameters to learn from and our data is limited.
+As can be seen from Table \ref{tab:transformer-models-results}, ViT models show varying performance across different datasets. The base models, ViT-B/16 and ViT-B/32, perform exceptionally well, with high accuracy on all datasets. However, the larger models, ViT-L/16 and ViT-L/32, do not outperform the base models, suggesting that increased model size does not necessarily correlate with improved performance for this particular task. We expect that the data available is not sufficient to train the larger models effectively. We can also see that the patch 16 versions of the ViT models perform better than the patch 32 versions. This is likely due to the fact that the patch 16 versions have a higher resolution, to capture fine details and maintain higher spatial resolution, which is important for accurately distinguishing between chord shapes and hand positions.
 
-We can also see that the patch 16 versions of the ViT models perform better than the patch 32 versions. This is likely due to the fact that the patch 16 versions have a higher resolution, to capture fine details and maintain higher spatial resolution, which is important for accurately distinguishing between chord shapes and hand positions
-
-Both DINOv2 variants, small and large, demonstrated strong and consistent performance across all datasets. The DINOv2-large model, in particular, achieved the highest accuracy (0.979) on the Guitar\_Chords\_Ours dataset, slightly outperforming the small variant.
-
-The superior performance of DINOv2 can be attributed to its self-supervised learning approach. Unlike models pre-trained on ImageNet, which does not contain specific classes related to 'hands,' DINOv2's self-supervised learning allows it to develop more general and transferable representations, leading to better generalization in our specific task. This enhanced generalization is further supported by attention visualizations of the model when applied to images from the 'ours' dataset, where the model correctly focuses on the hand performing the fretting.
+Both DINOv2 variants, demonstrated strong and consistent performance across all datasets. The DINOv2-L model, in particular, achieved the highest accuracy on the \textbf{Guitar\_Chords\_Ours} dataset, slightly outperforming the small variant. The superior performance of DINOv2 can be attributed to its self-supervised learning approach. Unlike models pre-trained on ImageNet, which does not contain specific classes related to 'hands,' DINOv2's self-supervised learning allows it to develop more general and transferable representations, leading to better generalization in our specific task. This enhanced generalization is further supported by attention visualizations of the model when applied to images from the 'ours' dataset, where the model correctly focuses on the hand performing the fretting.
 
 \section{Conclusion}
 
