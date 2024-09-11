@@ -1,4 +1,6 @@
 project: "chord-classification-final"
 entity: "hwga-cj"
 
+# Sorry to break it to you, but the API key is invalidated :)
+# https://www.youtube.com/watch?v=dQw4w9WgXcQ
 token: "d207ba77942eed7fa0856e5c74859ddfd6cbc5a0"
