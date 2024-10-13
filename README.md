@@ -55,6 +55,8 @@ We identified a significant gap in available datasets for the task of guitar cho
   <figcaption><strong>Figure 1:</strong> The t-SNE plot of our dataset containing 14 chords. Each point represents a KNN-sampled frame, with the color indicating the corresponding chord label.</figcaption>
 </figure>
 
+<p> </p>
+
 Unfortunately, both sampling strategies resulted in an overly simplistic dataset that failed to capture the real-world complexity of chords, as shown by the above [Figure](#tsne-plot). This resulted in poor model generalization. However, rather than abandoning our dataset we used it as a test set to evaluate the generalizability of our model. In the end, we decided to use existing datasets [[1](https://universe.roboflow.com/grc-mask-custom-dataset/guitar-chord-bounding-box), [2](https://universe.roboflow.com/grc-mask-custom-dataset/guitar-chord-handshape), [3](https://universe.roboflow.com/joaomarcoscrs/guitar-chords-daewp), [4](https://universe.roboflow.com/my-work-3idwy/guitar-chord-tvon8)] publicly available in [Roboflow](https://universe.roboflow.com/) for training the models, merging them to create a more complex dataset which resulted in significantly better results.
 
 This change in our approach necessitated a change in the scope of our chord recognition task. As a consequence of using existing datasets, we were limited to only seven chords in total—A, B, C, D, E, F, and G—down from the 14 chords originally planned.
@@ -222,6 +224,8 @@ To address this limitation of the previous approach, we decided to explore more 
   <figcaption><strong>Figure 4:</strong> F1 Score for the models tested and finetuned on the <em>fretboard</em> class.</figcaption>
 </figure>
 
+<p> </p>
+
 ViT models show varying performance across different datasets. The base models perform exceptionally well, with high accuracy on all datasets. However, the larger models do not exhibit the same performance. We argue that this is happening because the available data is not sufficient to train the large version of the models effectively. Additionally, we can also observe that the patch 16 versions of the ViT models perform better than the patch 32 versions. This is likely due to the fact that the patch 16 versions have a higher resolution, which is important for accurately distinguishing between different hand positions.
 
 Moreover, both DINOv2 variants demonstrated strong and consistent performance across all datasets. The DINOv2-L model, in particular, achieved the highest accuracy on the `Guitar_Chords_Ours` dataset, slightly outperforming the small variant. The superior performance of DINOv2 can be attributed to its self-supervised learning approach. Unlike models pre-trained on ImageNet, which does not contain a specific class for <em>hands</em>, DINOv2's self-supervised learning allows enables it to learn more generic and transferable representations, leading to better generalization in our task. This enhanced generalization is further supported by attention visualizations of the model when applied to images from `Guitar_Chords_Ours` dataset, where the model correctly focuses on the hand performing the fretting, as evidenced by [Figure 5](#occlusion-based-attribution) and [Figure 6](#occlusion-based-attribution-full).
@@ -231,6 +235,8 @@ Moreover, both DINOv2 variants demonstrated strong and consistent performance ac
   <img src="Project/reports/images/final/occlusion_trained.jpg" alt="Occlusion in trained model" width="50%" >
   <figcaption><strong>Figure 5:</strong> Occlusion-based attribution <a href="https://arxiv.org/abs/2009.07896">[Kokhlikyan et al., 2020]</a> for model interpretability on a 74 × 389 input image using a stride of 8 and a sliding window of 30 × 30, using <a href="https://captum.ai/tutorials/TorchVision_Interpret#3--Occlusion-based-attribution">Captum</a>. <strong>Top:</strong> Untrained DINOv2 model. <strong>Bottom:</strong> Our DINOv2 model.</figcaption>
 </figure>
+
+<p> </p>
 
 <figure id="occlusion-based-attribution-full">
   <img src="Project/reports/images/final/occlusion_trained_full.jpg" alt="Occlusion in trained model - full picture"/>
