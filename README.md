@@ -146,9 +146,9 @@ Some qualitative results are shown below, comparing the original YOLOv9 predicti
 
 <table>
 <tr>
-  <td><img src="Project/src/fretboard-recognition/images/other-image-finetuned.jpg"></td>
+  <td><img src="Project/src/fretboard-recognition/images/other-image-original.jpg"></td>
   <td><img src="Project/src/fretboard-recognition/images/other-image-non-frozen.jpg" style="width:96.5%;"></td>
-  <td><img src="Project/src/fretboard-recognition/images/other-image-original.jpg" style="width:96.5%;"></td>
+  <td><img src="Project/src/fretboard-recognition/images/other-image-finetuned.jpg" style="width:96.5%;"></td>
 </tr>
 <tr>
   <td align="center">Original YOLOv9 prediction</td>
