@@ -181,7 +181,9 @@ Some qualitative results are shown below, comparing the original YOLOv9 predicti
 
 
 #### [Guitar Chord Classification](#guitar-chord-classification-results)
-To evaluate our approach against those in the original paper, we implemented the [`InceptionResNetv2`](https://arxiv.org/abs/1602.07261) model as described by the authors. After training the model using the hyperparameters provided by [[Kristian et al., 2024]](https://ph01.tci-thaijo.org/index.php/ecticit/article/view/254624) on our dataset, we obtained the results shown in **Table 3**, which provided us with a baseline to compare our models against.
+
+##### [Hand Pose Estimation + Classifier](#hand-pose-estimation--classifier-results)
+To evaluate our approach against those in the original paper, we implemented the [`InceptionResNetv2`](https://arxiv.org/abs/1602.07261) model as described by the authors. After training the model using the hyperparameters provided by [[Kristian et al., 2024]](https://ph01.tci-thaijo.org/index.php/ecticit/article/view/254624) on our dataset, we obtained the results shown in **Table 3**, which provided us with a baseline to compare our models against. Surprisingly, this approach performed well, achieving good accuracy during validation and testing on two datasets. However, the model struggled to generalize to the third dataset, which was created by us. This outcome was anticipated, as the samples in our dataset were out of the training distribution, and the model lacked the complexity needed to generalize to such data. Results are summarized in **Table 4**.
 
 | **Model**           | **GC**   | **GCT**  | **GCO**  |
 |---------------------|----------|----------|----------|
@@ -191,18 +193,6 @@ To evaluate our approach against those in the original paper, we implemented the
 | MLP                 | 89.44%   | 78.57%   | 14.39%   |
 
 **Table 3:** Accuracy of the Hand Pose Estimation + Classifier in the test set of different datasets. The following parameters were used: `SVM (C = 300)`, `Random Forest (n_estimators = 200)`, and `MLP (hidden_layer_sizes = (100, 256, 100))`.  Datasets used: **GC**: `Guitar_Chords`, **GCT**: `Guitar_Chords_Tiny`, **GCO**: `Guitar_Chords_Ours`.
-
-##### [Hand Pose Estimation + Classifier](#hand-pose-estimation--classifier-results)
-Surprisingly, this approach performed well, achieving good accuracy during validation and testing on two datasets. However, the model struggled to generalize to the third dataset, which was created by us. This outcome was anticipated, as the samples in our dataset were out of the training distribution, and the model lacked the complexity needed to generalize to such data. Results are summarized in **Table 4**.
-
-| **Method**        | **GC** | **GCT** | **GCO** |
-|-------------------|--------|---------|---------|
-| SVM               | 95.27% | 85.71%  | 18.61%  |
-| Random Forest     | 93.35% | 52.41%  | 16.16%  |
-| MLP               | 89.44% | 78.57%  | 14.39%  |
-
-**Table 4:** [Hand Pose Estimation + Classifier](#hand-pose-estimation--classifier-results) results on the three datasets.
-
 
 ##### Classifier only approach
 To address this limitation of the previous approach, we decided to explore more complex models, such as [Vision Transformers](https://arxiv.org/abs/2010.11929) and [DINOv2](https://arxiv.org/abs/2304.07193), which is also available on [Hugging Face](https://huggingface.co/docs/transformers/model_doc/dinov2). The results of our experiments are summarized below:
