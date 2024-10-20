@@ -17,6 +17,8 @@ Each assignment is organized in separate folders as outlined below:
     - `BatchNorm`, `Dropout`, `Data Augmentation` and `EarlyStopping` as regularization techniques to improve the model's generalization.
     - Fine-tune the pre-trained model [`VGG_11_bn`](https://pytorch.org/vision/main/models/generated/torchvision.models.vgg11_bn.html) on the [CIFAR-10](http://www.cs.toronto.edu/~kriz/) dataset, with various configurations (fine-tuning only the classifier layers, fine-tuning the entire model with pre-loaded weights, and without pre-loaded weights).
 
+*No guarantee is given to the correctness of the solution of the assignments, or any code implementation in this entire repository.*
+
 ## Project: From Strings to Sequences — Acoustic Guitar Chords Recognition
 <sub>See the [Project/reports/](Project/reports/) folder for the complete LaTeX report.</sub>
 
