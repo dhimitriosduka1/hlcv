@@ -1,28 +1,6 @@
 # High-Level Computer Vision (HLCV) 
 
-This repository contains implementations of various assignments and a project related to the [High-Level Computer Vision](https://www.mpi-inf.mpg.de/departments/computer-vision-and-machine-learning/teaching/courses-1/ss-2024-high-level-computer-vision) course lectured by [Prof. Dr. Bernt Schiele](https://www.mpi-inf.mpg.de/departments/computer-vision-and-machine-learning/people/bernt-schiele) at [Saarland University](https://www.uni-saarland.de/) during the Sommer Semester 2024. *All course materials and assignments outlines belong to the course's instructors*.
-
-## Assignments
-Each assignment is organized in separate folders as outlined below:
-
-- **Assignment 1**: Exercises and code related to the first assignment.
-    - Classical Machine Learning: Image Representations and Histogram Distances (`grayvalue`, `rgb`, `rg`, `dxdy`), Object/Neighbours Identification via distance metrics (`Chi^2`, `L2`), and performance evaluation with `PR` curve.
-    - [UCI ML hand-written digits](https://archive.ics.uci.edu/dataset/80/optical+recognition+of+handwritten+digits) recognition with an `SVM` classifier.
-- **Assignment 2**: Exercises and code related to the second assignment.
-    - Simple two-layer neural network and SGD training algorithm based on back-propagation using only basic matrix operations.
-    - Multi-layer perceptron using [PyTorch](https://pytorch.org/) with different layer configurations using `BatchNorm`, `Dropout`, and `EarlyStopping` as regularization techniques. 
-    - Both trained, finetuned using `GridSearchCV` and evaluated on the [CIFAR-10](http://www.cs.toronto.edu/~kriz/) dataset.
-- **Assignment 3**: Exercises and code related to the third assignment.
-    - Convolutional Neural Networks (CNN) using [PyTorch](https://pytorch.org/) for image classification on the [CIFAR-10](http://www.cs.toronto.edu/~kriz/) dataset, with filters visualization, `Top-1` and `Top-5` accuracy evaluation.
-    - `BatchNorm`, `Dropout`, `Data Augmentation` and `EarlyStopping` as regularization techniques to improve the model's generalization.
-    - Fine-tune the pre-trained model [`VGG_11_bn`](https://pytorch.org/vision/main/models/generated/torchvision.models.vgg11_bn.html) on the [CIFAR-10](http://www.cs.toronto.edu/~kriz/) dataset, with various configurations (fine-tuning only the classifier layers, fine-tuning the entire model with pre-loaded weights, and without pre-loaded weights).
-
-*No guarantee is given to the correctness of the solution of the assignments, or any code implementation in this entire repository.*
-
-## Project: From Strings to Sequences — Acoustic Guitar Chords Recognition
-<sub>See the [Project/reports/](Project/reports/) folder for the complete LaTeX report.</sub>
-
-**Summary**: This system automates **chord recognition** from acoustic guitar videos by detecting and classifying chords based on video input. It leverages **YOLO** and **Faster R-CNN** for fretboard detection, allowing the system to identify the position of the hand and fingers on the guitar neck. For chord classification, it utilizes **Vision Transformers** and **DINOv2**, which process visual cues to distinguish between different chords. Additionally, **hand pose estimation** was explored as a potential method to perform chord recognition. Finally, We extend the work from [[Kristian et al., 2024]](https://ph01.tci-thaijo.org/index.php/ecticit/article/view/254624) by exploring the potential of using state-of-the-art deep learning models and techniques with an additional proposal for an audio generation module.
+This repository contains implementations of various assignments and a project related to the [High-Level Computer Vision](https://www.mpi-inf.mpg.de/departments/computer-vision-and-machine-learning/teaching/courses-1/ss-2024-high-level-computer-vision) course lectured by [Prof. Dr. Bernt Schiele](https://www.mpi-inf.mpg.de/departments/computer-vision-and-machine-learning/people/bernt-schiele) at [Saarland University](https://www.uni-saarland.de/) during the Sommer Semester 2024. *All course materials and assignments outlines belong to the course's instructors*. *No guarantee is given to the correctness of the solution of the assignments, or any code implementation in this entire repository.*
 
 ### Table of Contents
 - [High-Level Computer Vision (HLCV)](#high-level-computer-vision-hlcv)
@@ -43,6 +21,25 @@ Each assignment is organized in separate folders as outlined below:
         - [Classifier only approach](#classifier-only-approach-1)
     - [Conclusion](#conclusion)
 
+## Assignments
+Each assignment is organized in separate folders as outlined below:
+
+- **Assignment 1**: Exercises and code related to the first assignment.
+    - Classical Machine Learning: Image Representations and Histogram Distances (`grayvalue`, `rgb`, `rg`, `dxdy`), Object/Neighbours Identification via distance metrics (`Chi^2`, `L2`), and performance evaluation with `PR` curve.
+    - [UCI ML hand-written digits](https://archive.ics.uci.edu/dataset/80/optical+recognition+of+handwritten+digits) recognition with an `SVM` classifier.
+- **Assignment 2**: Exercises and code related to the second assignment.
+    - Simple two-layer neural network and SGD training algorithm based on back-propagation using only basic matrix operations.
+    - Multi-layer perceptron using [PyTorch](https://pytorch.org/) with different layer configurations using `BatchNorm`, `Dropout`, and `EarlyStopping` as regularization techniques. 
+    - Both trained, finetuned using `GridSearchCV` and evaluated on the [CIFAR-10](http://www.cs.toronto.edu/~kriz/) dataset.
+- **Assignment 3**: Exercises and code related to the third assignment.
+    - Convolutional Neural Networks (CNN) using [PyTorch](https://pytorch.org/) for image classification on the [CIFAR-10](http://www.cs.toronto.edu/~kriz/) dataset, with filters visualization, `Top-1` and `Top-5` accuracy evaluation.
+    - `BatchNorm`, `Dropout`, `Data Augmentation` and `EarlyStopping` as regularization techniques to improve the model's generalization.
+    - Fine-tune the pre-trained model [`VGG_11_bn`](https://pytorch.org/vision/main/models/generated/torchvision.models.vgg11_bn.html) on the [CIFAR-10](http://www.cs.toronto.edu/~kriz/) dataset, with various configurations (fine-tuning only the classifier layers, fine-tuning the entire model with pre-loaded weights, and without pre-loaded weights).
+
+## Project: From Strings to Sequences — Acoustic Guitar Chords Recognition
+<sub>See the [Project/reports/](Project/reports/) folder for the complete LaTeX report.</sub>
+
+**Summary**: This system automates **chord recognition** from acoustic guitar videos by detecting and classifying chords based on video input. It leverages **YOLO** and **Faster R-CNN** for fretboard detection, allowing the system to identify the position of the hand and fingers on the guitar neck. For chord classification, it utilizes **Vision Transformers** and **DINOv2**, which process visual cues to distinguish between different chords. Additionally, **hand pose estimation** was explored as a potential method to perform chord recognition. Finally, We extend the work from [[Kristian et al., 2024]](https://ph01.tci-thaijo.org/index.php/ecticit/article/view/254624) by exploring the potential of using state-of-the-art deep learning models and techniques with an additional proposal for an audio generation module.
 
 ### Introduction
 ACR is an information retrieval task that automatically recognizes the chords played in a music piece, whether it be an audio or video file. The ability to accurately recognize and identify chords is crucial for various downstream applications such as music analysis, music transcription, or even restoration of corrupted musical performances.
