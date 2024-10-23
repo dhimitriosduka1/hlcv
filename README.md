@@ -111,6 +111,8 @@ The table below shows the performance metrics of the different models tested on 
   <figcaption><strong>Figure 3:</strong> Recall vs. mAP@50 for the models tested and finetuned on the <em>fretboard</em> class.</figcaption>
 </figure>
 
+<p> </p>
+
 Since our YOLOv9 model did not lose its capability to detect the original 80 classes from the [COCO dataset](https://cocodataset.org/#home), we decided to re-evaluate its performance on the whole COCO dataset to quantify how much the finetuning process affected the original pre-trained model's performance. The results are shown below, where positive values are desirable for diagonal entries (indicating correct classifications), and negative values are preferred for off-diagonal entries (indicating reduced misclassifications).
 
 <table>
